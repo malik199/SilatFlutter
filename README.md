@@ -1,4 +1,4 @@
-# flutter_authentication
+# Silat Flutter
 
 A new Flutter project.
 
