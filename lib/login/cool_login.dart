@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_authentication/utils/constants.dart';
+import 'package:silat_flutter/utils/constants.dart';
 
 
 class CoolLoginScreen extends StatefulWidget {

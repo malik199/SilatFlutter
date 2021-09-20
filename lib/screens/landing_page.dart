@@ -1,10 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_authentication/login/login_page.dart';
-import 'package:flutter_authentication/utils/fire_auth.dart';
-import 'package:flutter_authentication/screens/home.dart';
-import 'package:flutter_authentication/screens/scoring_portrait.dart';
-import 'package:flutter_authentication/screens/rules_creed.dart';
+import 'package:silat_flutter/login/login_page.dart';
+import 'package:silat_flutter/utils/fire_auth.dart';
+import 'package:silat_flutter/screens/home.dart';
+import 'package:silat_flutter/screens/scoring_portrait.dart';
+import 'package:silat_flutter/screens/rules_creed.dart';
+import 'package:silat_flutter/screens/techniques_home.dart';
 
 class LandingPage extends StatefulWidget {
   final User user;
@@ -62,10 +63,7 @@ class _LandingPageState extends State<LandingPage> {
 
     List<Widget> _pages = <Widget>[
       HomeData(userPassed: _currentUser),
-      Icon(
-        Icons.sports_kabaddi,
-        size: 150,
-      ),
+      TechniquesHome(),
       RulesCreed(),
       ScoringPortrait(),
       Icon(

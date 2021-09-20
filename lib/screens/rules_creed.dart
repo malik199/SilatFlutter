@@ -5,10 +5,12 @@ class RulesCreed extends StatelessWidget {
 
   final int flex1 = 2;
   final int flex2 = 5;
-  final double spaceBetween = 6;
+  final int flex1a = 1;
+  final int flex2a = 5;
+  final double spaceBetween = 12;
   final Color color1 = Colors.teal;
-  final Color color2 = Colors.redAccent;
-  final Color color3 = Colors.blue;
+  final Color color2 = Colors.blue;
+  final Color color3 = Colors.teal;
 
   @override
   Widget build(BuildContext context) {
@@ -188,7 +190,7 @@ class RulesCreed extends StatelessWidget {
               children: [
                 Expanded(
                   flex: flex1,
-                  child: Text("Number 1: ", style: TextStyle(
+                  child: Text("Respect your instructor", style: TextStyle(
                       fontSize: 20.0,
                       fontWeight: FontWeight.bold,
                       color: color2),),
@@ -198,10 +200,9 @@ class RulesCreed extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.only(left: 10.0),
                     child: Text(
-                      "To serve God, honor my country, and preserve truth and justice.",
+                      '∙ Raise your hand in class. \n∙ Address your instructor and senior students as "Ka" (a Indonesian term of respect). \n∙ "Hormat" is a respectful way of greeting your instructors and other students.',
                       style: TextStyle(
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.bold,
+                          fontSize: 16.0,
                           color: Colors.black),
                     ),
                   ),
@@ -216,7 +217,7 @@ class RulesCreed extends StatelessWidget {
               children: [
                 Expanded(
                   flex: flex1,
-                  child: Text("Number 2: ", style: TextStyle(
+                  child: Text("Respect the class", style: TextStyle(
                       fontSize: 20.0,
                       fontWeight: FontWeight.bold,
                       color: color2),),
@@ -226,10 +227,9 @@ class RulesCreed extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.only(left: 10.0),
                     child: Text(
-                      "To obey the principles of martial arts.",
+                      '∙ Notify your instructor if you are late or absent. \n∙ Ask permission to enter or leave the class. \n∙ Keep the training area clean.',
                       style: TextStyle(
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.bold,
+                          fontSize: 16.0,
                           color: Colors.black),
                     ),
                   ),
@@ -244,7 +244,7 @@ class RulesCreed extends StatelessWidget {
               children: [
                 Expanded(
                   flex: flex1,
-                  child: Text("Number 3: ", style: TextStyle(
+                  child: Text("Respect other students", style: TextStyle(
                       fontSize: 20.0,
                       fontWeight: FontWeight.bold,
                       color: color2),),
@@ -254,10 +254,9 @@ class RulesCreed extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.only(left: 10.0),
                     child: Text(
-                      "To respect and honor my instructors, the school and to discipline myself.",
+                      '∙ Be polite and considerate with your fellow students. \n∙ Control your temper. \n∙ Be accommodating and amicable.',
                       style: TextStyle(
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.bold,
+                          fontSize: 16.0,
                           color: Colors.black),
                     ),
                   ),
@@ -272,7 +271,7 @@ class RulesCreed extends StatelessWidget {
               children: [
                 Expanded(
                   flex: flex1,
-                  child: Text("Number 4: ", style: TextStyle(
+                  child: Text("Respect your uniform", style: TextStyle(
                       fontSize: 20.0,
                       fontWeight: FontWeight.bold,
                       color: color2),),
@@ -282,10 +281,9 @@ class RulesCreed extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.only(left: 10.0),
                     child: Text(
-                      "To be able to improve my performance.",
+                      '∙ Come to class with a clean uniform. \n∙ Remove your belt when eating, drinking or outside of class. \n∙ Treat your uniform, belt and sparring gear with respect.',
                       style: TextStyle(
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.bold,
+                          fontSize: 16.0,
                           color: Colors.black),
                     ),
                   ),
@@ -300,7 +298,7 @@ class RulesCreed extends StatelessWidget {
               children: [
                 Expanded(
                   flex: flex1,
-                  child: Text("Number 5: ", style: TextStyle(
+                  child: Text("Respect the art of Silat", style: TextStyle(
                       fontSize: 20.0,
                       fontWeight: FontWeight.bold,
                       color: color2),),
@@ -310,10 +308,9 @@ class RulesCreed extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.only(left: 10.0),
                     child: Text(
-                      "With faith and morality I will be strong, without faith and morality I will be weak.",
+                      '∙ Use silat only in self-defense. \n∙ Never instigate or provoke someone to fight. \n∙ Practice your techniques regularly at home.',
                       style: TextStyle(
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.bold,
+                          fontSize: 16.0,
                           color: Colors.black),
                     ),
                   ),
@@ -346,18 +343,18 @@ class RulesCreed extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
-                  flex: flex1,
-                  child: Text("Number 1: ", style: TextStyle(
+                  flex: flex1a,
+                  child: Text("Satu:", style: TextStyle(
                       fontSize: 20.0,
                       fontWeight: FontWeight.bold,
                       color: color3),),
                 ),
                 Expanded(
-                  flex: flex2,
+                  flex: flex2a,
                   child: Padding(
                     padding: const EdgeInsets.only(left: 10.0),
                     child: Text(
-                      "To serve God, honor my country, and preserve truth and justice.",
+                      "Mengabdi kepada Allah, bangsa dan negara, serta membela keadilan dan kebenaran.",
                       style: TextStyle(
                           fontSize: 20.0,
                           fontWeight: FontWeight.bold,
@@ -374,18 +371,18 @@ class RulesCreed extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
-                  flex: flex1,
-                  child: Text("Number 2: ", style: TextStyle(
+                  flex: flex1a,
+                  child: Text("Dua", style: TextStyle(
                       fontSize: 20.0,
                       fontWeight: FontWeight.bold,
                       color: color3),),
                 ),
                 Expanded(
-                  flex: flex2,
+                  flex: flex2a,
                   child: Padding(
                     padding: const EdgeInsets.only(left: 10.0),
                     child: Text(
-                      "To obey the principles of martial arts.",
+                      "Mentaati azas-azas bela diri.",
                       style: TextStyle(
                           fontSize: 20.0,
                           fontWeight: FontWeight.bold,
@@ -402,18 +399,18 @@ class RulesCreed extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
-                  flex: flex1,
-                  child: Text("Number 3: ", style: TextStyle(
+                  flex: flex1a,
+                  child: Text("Tiga", style: TextStyle(
                       fontSize: 20.0,
                       fontWeight: FontWeight.bold,
                       color: color3),),
                 ),
                 Expanded(
-                  flex: flex2,
+                  flex: flex2a,
                   child: Padding(
                     padding: const EdgeInsets.only(left: 10.0),
                     child: Text(
-                      "To respect and honor my instructors, the school and to discipline myself.",
+                      "Patuh dan taat kepada pimpinan serta disiplin pribadi.",
                       style: TextStyle(
                           fontSize: 20.0,
                           fontWeight: FontWeight.bold,
@@ -430,18 +427,18 @@ class RulesCreed extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
-                  flex: flex1,
-                  child: Text("Number 4: ", style: TextStyle(
+                  flex: flex1a,
+                  child: Text("Empat", style: TextStyle(
                       fontSize: 20.0,
                       fontWeight: FontWeight.bold,
                       color: color3),),
                 ),
                 Expanded(
-                  flex: flex2,
+                  flex: flex2a,
                   child: Padding(
                     padding: const EdgeInsets.only(left: 10.0),
                     child: Text(
-                      "To be able to improve my performance.",
+                      "Sanggup meningkatkan prestasi.",
                       style: TextStyle(
                           fontSize: 20.0,
                           fontWeight: FontWeight.bold,
@@ -458,18 +455,18 @@ class RulesCreed extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
-                  flex: flex1,
-                  child: Text("Number 5: ", style: TextStyle(
+                  flex: flex1a,
+                  child: Text("Lima", style: TextStyle(
                       fontSize: 20.0,
                       fontWeight: FontWeight.bold,
                       color: color3),),
                 ),
                 Expanded(
-                  flex: flex2,
+                  flex: flex2a,
                   child: Padding(
                     padding: const EdgeInsets.only(left: 10.0),
                     child: Text(
-                      "With faith and morality I will be strong, without faith and morality I will be weak.",
+                      "Dengan iman dan akhlak saya menjadi kuat. \nTanpa iman dan akhlak saya menjadi lemah.",
                       style: TextStyle(
                           fontSize: 20.0,
                           fontWeight: FontWeight.bold,

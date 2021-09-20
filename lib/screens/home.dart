@@ -1,8 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_authentication/login/login_page.dart';
-import 'package:flutter_authentication/utils/fire_auth.dart';
-import 'package:flutter_authentication/screens/scoring_portrait.dart';
+import 'package:silat_flutter/login/login_page.dart';
+import 'package:silat_flutter/utils/fire_auth.dart';
+import 'package:silat_flutter/screens/scoring_portrait.dart';
+import 'package:silat_flutter/screens/techniques_home.dart';
 
 class Home extends StatefulWidget {
   //const Home({Key? key}) : super(key: key);
@@ -26,14 +27,7 @@ class _HomeState extends State<Home> {
         Text('NAME: MyName'),
       ],
     ),
-    Icon(
-      Icons.sports_kabaddi,
-      size: 150,
-    ),
-    Icon(
-      Icons.description,
-      size: 150,
-    ),
+    TechniquesHome(),
     ScoringPortrait(),
     Icon(
       Icons.event,
@@ -75,16 +69,16 @@ class _HomeState extends State<Home> {
             label: 'Techniques',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.description),
-            label: 'Rules & Creed',
-          ),
-          BottomNavigationBarItem(
             icon: Icon(Icons.table_view),
             label: 'Scoring',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.event),
             label: 'Events',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.description),
+            label: 'Rules & Creed',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.logout),

@@ -1,11 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_authentication/screens/landing_page.dart';
-import 'package:flutter_authentication/login/register_page.dart';
-import 'package:flutter_authentication/utils/fire_auth.dart';
-import 'package:flutter_authentication/utils/validator.dart';
-import 'package:flutter_authentication/login/cool_login.dart';
+import 'package:silat_flutter/screens/landing_page.dart';
+import 'package:silat_flutter/login/register_page.dart';
+import 'package:silat_flutter/utils/fire_auth.dart';
+import 'package:silat_flutter/utils/validator.dart';
+import 'package:silat_flutter/login/cool_login.dart';
 
 class LoginPage extends StatefulWidget {
   @override
