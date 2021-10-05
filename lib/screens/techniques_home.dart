@@ -11,7 +11,7 @@ class TechniquesHome extends StatefulWidget {
 
 class _TechniquesHomeState extends State<TechniquesHome> {
   final textcontroller = TextEditingController();
-  final databaseRef = FirebaseDatabase.instance.reference();
+  final _database = FirebaseDatabase.instance.reference();
   final Future<FirebaseApp> _future = Firebase.initializeApp();
 
   /*void addData(String data) {
@@ -19,9 +19,26 @@ class _TechniquesHomeState extends State<TechniquesHome> {
   }*/
   var myData;
   void printFirebase(){
-    databaseRef.once().then((DataSnapshot snapshot) {
+    /*_database.once().then((DataSnapshot snapshot) {
       print('Data : ${snapshot.value}');
+    });*/
+
+    _database.child('techniques/0').get().then((DataSnapshot snapshot) {
+        final data = new Map<String, dynamic>.from(snapshot.value);
+        print('New Data: ${data}');
     });
+
+    /*
+    _database.child('techniques/').onValue.listen((event) {
+      final data = new Map<String, dynamic>.from(event.snapshot.value);
+      print('Data : ${description}');
+    });
+
+    _database.child('users/0/firstname').onValue.listen((event) {
+      final String description = event.snapshot.value;
+      print('Data : ${description}');
+    });
+     */
   }
 
   @override
