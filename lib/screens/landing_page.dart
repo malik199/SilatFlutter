@@ -77,6 +77,7 @@ class _LandingPageState extends State<LandingPage> {
     ];
 
     return Scaffold(
+      drawer: Text("This is my Drawer"),
       appBar: AppBar(
         backgroundColor: Colors.teal,
         title: Text('Silat Institute App'),

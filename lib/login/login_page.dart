@@ -42,6 +42,35 @@ class _LoginPageState extends State<LoginPage> {
     return firebaseApp;
   }
 
+  showAlertDialog(BuildContext context) {
+
+    // set up the button
+    Widget okButton = TextButton(
+      child: Text("OK"),
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text("Login Error"),
+      content: Text("Username or password is incorrect."),
+      actions: [
+        okButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -62,7 +91,7 @@ class _LoginPageState extends State<LoginPage> {
                     Padding(
                       padding: const EdgeInsets.only(bottom: 24.0),
                       child: Text(
-                        'Login',
+                        'Silat Login',
                         style: Theme.of(context).textTheme.headline1,
                       ),
                     ),
@@ -142,6 +171,8 @@ class _LoginPageState extends State<LoginPage> {
                                                       LandingPage(user: user),
                                                 ),
                                               );
+                                            } else {
+                                              showAlertDialog(context);
                                             }
                                           }
                                         },

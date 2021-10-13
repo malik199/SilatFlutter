@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'techniques_list.dart';
+import '../models/pull_color_model.dart';
 
 class TechniquesHome extends StatefulWidget {
   const TechniquesHome({Key? key}) : super(key: key);
@@ -112,73 +113,19 @@ class Belt extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color getColor(color) {
-      switch (color) {
-        case 'white':
-          {
-            return Colors.white;
-          }
-          break;
 
-        case 'yellow':
-          {
-            return Colors.yellow;
-          }
-          break;
-
-        case 'green':
-          {
-            return Colors.green;
-          }
-          break;
-
-        case 'blue':
-          {
-            return Colors.blue;
-          }
-          break;
-
-        case 'purple':
-          {
-            return Colors.purple;
-          }
-          break;
-
-        case 'brown':
-          {
-            return Colors.brown;
-          }
-          break;
-
-        case 'black':
-          {
-            return Colors.black;
-          }
-          break;
-
-        case 'red':
-          {
-            return Colors.red;
-          }
-          break;
-
-        default:
-          {
-            return Colors.white;
-          }
-          break;
-      }
-    }
-
-    if (curriculum == 'jawara_muda') {
+    if (curriculum == 'jawara_muda' || curriculum == "instructor") {
       return TextButton(
         onPressed: () {
-          print("Container clicked");
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => TechniquesList(curriculum: "jawara_muda", color: color)),
+          );
         },
         child: Container(
           height: _beltHeight,
           decoration: BoxDecoration(
-            color: getColor(color),
+            color: PullColor().getColor(color),
             border: Border.all(
               color: Colors.grey,
               width: 1,
@@ -192,7 +139,7 @@ class Belt extends StatelessWidget {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => TechniquesList()),
+            MaterialPageRoute(builder: (context) => TechniquesList(curriculum: "satria_muda", color: color)),
           );
         },
         child: Container(
@@ -208,7 +155,7 @@ class Belt extends StatelessWidget {
           child: Padding(
             padding: EdgeInsets.symmetric(vertical: _innerPadding),
             child: Container(
-              color: getColor(color),
+              color: PullColor().getColor(color),
             ),
           ),
         ),
