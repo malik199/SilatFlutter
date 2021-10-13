@@ -7,6 +7,7 @@ class StripedBelts {
     final double _stripeWidth = 10;
     final double _stripeSpacing = 10;
     final double _innerPadding = 15;
+    final double _beltHeight = 35;
 
     var myWidget;
     switch (numberOfStripes) {
@@ -105,6 +106,6 @@ class StripedBelts {
         }
         break;
     }
-    return myWidget;
+    return Container(height: _beltHeight, child: myWidget);
   }
 }

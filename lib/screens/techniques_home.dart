@@ -46,6 +46,9 @@ class _TechniquesHomeState extends State<TechniquesHome> {
   @override
   Widget build(BuildContext context) {
     const double _spacing = 18;
+    String currentCurriculum = myList['curriculum'];
+    print(currentCurriculum);
+
 
     List _fullBeltArray = [
       "white",
@@ -66,13 +69,22 @@ class _TechniquesHomeState extends State<TechniquesHome> {
       return myBeltLevels;
     }
 
-    print(allYourBelts());
+    // Yet to be completed
+    void switchCurriculums(){
+      print("yet to be compeleted");
+      setState(() {
+        currentCurriculum = "satria_muda";
+
+      });
+    }
+
+
 
     Widget produceBelts(List<dynamic> _allbelts) {
       return Column(
           children: _allbelts
               .map(
-                (item) => Belt(curriculum: myList['curriculum'], color: item),
+                (item) => Belt(curriculum: currentCurriculum, color: item),
               )
               .toList());
     }
@@ -88,10 +100,10 @@ class _TechniquesHomeState extends State<TechniquesHome> {
       produceBelts(allYourBelts()),
       SizedBox(height: _spacing),
       ElevatedButton.icon(
-        label: Text('Admin Console'),
-        icon: Icon(Icons.settings),
+        label: Text('Switch Curriculums'),
+        icon: Icon(Icons.swap_horiz ),
         onPressed: () {
-          print('Pressed');
+          switchCurriculums();
         },
       )
     ]);

@@ -51,31 +51,53 @@ class _TechniquesListState extends State<TechniquesList> {
     final double _beltHeight = 35;
     final double _borderRadius = 4;
     final double _innerPadding = 15;
+    double _stripeBorderWhite = 0;
 
-    final jmstripe = dbItem?["jm_showstripe"];
+    int stripe;
+
+    if (widget.curriculum == 'jawara_muda') {
+      stripe = dbItem?["jm_showstripe"] == "" ? 0 : dbItem?["jm_showstripe"];
+      _stripeBorderWhite = 0;
+    } else {
+      stripe = dbItem?["sm_showstripe"] == "" ? 0 : dbItem?["sm_showstripe"];
+      _stripeBorderWhite = 10;
+    }
+    print('STRIPE $stripe');
+
     Widget showHeader() {
-      if (jmstripe != "") {
+      if (stripe != 0 && stripe is int) {
         return Padding(
           padding: const EdgeInsets.all(8.0),
           child: Container(
-              height: _beltHeight,
-              decoration: BoxDecoration(
-                color: PullColor().getColor(widget.color),
-                border: Border.all(
-                  color: Colors.grey,
-                  width: 1,
-                ),
-                borderRadius: BorderRadius.circular(_borderRadius),
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: Colors.grey,
+                width: 1,
               ),
-              child: StripedBelts().getStripes(1)
+              borderRadius: BorderRadius.circular(_borderRadius),
+            ),
+            child: Stack(children: [
+              Container(
+                height: _beltHeight,
+                color: PullColor().getColor(widget.color),
+              ),
+              Container(
+                height: _beltHeight,
+                decoration: BoxDecoration(
+                  border: Border.symmetric(
+                    horizontal: BorderSide(
+                        width: _stripeBorderWhite, color: Colors.white),
+                  ),
+                ),
+              ),
+              StripedBelts().getStripes(stripe),
+            ]),
           ),
         );
       } else {
         return SizedBox.shrink();
       }
     }
-
-    Future thumbURL = fetchAlbum(dbItem?['vidID']);
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -84,7 +106,6 @@ class _TechniquesListState extends State<TechniquesList> {
         showHeader(),
         Card(
           child: ListTile(
-            //leading: Image.network(thumbURL),
             leading: FutureBuilder(
                 future: fetchAlbum(dbItem?['vidID']),
                 builder: (context, snapshot) {
