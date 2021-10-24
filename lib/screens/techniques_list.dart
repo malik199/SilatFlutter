@@ -6,6 +6,7 @@ import 'dart:async';
 import 'dart:convert';
 import '../models/pull_color_model.dart';
 import '../models/striped_belts.dart';
+import 'video_player.dart';
 
 class TechniquesList extends StatefulWidget {
   final String color;
@@ -122,7 +123,15 @@ class _TechniquesListState extends State<TechniquesList> {
             title: Text(dbItem?['technique']),
             subtitle: Text(dbItem?['desc']),
             trailing: Icon(Icons.play_circle_outline),
-            onTap: () => {print("Technique Tapped")},
+            onTap: () => {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => VideoPlayer(
+                      title: dbItem?['technique'], videoId: dbItem?['vidID']),
+                ),
+              )
+            },
           ),
         ),
       ],

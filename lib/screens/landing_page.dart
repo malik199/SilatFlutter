@@ -6,38 +6,19 @@ import 'package:silat_flutter/screens/home.dart';
 import 'package:silat_flutter/screens/scoring_portrait.dart';
 import 'package:silat_flutter/screens/rules_creed.dart';
 import 'package:silat_flutter/screens/techniques_home.dart';
+import 'package:silat_flutter/admin/profile.dart';
+import 'package:fluttermoji/fluttermoji.dart';
 
 class LandingPage extends StatefulWidget {
   final User user;
 
   //const LandingPage({required this.user});
 
-  const LandingPage({Key? key, required this.user})
-      : super(key: key);
+  const LandingPage({Key? key, required this.user}) : super(key: key);
 
   @override
   _LandingPageState createState() => _LandingPageState(this.user);
 }
-
-/*
-class _LandingPageState extends State<LandingPage> {
-  bool _isSendingVerification = false;
-  bool _isSigningOut = false;
-
-  late User _currentUser;
-
-  @override
-  void initState() {
-    _currentUser = widget.user;
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Home(_currentUser);
-  }
-}*/
-
 
 class _LandingPageState extends State<LandingPage> {
   int _selectedIndex = 0;
@@ -50,19 +31,54 @@ class _LandingPageState extends State<LandingPage> {
     super.initState();
   }
 
+  void _signMeOut() async {
+    await FirebaseAuth.instance.signOut();
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: (context) => LoginPage(),
+      ),
+    );
+  }
+
   _LandingPageState(this._currentUser);
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
+      if (index == 5) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            // return object of type Dialog
+            return AlertDialog(
+              title: new Text("You are about to log out"),
+              content: new Text("Are you sure you want to log out?"),
+              actions: <Widget>[
+                // usually buttons at the bottom of the dialog
+                TextButton(
+                  onPressed: () => Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(
+                      builder: (context) => LoginPage(),
+                    ),
+                  ),
+                  child: const Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: () => {_signMeOut()},
+                  child: const Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-
     List<Widget> _pages = <Widget>[
-      HomeData(userPassed: _currentUser),
+      LandingPageData(userPassed: _currentUser),
       TechniquesHome(),
       RulesCreed(),
       ScoringPortrait(),
@@ -70,14 +86,52 @@ class _LandingPageState extends State<LandingPage> {
         Icons.event,
         size: 150,
       ),
-      Icon(
-        Icons.logout,
-        size: 150,
-      ),
+      Text("logging out..."),
     ];
 
     return Scaffold(
-      drawer: Text("This is my Drawer"),
+      drawer: Drawer(
+        // Add a ListView to the drawer. This ensures the user can scroll
+        // through the options in the drawer if there isn't enough vertical
+        // space to fit everything.
+        child: ListView(
+          // Important: Remove any padding from the ListView.
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  child: Image.asset(
+                    "assets/images/silatlogo.png",
+                  )),
+              decoration: BoxDecoration(
+                color: Colors.blue,
+              ),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            ListTile(
+              leading: Icon(Icons.person_outline),
+              title: const Text('My Profile'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Profile()),
+                );
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.settings),
+              title: const Text('Admin'),
+              onTap: () {
+                // Update the state of the app.
+                // ...
+              },
+            ),
+          ],
+        ),
+      ),
       appBar: AppBar(
         backgroundColor: Colors.teal,
         title: Text('Silat Institute App'),
@@ -122,18 +176,17 @@ class _LandingPageState extends State<LandingPage> {
   }
 }
 
-
 // ******************* HOME PAGE ************************
 
-class HomeData extends StatefulWidget {
+class LandingPageData extends StatefulWidget {
   final User userPassed;
-  const HomeData({required this.userPassed});
+  const LandingPageData({required this.userPassed});
 
   @override
-  _HomeDataState createState() => _HomeDataState();
+  _LandingPageDataState createState() => _LandingPageDataState();
 }
 
-class _HomeDataState extends State<HomeData> {
+class _LandingPageDataState extends State<LandingPageData> {
   late User _currentUser;
 
   @override
@@ -159,69 +212,76 @@ class _HomeDataState extends State<HomeData> {
 
   @override
   Widget build(BuildContext context) {
+    double spacingBetween = 16;
     return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
+        SizedBox(height: spacingBetween),
+        FluttermojiCircleAvatar(
+          radius: 100,
+        ),
+        SizedBox(height: spacingBetween),
         Text(
-          'NAME: ${_currentUser.displayName}',
-          style: Theme.of(context).textTheme.bodyText1,
+          '${_currentUser.displayName}',
+          style: Theme.of(context).textTheme.headline4,
         ),
-        SizedBox(height: 16.0),
-        Text(
-          'EMAIL: ${_currentUser.email}',
-          style: Theme.of(context).textTheme.bodyText1,
-        ),
-        SizedBox(height: 16.0),
-        _currentUser.emailVerified
-            ? Text(
-          'Email verified',
-          style: Theme.of(context)
-              .textTheme
-              .bodyText1!
-              .copyWith(color: Colors.green),
-        )
-            : Text(
-          'Email not verified',
-          style: Theme.of(context)
-              .textTheme
-              .bodyText1!
-              .copyWith(color: Colors.red),
-        ),
-        SizedBox(height: 16.0),
-        _isSendingVerification
-            ? CircularProgressIndicator()
-            : Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ElevatedButton(
-              onPressed: () async {
-                setState(() {
-                  _isSendingVerification = true;
-                });
-                await _currentUser.sendEmailVerification();
-                setState(() {
-                  _isSendingVerification = false;
-                });
-              },
-              child: Text('Verify email'),
-            ),
-            SizedBox(width: 8.0),
-            IconButton(
-              icon: Icon(Icons.refresh),
-              onPressed: () async {
-                User? user = await FireAuth.refreshUser(_currentUser);
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 3.0, horizontal: 28.0),
+          child: _currentUser.emailVerified
+              ? Text(
+                  'Your email <${_currentUser.email}> is verified',
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyText1!
+                      .copyWith(color: Colors.green),
+                )
+              : Column(
+                  children: [
+                    Text(
+                      'Your email <${_currentUser.email}> is not verified',
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyText1!
+                          .copyWith(color: Colors.red),
+                    ),
+                    _isSendingVerification
+                        ? CircularProgressIndicator()
+                        : Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              ElevatedButton(
+                                onPressed: () async {
+                                  setState(() {
+                                    _isSendingVerification = true;
+                                  });
+                                  await _currentUser.sendEmailVerification();
+                                  setState(() {
+                                    _isSendingVerification = false;
+                                  });
+                                },
+                                child: Text('Verify email'),
+                              ),
+                              SizedBox(width: 8.0),
+                              IconButton(
+                                icon: Icon(Icons.refresh),
+                                onPressed: () async {
+                                  User? user =
+                                      await FireAuth.refreshUser(_currentUser);
 
-                if (user != null) {
-                  setState(() {
-                    _currentUser = user;
-                  });
-                }
-              },
-            ),
-          ],
+                                  if (user != null) {
+                                    setState(() {
+                                      _currentUser = user;
+                                    });
+                                  }
+                                },
+                              ),
+                            ],
+                          ),
+                  ],
+                ),
         ),
-        SizedBox(height: 16.0),
-        _isSigningOut
+        SizedBox(height: spacingBetween),
+        /*_isSigningOut
             ? CircularProgressIndicator()
             : ElevatedButton(
           onPressed: () async {
@@ -237,7 +297,7 @@ class _HomeDataState extends State<HomeData> {
                 builder: (context) => LoginPage(),
               ),
             );
-          },
+          }
           child: Text('Sign out'),
           style: ElevatedButton.styleFrom(
             primary: Colors.red,
@@ -245,7 +305,7 @@ class _HomeDataState extends State<HomeData> {
               borderRadius: BorderRadius.circular(30),
             ),
           ),
-        ),
+        ),*/
       ],
     );
   }

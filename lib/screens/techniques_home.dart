@@ -78,8 +78,6 @@ class _TechniquesHomeState extends State<TechniquesHome> {
       });
     }
 
-
-
     Widget produceBelts(List<dynamic> _allbelts) {
       return Column(
           children: _allbelts

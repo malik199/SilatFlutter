@@ -33,7 +33,8 @@ dependencies:
   firebase_database: "^8.0.0"
   flutter_vibrate: ^1.1.0
   http: ^0.13.4
-  quiver: ^3.0.1
+  vimeo_player_flutter: ^0.0.3
+  fluttermoji: ^0.2.2
 
 dev_dependencies:
   flutter_test:
