@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'techniques_list.dart';
 import '../models/pull_color_model.dart';
 
@@ -15,7 +14,7 @@ class TechniquesHome extends StatefulWidget {
 class _TechniquesHomeState extends State<TechniquesHome> {
   final textcontroller = TextEditingController();
   final _database = FirebaseDatabase.instance.reference();
-  final Future<FirebaseApp> _future = Firebase.initializeApp();
+  //final Future<FirebaseApp> _future = Firebase.initializeApp();
   User? _user = FirebaseAuth.instance.currentUser;
 
   @override
@@ -25,6 +24,8 @@ class _TechniquesHomeState extends State<TechniquesHome> {
 
   var myData;
   var myList;
+  bool verified = true;
+
   void getYourTechniques() {
     _database
         .child('users')
@@ -33,22 +34,22 @@ class _TechniquesHomeState extends State<TechniquesHome> {
         .limitToFirst(1)
         .once()
         .then((DataSnapshot snapshot) {
-      final data = new Map<String?, dynamic>.from(snapshot.value);
-      setState(() {
-        data.forEach((key, value) {
-          myList = value;
-          print('My List ${myList}');
+      if(snapshot.value != null){
+        final data = new Map<String?, dynamic>.from(snapshot.value);
+        setState(() {
+          data.forEach((key, value) {
+            myList = value;
+            print('My List ${myList}');
+          });
         });
-      });
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
     const double _spacing = 18;
-    String currentCurriculum = myList['curriculum'];
-    print(currentCurriculum);
-
+    String currentCurriculum = myList?['curriculum'] ?? "jawara_muda";
 
     List _fullBeltArray = [
       "white",
@@ -71,10 +72,8 @@ class _TechniquesHomeState extends State<TechniquesHome> {
 
     // Yet to be completed
     void switchCurriculums(){
-      print("yet to be compeleted");
       setState(() {
         currentCurriculum = "satria_muda";
-
       });
     }
 
@@ -87,7 +86,7 @@ class _TechniquesHomeState extends State<TechniquesHome> {
               .toList());
     }
 
-    return Column(children: [
+    Widget allTechniqueWidget  = Column(children: [
       Padding(
         padding: const EdgeInsets.all(_spacing),
         child: Text(
@@ -105,6 +104,8 @@ class _TechniquesHomeState extends State<TechniquesHome> {
         },
       )
     ]);
+
+    return verified ? allTechniqueWidget : Text("You need to be verified before you view.");
   }
 }
 

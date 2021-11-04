@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:silat_flutter/login/login_page.dart';
 import 'package:silat_flutter/utils/fire_auth.dart';
-import 'package:silat_flutter/screens/home.dart';
 import 'package:silat_flutter/screens/scoring_portrait.dart';
 import 'package:silat_flutter/screens/rules_creed.dart';
 import 'package:silat_flutter/screens/techniques_home.dart';
@@ -192,13 +191,13 @@ class _LandingPageDataState extends State<LandingPageData> {
   @override
   void initState() {
     _currentUser = widget.userPassed;
-    print(_currentUser);
+    //print(_currentUser);
     super.initState();
   }
 
   Color _containerColor = Colors.yellow;
   bool _isSendingVerification = false;
-  bool _isSigningOut = false;
+  //bool _isSigningOut = false;
 
   void changeColor() {
     setState(() {
