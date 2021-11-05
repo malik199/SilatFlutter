@@ -34,7 +34,7 @@ class _TechniquesHomeState extends State<TechniquesHome> {
         .limitToFirst(1)
         .once()
         .then((DataSnapshot snapshot) {
-      if(snapshot.value != null){
+      if (snapshot.value != null) {
         final data = new Map<String?, dynamic>.from(snapshot.value);
         setState(() {
           data.forEach((key, value) {
@@ -71,7 +71,7 @@ class _TechniquesHomeState extends State<TechniquesHome> {
     }
 
     // Yet to be completed
-    void switchCurriculums(){
+    void switchCurriculums() {
       setState(() {
         currentCurriculum = "satria_muda";
       });
@@ -86,26 +86,41 @@ class _TechniquesHomeState extends State<TechniquesHome> {
               .toList());
     }
 
-    Widget allTechniqueWidget  = Column(children: [
-      Padding(
-        padding: const EdgeInsets.all(_spacing),
-        child: Text(
-          ("${myList?['firstname']}'s techniques").toUpperCase(),
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
+    Widget allTechniqueWidget = Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+              colors: [
+                const Color(0xff000000),
+                const Color(0xff0c3e40),
+              ],
+              begin: const FractionalOffset(0.0, 0.0),
+              end: const FractionalOffset(0.0, 1.0),
+              stops: [0.0, 1.0],
+              tileMode: TileMode.clamp),
         ),
-      ),
-      produceBelts(allYourBelts()),
-      SizedBox(height: _spacing),
-      ElevatedButton.icon(
-        label: Text('Switch Curriculums'),
-        icon: Icon(Icons.swap_horiz ),
-        onPressed: () {
-          switchCurriculums();
-        },
-      )
-    ]);
+        //color: Color(0xff02252c),
+        child: Column(children: [
+                  Padding(
+                    padding: const EdgeInsets.all(_spacing),
+                    child: Text(
+                      ("${myList?['firstname']}'s techniques").toUpperCase(),
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25, color:Colors.white),
+                    ),
+                  ),
+                  produceBelts(allYourBelts()),
+                  SizedBox(height: _spacing),
+                  ElevatedButton.icon(
+                    label: Text('Switch Curriculums'),
+                    icon: Icon(Icons.swap_horiz),
+                    onPressed: () {
+                      switchCurriculums();
+                    },
+                  )
+    ]));
 
-    return verified ? allTechniqueWidget : Text("You need to be verified before you view.");
+    return verified
+        ? allTechniqueWidget
+        : Text("You need to be verified before you view.");
   }
 }
 
@@ -124,13 +139,14 @@ class Belt extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     if (curriculum == 'jawara_muda' || curriculum == "instructor") {
       return TextButton(
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => TechniquesList(curriculum: "jawara_muda", color: color)),
+            MaterialPageRoute(
+                builder: (context) =>
+                    TechniquesList(curriculum: "jawara_muda", color: color)),
           );
         },
         child: Container(
@@ -138,7 +154,7 @@ class Belt extends StatelessWidget {
           decoration: BoxDecoration(
             color: PullColor().getColor(color),
             border: Border.all(
-              color: Colors.grey,
+              color: Colors.black26,
               width: 1,
             ),
             borderRadius: BorderRadius.circular(_borderRadius),
@@ -150,7 +166,9 @@ class Belt extends StatelessWidget {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => TechniquesList(curriculum: "satria_muda", color: color)),
+            MaterialPageRoute(
+                builder: (context) =>
+                    TechniquesList(curriculum: "satria_muda", color: color)),
           );
         },
         child: Container(

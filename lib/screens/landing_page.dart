@@ -6,6 +6,7 @@ import 'package:silat_flutter/screens/scoring_portrait.dart';
 import 'package:silat_flutter/screens/rules_creed.dart';
 import 'package:silat_flutter/screens/techniques_home.dart';
 import 'package:silat_flutter/admin/profile.dart';
+import 'package:silat_flutter/admin/approved_users.dart';
 import 'package:fluttermoji/fluttermoji.dart';
 
 class LandingPage extends StatefulWidget {
@@ -122,10 +123,12 @@ class _LandingPageState extends State<LandingPage> {
             ),
             ListTile(
               leading: Icon(Icons.settings),
-              title: const Text('Admin'),
+              title: const Text('Approved Users'),
               onTap: () {
-                // Update the state of the app.
-                // ...
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ApprovedUsers()),
+                );
               },
             ),
           ],
@@ -209,103 +212,194 @@ class _LandingPageDataState extends State<LandingPageData> {
     });
   }
 
+  List items = [
+    'Item 1',
+    'Item 2',
+    'Item 3',
+    'Item 1',
+    'Item 2',
+    'Item 3',
+    'Item 1',
+    'Item 2',
+    'Item 3',
+    'Item 1',
+    'Item 2',
+    'Item 3',
+    'Item 1',
+    'Item 2',
+    'Item 3',
+    'Item 1',
+    'Item 2',
+    'Item 3',
+    'Item 1',
+    'Item 2',
+    'Item 3',
+    'Item 1',
+    'Item 2',
+    'Item 3',
+    'Item 1',
+    'Item 2',
+    'Item 3',
+    'Item 1',
+    'Item 2',
+    'Item 3',
+    'Item 1',
+    'Item 2',
+    'Item 3',
+    'Item 1',
+    'Item 2',
+    'Item 3',
+    'Item 1',
+    'Item 2',
+    'Item 3',
+    'Item 1',
+    'Item 2',
+    'Item 3',
+    'Item 1',
+    'Item 2',
+    'Item 3',
+    'Item 1',
+    'Item 2',
+    'Item 3',
+    'Item 1',
+    'Item 2',
+    'Item 3',
+    'Item 1',
+    'Item 2',
+    'Item 3',
+    'Item 1',
+    'Item 2',
+    'Item 3'
+  ];
+
   @override
   Widget build(BuildContext context) {
     double spacingBetween = 16;
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        SizedBox(height: spacingBetween),
-        FluttermojiCircleAvatar(
-          radius: 100,
-        ),
-        SizedBox(height: spacingBetween),
-        Text(
-          '${_currentUser.displayName}',
-          style: Theme.of(context).textTheme.headline4,
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 3.0, horizontal: 28.0),
-          child: _currentUser.emailVerified
-              ? Text(
-                  'Your email <${_currentUser.email}> is verified',
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyText1!
-                      .copyWith(color: Colors.green),
-                )
-              : Column(
-                  children: [
-                    Text(
-                      'Your email <${_currentUser.email}> is not verified',
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyText1!
-                          .copyWith(color: Colors.red),
-                    ),
-                    _isSendingVerification
-                        ? CircularProgressIndicator()
-                        : Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              ElevatedButton(
-                                onPressed: () async {
-                                  setState(() {
-                                    _isSendingVerification = true;
-                                  });
-                                  await _currentUser.sendEmailVerification();
-                                  setState(() {
-                                    _isSendingVerification = false;
-                                  });
-                                },
-                                child: Text('Verify email'),
-                              ),
-                              SizedBox(width: 8.0),
-                              IconButton(
-                                icon: Icon(Icons.refresh),
-                                onPressed: () async {
-                                  User? user =
-                                      await FireAuth.refreshUser(_currentUser);
-
-                                  if (user != null) {
-                                    setState(() {
-                                      _currentUser = user;
-                                    });
-                                  }
-                                },
-                              ),
-                            ],
-                          ),
-                  ],
-                ),
-        ),
-        SizedBox(height: spacingBetween),
-        /*_isSigningOut
-            ? CircularProgressIndicator()
-            : ElevatedButton(
-          onPressed: () async {
-            setState(() {
-              _isSigningOut = true;
-            });
-            await FirebaseAuth.instance.signOut();
-            setState(() {
-              _isSigningOut = false;
-            });
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(
-                builder: (context) => LoginPage(),
-              ),
-            );
-          }
-          child: Text('Sign out'),
-          style: ElevatedButton.styleFrom(
-            primary: Colors.red,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(30),
-            ),
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+            colors: [
+              const Color(0xff000000),
+              const Color(0xff0c3e40),
+            ],
+            begin: const FractionalOffset(0.0, 0.0),
+            end: const FractionalOffset(0.0, 1.0),
+            stops: [0.0, 1.0],
+            tileMode: TileMode.clamp),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          SizedBox(height: spacingBetween),
+          FluttermojiCircleAvatar(
+            radius: 100,
           ),
-        ),*/
-      ],
+          SizedBox(height: spacingBetween),
+          Text(
+            '${_currentUser.displayName}',
+            style: Theme.of(context).textTheme.headline4,
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 3.0, horizontal: 28.0),
+            child: _currentUser.emailVerified
+                ? Text(
+                    'Your email <${_currentUser.email}> is verified',
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyText1!
+                        .copyWith(color: Colors.green),
+                  )
+                : Column(
+                    children: [
+                      Text(
+                        'Your email <${_currentUser.email}> is not verified',
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyText1!
+                            .copyWith(color: Colors.red),
+                      ),
+                      _isSendingVerification
+                          ? CircularProgressIndicator()
+                          : Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                ElevatedButton(
+                                  onPressed: () async {
+                                    setState(() {
+                                      _isSendingVerification = true;
+                                    });
+                                    await _currentUser.sendEmailVerification();
+                                    setState(() {
+                                      _isSendingVerification = false;
+                                    });
+                                  },
+                                  child: Text('Verify email'),
+                                ),
+                                SizedBox(width: 8.0),
+                                IconButton(
+                                  icon: Icon(Icons.refresh),
+                                  onPressed: () async {
+                                    User? user =
+                                        await FireAuth.refreshUser(_currentUser);
+
+                                    if (user != null) {
+                                      setState(() {
+                                        _currentUser = user;
+                                      });
+                                    }
+                                  },
+                                ),
+                              ],
+                            ),
+                    ],
+                  ),
+          ),
+          SizedBox(height: spacingBetween),
+          Expanded(
+            child: Row(children: [
+              Expanded(
+                child: Container(
+                  color: Colors.blue,
+                  child: ListView(children: [
+                    Column(
+                      children: <Widget>[
+                        Text("Tanding",
+                            style: TextStyle(fontWeight: FontWeight.bold)),
+                        ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: 30,
+                            itemBuilder: (context, index) {
+                              return Text('Some text');
+                            })
+                      ],
+                    ),
+                  ]),
+                ),
+              ),
+              SizedBox(width: 0),
+              Expanded(
+                child: Container(
+                  color: Colors.red,
+                  child: ListView(children: [
+                    Column(
+                      children: <Widget>[
+                        Text("TUNGGAL",
+                            style: TextStyle(fontWeight: FontWeight.bold)),
+                        ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: items.length,
+                            itemBuilder: (context, index) {
+                              return Text(items[index]);
+                            })
+                      ],
+                    ),
+                  ]),
+                ),
+              ),
+            ]),
+          )
+        ],
+      ),
     );
   }
 }
