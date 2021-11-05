@@ -99,6 +99,7 @@ class _ProfileState extends State<Profile> {
                     icon: Icon(Icons.save),
                     label: Text("Update Profile"),
                     onPressed: () {
+                      print(_user);
                       final isValid = formKey.currentState?.validate();
                       // FocusScope.of(context).unfocus();
 

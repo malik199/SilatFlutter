@@ -1,11 +1,23 @@
 class Validator {
-  static String? validateName({required String? name}) {
-    if (name == null) {
+  static String? validateFirstname({required String? firstname}) {
+    if (firstname == null) {
       return null;
     }
 
-    if (name.isEmpty) {
-      return 'Name can\'t be empty';
+    if (firstname.isEmpty) {
+      return 'First name can\'t be empty';
+    }
+
+    return null;
+  }
+
+  static String? validateLastname({required String? lastname}) {
+    if (lastname == null) {
+      return null;
+    }
+
+    if (lastname.isEmpty) {
+      return 'Last name can\'t be empty';
     }
 
     return null;

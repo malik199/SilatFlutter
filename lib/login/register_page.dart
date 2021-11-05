@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:silat_flutter/screens/landing_page.dart';
 import 'package:silat_flutter/utils/fire_auth.dart';
 import 'package:silat_flutter/utils/validator.dart';
@@ -12,22 +13,27 @@ class RegisterPage extends StatefulWidget {
 
 class _RegisterPageState extends State<RegisterPage> {
   final _registerFormKey = GlobalKey<FormState>();
+  final _database = FirebaseDatabase.instance.reference();
 
-  final _nameTextController = TextEditingController();
+  final _firstnameTextController = TextEditingController();
+  final _lastnameTextController = TextEditingController();
   final _emailTextController = TextEditingController();
   final _passwordTextController = TextEditingController();
 
-  final _focusName = FocusNode();
+  final _focusFirstname = FocusNode();
+  final _focusLastname = FocusNode();
   final _focusEmail = FocusNode();
   final _focusPassword = FocusNode();
 
+  double _spacing = 16.0;
   bool _isProcessing = false;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        _focusName.unfocus();
+        _focusFirstname.unfocus();
+        _focusLastname.unfocus();
         _focusEmail.unfocus();
         _focusPassword.unfocus();
       },
@@ -46,13 +52,13 @@ class _RegisterPageState extends State<RegisterPage> {
                   child: Column(
                     children: <Widget>[
                       TextFormField(
-                        controller: _nameTextController,
-                        focusNode: _focusName,
-                        validator: (value) => Validator.validateName(
-                          name: value,
+                        controller: _firstnameTextController,
+                        focusNode: _focusFirstname,
+                        validator: (value) => Validator.validateFirstname(
+                          firstname: value,
                         ),
                         decoration: InputDecoration(
-                          hintText: "Name",
+                          hintText: "First Name",
                           errorBorder: UnderlineInputBorder(
                             borderRadius: BorderRadius.circular(6.0),
                             borderSide: BorderSide(
@@ -61,7 +67,23 @@ class _RegisterPageState extends State<RegisterPage> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 16.0),
+                      SizedBox(height: _spacing),
+                      TextFormField(
+                        controller: _lastnameTextController,
+                        focusNode: _focusLastname,
+                        validator: (value) =>
+                            Validator.validateLastname(lastname: value),
+                        decoration: InputDecoration(
+                          hintText: "Last Name",
+                          errorBorder: UnderlineInputBorder(
+                            borderRadius: BorderRadius.circular(6.0),
+                            borderSide: BorderSide(
+                              color: Colors.red,
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: _spacing),
                       TextFormField(
                         controller: _emailTextController,
                         focusNode: _focusEmail,
@@ -78,7 +100,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 16.0),
+                      SizedBox(height: _spacing),
                       TextFormField(
                         controller: _passwordTextController,
                         focusNode: _focusPassword,
@@ -102,44 +124,65 @@ class _RegisterPageState extends State<RegisterPage> {
                           : Row(
                               children: [
                                 Expanded(
-                                  child: ElevatedButton(
-                                    onPressed: () async {
-                                      setState(() {
-                                        _isProcessing = true;
-                                      });
+                                    child: ElevatedButton(
+                                        onPressed: () async {
+                                          setState(() {
+                                            _isProcessing = true;
+                                          });
 
-                                      if (_registerFormKey.currentState!
-                                          .validate()) {
-                                        User? user = await FireAuth
-                                            .registerUsingEmailPassword(
-                                          name: _nameTextController.text,
-                                          email: _emailTextController.text,
-                                          password:
-                                              _passwordTextController.text,
-                                        );
+                                          if (_registerFormKey.currentState!
+                                              .validate()) {
+                                            User? user = await FireAuth
+                                                .registerUsingEmailPassword(
+                                              name:
+                                                  '${_firstnameTextController.text} ${_lastnameTextController.text}',
+                                              email: _emailTextController.text,
+                                              password:
+                                                  _passwordTextController.text,
+                                            );
 
-                                        setState(() {
-                                          _isProcessing = false;
-                                        });
+                                            if (user != null) {
+                                              await _database.child('/users').push().set({
+                                                'uid': user.uid,
+                                                'belt': 'white',
+                                                'comments':
+                                                    'Welcome to Silat martial arts.',
+                                                'curriculum': "jawara_muda",
+                                                'email':
+                                                    _emailTextController.text,
+                                                'firstname':
+                                                    _firstnameTextController
+                                                        .text,
+                                                'lastname':
+                                                    _lastnameTextController
+                                                        .text,
+                                                'isApproved:': false,
+                                                'stripe': 0
+                                              }).catchError((error) => print(
+                                                  'You got an error! $error'));
+                                              Navigator.of(context)
+                                                  .pushAndRemoveUntil(
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      LandingPage(user: user),
+                                                ),
+                                                ModalRoute.withName('/'),
+                                              );
+                                            }
 
-                                        if (user != null) {
-                                          Navigator.of(context)
-                                              .pushAndRemoveUntil(
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  LandingPage(user: user),
-                                            ),
-                                            ModalRoute.withName('/'),
-                                          );
-                                        }
-                                      }
-                                    },
-                                    child: Text(
-                                      'Sign up',
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                                  ),
-                                ),
+                                            setState(() {
+                                              _isProcessing = false;
+                                            });
+                                          } else {
+                                            setState(() {
+                                              _isProcessing = false;
+                                            });
+                                          }
+                                        },
+                                        child: Text(
+                                          'Sign up',
+                                          style: TextStyle(color: Colors.white),
+                                        )))
                               ],
                             )
                     ],
