@@ -79,7 +79,8 @@ class _EditProfileWidgetState extends State<EditProfileWidget> {
                 'blue',
                 'purple',
                 'brown',
-                'black'
+                'black',
+                'red'
               ].map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
@@ -124,6 +125,7 @@ class _EditProfileWidgetState extends State<EditProfileWidget> {
                 'jawara_muda',
                 'satria_muda',
                 'abah_jawara',
+                'guest',
                 'instructor'
               ].map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
