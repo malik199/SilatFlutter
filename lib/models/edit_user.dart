@@ -21,10 +21,12 @@ class _EditProfileWidgetState extends State<EditProfileWidget> {
   double spacingHeight = 10;
   String _beltColor = "";
   String _curriculum = "";
+  bool _isApprov = false;
 
   void initState() {
     _beltColor = widget.dbItem?['belt'];
     _curriculum = widget.dbItem?['curriculum'];
+    _isApprov = widget.dbItem?['isApproved'];
     print(widget.dbItem);
     super.initState();
   }
@@ -89,19 +91,6 @@ class _EditProfileWidgetState extends State<EditProfileWidget> {
               }).toList(),
             )
           ]),
-          /*SwitchListTile(
-              title: Row(children: [
-                Icon(Icons.thumb_up_alt, color: Colors.green),
-                SizedBox(width: spacingWidth),
-                Text(
-                  "Approval",
-                  style: TextStyle(fontSize: 15),
-                )
-              ]),
-              value: widget.dbItem?['isApproved'],
-              onChanged: (bool value) {
-                setState(() => _toggled = value);
-              }),*/
           Row(children: [
             SizedBox(width: 16),
             Icon(Icons.assignment),
@@ -135,6 +124,19 @@ class _EditProfileWidgetState extends State<EditProfileWidget> {
               }).toList(),
             )
           ]),
+          SwitchListTile(
+              title: Row(children: [
+                Icon(Icons.thumb_up_alt),
+                SizedBox(width: spacingWidth),
+                Text(
+                  "Approval",
+                  style: TextStyle(fontSize: 15),
+                )
+              ]),
+              value: _isApprov,
+              onChanged: (bool value) {
+                setState(() => _isApprov = value);
+              }),
           SizedBox(height: 20),
           ElevatedButton.icon(
               style: ElevatedButton.styleFrom(
@@ -154,6 +156,7 @@ class _EditProfileWidgetState extends State<EditProfileWidget> {
                     .update({
                       'belt': _beltColor,
                       'curriculum': _curriculum,
+                      'isApproved': _isApprov,
                     })
                     .then((value) =>
                         ScaffoldMessenger.of(context).showSnackBar(snackBarGreen))
