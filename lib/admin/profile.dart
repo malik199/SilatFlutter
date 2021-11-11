@@ -11,7 +11,6 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
-
   final formKey = GlobalKey<FormState>(); //key for form
   User? _currentUser = FirebaseAuth.instance.currentUser;
   final _database = FirebaseDatabase.instance.reference();
@@ -201,24 +200,26 @@ class _ProfileState extends State<Profile> {
             ),
           ),
           SizedBox(height: paddingBetween),
-          FluttermojiCircleAvatar(
-            backgroundColor: Colors.grey[200],
-            radius: 100,
+          Divider(
+            height: 20,
+            thickness: 2,
+            indent: 0,
+            endIndent: 0,
           ),
-          SizedBox(height: paddingBetween),
-          ElevatedButton.icon(
-            style: ElevatedButton.styleFrom(
-                shape: new RoundedRectangleBorder(
-                  borderRadius: new BorderRadius.circular(12.0),
-                ),
-                primary: Colors.orange,
-                padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
-                textStyle:
-                    TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
-            icon: Icon(Icons.edit),
-            label: Text("Change Avatar"),
+          Center(child: Text("Change Avatar", style: TextStyle(fontWeight: FontWeight.bold))),
+          OutlinedButton(
+            style: ButtonStyle(
+              shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0))),
+            ),
             onPressed: () => Navigator.push(
                 context, new MaterialPageRoute(builder: (context) => Avatar())),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: FluttermojiCircleAvatar(
+                backgroundColor: Colors.grey[200],
+                radius: 100,
+              ),
+            ),
           ),
         ],
       ),
