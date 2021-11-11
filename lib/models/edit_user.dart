@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 
-class EditProfileWidget extends StatefulWidget {
-  const EditProfileWidget({
+class EditUserWidget extends StatefulWidget {
+  const EditUserWidget({
     Key? key,
     required this.dbItem,
     required this.dbkey,
@@ -11,10 +11,10 @@ class EditProfileWidget extends StatefulWidget {
   final dbItem;
   final dbkey;
   @override
-  _EditProfileWidgetState createState() => _EditProfileWidgetState();
+  _EditUserWidgetState createState() => _EditUserWidgetState();
 }
 
-class _EditProfileWidgetState extends State<EditProfileWidget> {
+class _EditUserWidgetState extends State<EditUserWidget> {
   final _database = FirebaseDatabase.instance.reference();
 
   double spacingWidth = 10;
