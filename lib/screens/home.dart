@@ -1,105 +1,54 @@
+import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:silat_flutter/login/login_page.dart';
 import 'package:silat_flutter/utils/fire_auth.dart';
-import 'package:silat_flutter/screens/scoring_portrait.dart';
-import 'package:silat_flutter/screens/techniques_home.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:fluttermoji/fluttermoji.dart';
+import 'package:quartet/quartet.dart';
 
-class Home extends StatefulWidget {
-  //const Home({Key? key}) : super(key: key);
-   Home(this._currentUser);
-   late User _currentUser;
+class LandingPageData extends StatefulWidget {
+  final User userPassed;
+  const LandingPageData({required this.userPassed});
 
   @override
-  _HomeState createState() => _HomeState();
+  _LandingPageDataState createState() => _LandingPageDataState();
 }
 
-class _HomeState extends State<Home> {
-  int _selectedIndex = 0;
+class _LandingPageDataState extends State<LandingPageData> {
+  late User _currentUser;
+  final _database = FirebaseDatabase.instance.reference();
+  late StreamSubscription _userDBStream;
+  var myUser;
 
-  static List<Widget> _pages = <Widget>[
-    Column(
-      children: [
-        Icon(
-          Icons.home,
-          size: 150,
-        ),
-        Text('NAME: MyName'),
-      ],
-    ),
-    TechniquesHome(),
-    ScoringPortrait(),
-    Icon(
-      Icons.event,
-      size: 150,
-    ),
-    Icon(
-      Icons.logout,
-      size: 150,
-    ),
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _currentUser = widget.userPassed;
+    _getUserData();
+  }
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
+  void _getUserData() {
+    _userDBStream = _database
+        .child('users')
+        .orderByChild('email')
+        .equalTo((_currentUser.email)?.toLowerCase())
+        .limitToFirst(1)
+        .onValue
+        .listen((event) {
+      if (event.snapshot.value != null) {
+        final data = new Map<String?, dynamic>.from(event.snapshot.value);
+        setState(() {
+          data.forEach((key, value) {
+            myUser = value;
+          });
+        });
+      }
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.teal,
-        title: const Text('Silat Institute App'),
-      ),
-      body: Center(
-        child: _pages.elementAt(_selectedIndex),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        selectedItemColor: Colors.teal,
-        unselectedItemColor: Colors.grey,
-        type: BottomNavigationBarType.shifting,
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.sports_kabaddi),
-            label: 'Techniques',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.table_view),
-            label: 'Scoring',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.event),
-            label: 'Events',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.description),
-            label: 'Rules & Creed',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.logout),
-            label: 'Log Out',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-      ),
-    );
-  }
-}
-
-
-class HomeData extends StatefulWidget {
-  @override
-  _HomeDataState createState() => _HomeDataState();
-}
-
-class _HomeDataState extends State<HomeData> {
   Color _containerColor = Colors.yellow;
+  bool _isSendingVerification = false;
+  //bool _isSigningOut = false;
 
   void changeColor() {
     setState(() {
@@ -111,22 +60,242 @@ class _HomeDataState extends State<HomeData> {
     });
   }
 
+  List items = [
+    'Item 1',
+    'Item 2',
+    'Item 3',
+    'Item 1',
+    'Item 2',
+    'Item 3',
+    'Item 1',
+    'Item 2',
+    'Item 3',
+    'Item 1',
+    'Item 2',
+    'Item 3',
+    'Item 1',
+    'Item 2',
+    'Item 3',
+    'Item 1',
+    'Item 2',
+    'Item 3',
+    'Item 1',
+    'Item 2',
+    'Item 3',
+    'Item 1',
+    'Item 2',
+    'Item 3',
+    'Item 1',
+    'Item 2',
+    'Item 3',
+    'Item 1',
+    'Item 2',
+    'Item 3',
+    'Item 1',
+    'Item 2',
+    'Item 3',
+    'Item 1',
+    'Item 2',
+    'Item 3',
+    'Item 1',
+    'Item 2',
+    'Item 3',
+    'Item 1',
+    'Item 2',
+    'Item 3',
+    'Item 1',
+    'Item 2',
+    'Item 3',
+    'Item 1',
+    'Item 2',
+    'Item 3',
+    'Item 1',
+    'Item 2',
+    'Item 3',
+    'Item 1',
+    'Item 2',
+    'Item 3',
+    'Item 1',
+    'Item 2',
+    'Item 3'
+  ];
+
+  @override
+  void deactivate() {
+    _userDBStream.cancel();
+    super.deactivate();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        title: 'Flutter Demo',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),
-        home: Scaffold(
-          appBar: AppBar(title: Text("A Simple App Stateful Widget")),
-          body: Container(decoration: BoxDecoration(color: _containerColor)),
-          floatingActionButton: FloatingActionButton(
-            onPressed: changeColor,
-            child: Icon(Icons.add),
-            tooltip: "Book Here",
+    double spacingBetween = 16;
+
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+            colors: [
+              const Color(0xff000000),
+              const Color(0xff0c3e40),
+            ],
+            begin: const FractionalOffset(0.0, 0.0),
+            end: const FractionalOffset(0.0, 1.0),
+            stops: [0.0, 1.0],
+            tileMode: TileMode.clamp),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          SizedBox(height: spacingBetween),
+          Container(
+              decoration: BoxDecoration(
+                  color: Colors.blue[900],
+                  borderRadius: BorderRadius.all(Radius.circular(15))),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(myUser?['firstname'] != null ? titleCase('${myUser?['firstname']} ${myUser?['lastname']}') : "",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 27,
+                                color: Colors.white)),
+                        SizedBox(height: 10),
+                        Text(titleCase('${myUser?['belt']} Belt') ?? "",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 17,
+                                color: Colors.white)),
+                        Text(titleCase(myUser?['curriculum']) ?? "",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 17,
+                                color: Colors.white)),
+                        Text('Age: ${titleCase(myUser?['age'].toString())}',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 17,
+                                color: Colors.white)),
+                      ],
+                    ),
+                    FluttermojiCircleAvatar(
+                      radius: 70,
+                    ),
+                  ],
+                ),
+              )),
+          SizedBox(height: spacingBetween),
+          Padding(
+            padding:
+                const EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0),
+            child: _currentUser.emailVerified
+                ? Text(
+                    'Your email <${_currentUser.email}> \nis verified',
+                    style: TextStyle(color: Colors.green)
+                  )
+                : Column(
+                    children: [
+                      Text(
+                        'Your email\n${_currentUser.email}\nis not verified',
+                        style: TextStyle(color: Colors.red),
+                        textAlign: TextAlign.center,
+                      ),
+                      _isSendingVerification
+                          ? CircularProgressIndicator()
+                          : Row(
+    mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                ElevatedButton(
+                                  onPressed: () async {
+                                    setState(() {
+                                      _isSendingVerification = true;
+                                    });
+                                    await _currentUser.sendEmailVerification();
+                                    setState(() {
+                                      _isSendingVerification = false;
+                                    });
+                                  },
+                                  child: Text('VERIFY EMAIL', style: TextStyle(fontSize: 15)),
+                                ),
+                                SizedBox(width: 8.0),
+                                IconButton(
+                                  icon: Icon(Icons.refresh, color: Colors.white),
+                                  onPressed: () async {
+                                    User? user = await FireAuth.refreshUser(
+                                        _currentUser);
+
+                                    if (user != null) {
+                                      setState(() {
+                                        _currentUser = user;
+                                      });
+                                    }
+                                  },
+                                ),
+                              ],
+                            ),
+                    ],
+                  ),
           ),
-        ));
+          SizedBox(height: spacingBetween),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.list, size: 40, color: Colors.yellow),
+              Text("LEADER BOARD",
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 27,
+                      color: Colors.white)),
+            ],
+          ),
+          Expanded(
+            child: Row(children: [
+              Expanded(
+                child: Container(
+                  color: Colors.red,
+                  child: ListView(children: [
+                    Column(
+                      children: <Widget>[
+                        Text("Jawara Muda",
+                            style: TextStyle(fontWeight: FontWeight.bold)),
+                        ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: 30,
+                            itemBuilder: (context, index) {
+                              return Text('Some text');
+                            })
+                      ],
+                    ),
+                  ]),
+                ),
+              ),
+              SizedBox(width: 0),
+              Expanded(
+                child: Container(
+                  color: Colors.blue,
+                  child: ListView(children: [
+                    Column(
+                      children: <Widget>[
+                        Text("Satria Muda",
+                            style: TextStyle(fontWeight: FontWeight.bold)),
+                        ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: items.length,
+                            itemBuilder: (context, index) {
+                              return Text(items[index]);
+                            })
+                      ],
+                    ),
+                  ]),
+                ),
+              ),
+            ]),
+          )
+        ],
+      ),
+    );
   }
 }
-
