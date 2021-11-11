@@ -4,16 +4,16 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import '../models/pull_color_model.dart';
 import 'package:quartet/quartet.dart';
-import '../models/edit_profile.dart';
+import '../models/edit_user.dart';
 
-class ApprovedUsers extends StatefulWidget {
-  const ApprovedUsers({Key? key}) : super(key: key);
+class UnapprovedUsers extends StatefulWidget {
+  const UnapprovedUsers({Key? key}) : super(key: key);
 
   @override
-  _ApprovedUsersState createState() => _ApprovedUsersState();
+  _UnapprovedUsersState createState() => _UnapprovedUsersState();
 }
 
-class _ApprovedUsersState extends State<ApprovedUsers> {
+class _UnapprovedUsersState extends State<UnapprovedUsers> {
   double spacingWidth = 10;
   double spacingHeight = 10;
 
@@ -33,6 +33,7 @@ class _ApprovedUsersState extends State<ApprovedUsers> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Card(
+          color: Colors.orangeAccent,
           child: ExpansionTile(
             backgroundColor: Colors.grey[100],
             title: ListTile(
@@ -49,7 +50,7 @@ class _ApprovedUsersState extends State<ApprovedUsers> {
               subtitle: Text(formatCurriculum(dbItem?['curriculum'])),
             ),
             children: [
-                EditProfileWidget(dbItem: dbItem, dbkey: dbkey)
+                EditUserWidget(dbItem: dbItem, dbkey: dbkey)
             ],
           ),
         )
@@ -61,7 +62,8 @@ class _ApprovedUsersState extends State<ApprovedUsers> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('My Techniques'),
+        backgroundColor: Colors.orange,
+        title: Text('Unapproved Users'),
       ),
       body: SafeArea(
         child: FirebaseAnimatedList(
@@ -69,7 +71,7 @@ class _ApprovedUsersState extends State<ApprovedUsers> {
               .reference()
               .child('users')
               .orderByChild('isApproved')
-              .equalTo(true),
+              .equalTo(false),
           itemBuilder: (BuildContext context, DataSnapshot snapshot,
               Animation<double> animation, int index) {
             Map dbItemValue = snapshot.value;

@@ -158,7 +158,11 @@ class _LandingPageDataState extends State<LandingPageData> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(myUser?['firstname'] != null ? titleCase('${myUser?['firstname']} ${myUser?['lastname']}') : "",
+                        Text(
+                            myUser?['firstname'] != null
+                                ? titleCase(
+                                    '${myUser?['firstname']} ${myUser?['lastname']}')
+                                : "",
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 27,
@@ -189,13 +193,10 @@ class _LandingPageDataState extends State<LandingPageData> {
               )),
           SizedBox(height: spacingBetween),
           Padding(
-            padding:
-                const EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0),
+            padding: const EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0),
             child: _currentUser.emailVerified
-                ? Text(
-                    'Your email <${_currentUser.email}> \nis verified',
-                    style: TextStyle(color: Colors.green)
-                  )
+                ? Text('Your email <${_currentUser.email}> \nis verified',
+                    style: TextStyle(color: Colors.green))
                 : Column(
                     children: [
                       Text(
@@ -206,7 +207,7 @@ class _LandingPageDataState extends State<LandingPageData> {
                       _isSendingVerification
                           ? CircularProgressIndicator()
                           : Row(
-    mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 ElevatedButton(
                                   onPressed: () async {
@@ -218,11 +219,13 @@ class _LandingPageDataState extends State<LandingPageData> {
                                       _isSendingVerification = false;
                                     });
                                   },
-                                  child: Text('VERIFY EMAIL', style: TextStyle(fontSize: 15)),
+                                  child: Text('VERIFY EMAIL',
+                                      style: TextStyle(fontSize: 15)),
                                 ),
                                 SizedBox(width: 8.0),
                                 IconButton(
-                                  icon: Icon(Icons.refresh, color: Colors.white),
+                                  icon:
+                                      Icon(Icons.refresh, color: Colors.white),
                                   onPressed: () async {
                                     User? user = await FireAuth.refreshUser(
                                         _currentUser);

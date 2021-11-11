@@ -156,7 +156,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                                 'lastname':
                                                     _lastnameTextController
                                                         .text,
-                                                'isApproved:': false,
+                                                'isApproved': false,
                                                 'stripe': 0
                                               }).catchError((error) => print(
                                                   'You got an error! $error'));

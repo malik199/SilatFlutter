@@ -1,13 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:silat_flutter/login/login_page.dart';
-import 'package:silat_flutter/utils/fire_auth.dart';
 import 'package:silat_flutter/screens/scoring_portrait.dart';
 import 'package:silat_flutter/screens/rules_creed.dart';
 import 'package:silat_flutter/screens/techniques_home.dart';
+import 'package:silat_flutter/screens/home.dart';
 import 'package:silat_flutter/admin/profile.dart';
 import 'package:silat_flutter/admin/approved_users.dart';
-import 'package:fluttermoji/fluttermoji.dart';
+import 'package:silat_flutter/admin/unapproved_users.dart';
+import 'package:silat_flutter/models/isAdmin.dart';
 
 class LandingPage extends StatefulWidget {
   final User user;
@@ -29,7 +30,11 @@ class _LandingPageState extends State<LandingPage> {
   void initState() {
     _currentUser = widget.user;
     super.initState();
+    IsAdmin _isAdmin = IsAdmin();
+    _isAdmin.trueOrFalse();
   }
+
+  bool isAdmin = false;
 
   void _signMeOut() async {
     await FirebaseAuth.instance.signOut();
@@ -121,16 +126,33 @@ class _LandingPageState extends State<LandingPage> {
                 );
               },
             ),
-            ListTile(
-              leading: Icon(Icons.settings),
-              title: const Text('Approved Users'),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ApprovedUsers()),
-                );
-              },
-            ),
+            if (isAdmin) // admin only area
+              Column(
+                children: [
+                  ListTile(
+                    leading: Icon(Icons.thumb_up),
+                    title: const Text('Approved Users'),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ApprovedUsers()),
+                      );
+                    },
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.thumb_down),
+                    title: const Text('Unapproved Users'),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => UnapprovedUsers()),
+                      );
+                    },
+                  ),
+                ],
+              ),
           ],
         ),
       ),
@@ -173,232 +195,6 @@ class _LandingPageState extends State<LandingPage> {
         ],
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
-      ),
-    );
-  }
-}
-
-// ******************* HOME PAGE ************************
-
-class LandingPageData extends StatefulWidget {
-  final User userPassed;
-  const LandingPageData({required this.userPassed});
-
-  @override
-  _LandingPageDataState createState() => _LandingPageDataState();
-}
-
-class _LandingPageDataState extends State<LandingPageData> {
-  late User _currentUser;
-
-  @override
-  void initState() {
-    _currentUser = widget.userPassed;
-    //print(_currentUser);
-    super.initState();
-  }
-
-  Color _containerColor = Colors.yellow;
-  bool _isSendingVerification = false;
-  //bool _isSigningOut = false;
-
-  void changeColor() {
-    setState(() {
-      if (_containerColor == Colors.yellow) {
-        _containerColor = Colors.red;
-        return;
-      }
-      _containerColor = Colors.yellow;
-    });
-  }
-
-  List items = [
-    'Item 1',
-    'Item 2',
-    'Item 3',
-    'Item 1',
-    'Item 2',
-    'Item 3',
-    'Item 1',
-    'Item 2',
-    'Item 3',
-    'Item 1',
-    'Item 2',
-    'Item 3',
-    'Item 1',
-    'Item 2',
-    'Item 3',
-    'Item 1',
-    'Item 2',
-    'Item 3',
-    'Item 1',
-    'Item 2',
-    'Item 3',
-    'Item 1',
-    'Item 2',
-    'Item 3',
-    'Item 1',
-    'Item 2',
-    'Item 3',
-    'Item 1',
-    'Item 2',
-    'Item 3',
-    'Item 1',
-    'Item 2',
-    'Item 3',
-    'Item 1',
-    'Item 2',
-    'Item 3',
-    'Item 1',
-    'Item 2',
-    'Item 3',
-    'Item 1',
-    'Item 2',
-    'Item 3',
-    'Item 1',
-    'Item 2',
-    'Item 3',
-    'Item 1',
-    'Item 2',
-    'Item 3',
-    'Item 1',
-    'Item 2',
-    'Item 3',
-    'Item 1',
-    'Item 2',
-    'Item 3',
-    'Item 1',
-    'Item 2',
-    'Item 3'
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    double spacingBetween = 16;
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-            colors: [
-              const Color(0xff000000),
-              const Color(0xff0c3e40),
-            ],
-            begin: const FractionalOffset(0.0, 0.0),
-            end: const FractionalOffset(0.0, 1.0),
-            stops: [0.0, 1.0],
-            tileMode: TileMode.clamp),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          SizedBox(height: spacingBetween),
-          FluttermojiCircleAvatar(
-            radius: 100,
-          ),
-          SizedBox(height: spacingBetween),
-          Text(
-            '${_currentUser.displayName}',
-            style: Theme.of(context).textTheme.headline4,
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 3.0, horizontal: 28.0),
-            child: _currentUser.emailVerified
-                ? Text(
-                    'Your email <${_currentUser.email}> is verified',
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyText1!
-                        .copyWith(color: Colors.green),
-                  )
-                : Column(
-                    children: [
-                      Text(
-                        'Your email <${_currentUser.email}> is not verified',
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyText1!
-                            .copyWith(color: Colors.red),
-                      ),
-                      _isSendingVerification
-                          ? CircularProgressIndicator()
-                          : Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                ElevatedButton(
-                                  onPressed: () async {
-                                    setState(() {
-                                      _isSendingVerification = true;
-                                    });
-                                    await _currentUser.sendEmailVerification();
-                                    setState(() {
-                                      _isSendingVerification = false;
-                                    });
-                                  },
-                                  child: Text('Verify email'),
-                                ),
-                                SizedBox(width: 8.0),
-                                IconButton(
-                                  icon: Icon(Icons.refresh),
-                                  onPressed: () async {
-                                    User? user =
-                                        await FireAuth.refreshUser(_currentUser);
-
-                                    if (user != null) {
-                                      setState(() {
-                                        _currentUser = user;
-                                      });
-                                    }
-                                  },
-                                ),
-                              ],
-                            ),
-                    ],
-                  ),
-          ),
-          SizedBox(height: spacingBetween),
-          Expanded(
-            child: Row(children: [
-              Expanded(
-                child: Container(
-                  color: Colors.blue,
-                  child: ListView(children: [
-                    Column(
-                      children: <Widget>[
-                        Text("Tanding",
-                            style: TextStyle(fontWeight: FontWeight.bold)),
-                        ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: 30,
-                            itemBuilder: (context, index) {
-                              return Text('Some text');
-                            })
-                      ],
-                    ),
-                  ]),
-                ),
-              ),
-              SizedBox(width: 0),
-              Expanded(
-                child: Container(
-                  color: Colors.red,
-                  child: ListView(children: [
-                    Column(
-                      children: <Widget>[
-                        Text("TUNGGAL",
-                            style: TextStyle(fontWeight: FontWeight.bold)),
-                        ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: items.length,
-                            itemBuilder: (context, index) {
-                              return Text(items[index]);
-                            })
-                      ],
-                    ),
-                  ]),
-                ),
-              ),
-            ]),
-          )
-        ],
       ),
     );
   }

@@ -3,6 +3,7 @@ import 'package:fluttermoji/fluttermoji.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:silat_flutter/admin/avatar.dart';
+import 'dart:async';
 
 class Profile extends StatefulWidget {
   @override
@@ -10,22 +11,70 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
-  final formKey = GlobalKey<FormState>(); //key for form
-  final _database = FirebaseDatabase.instance.reference();
-  User? _user = FirebaseAuth.instance.currentUser;
 
-  String username = '';
-  String email = '';
+  final formKey = GlobalKey<FormState>(); //key for form
+  User? _currentUser = FirebaseAuth.instance.currentUser;
+  final _database = FirebaseDatabase.instance.reference();
+  late StreamSubscription _userDBStream;
+  var myUser;
+
+  late String? _firstName;
+  late String? _lastName;
+  late String? _dbkey;
+
+  int _age = 6;
+  List _listOfAges = [for (var i = 6; i <= 50; i++) i];
 
   @override
   void initState() {
+    _listOfAges.add(0);
+    _getUserData();
     super.initState();
-    //_controller = TextEditingController();
-    //print(_user?.displayName);
   }
 
-  var myData;
-  var myList;
+  void _getUserData() {
+    try {
+      _userDBStream = _database
+          .child('users')
+          .orderByChild('email')
+          .equalTo((_currentUser?.email)?.toLowerCase())
+          .limitToFirst(1)
+          .onValue
+          .listen((event) {
+        if (event.snapshot.value != null) {
+          final data = new Map<String?, dynamic>.from(event.snapshot.value);
+
+          print(event.snapshot.key);
+          data.forEach((key, value) {
+            setState(() {
+              print(value['firstname']);
+              _dbkey = key;
+              _firstName = value['firstname'];
+              _lastName = value['lastname'];
+              _age = value['age'] ?? 0;
+            });
+          });
+        }
+      });
+    } catch (e) {
+      print("something went wrong");
+    }
+  }
+
+  final snackBarRed = SnackBar(
+    content: Text('A problem occured.'),
+    backgroundColor: Colors.red,
+  );
+  final snackBarGreen = SnackBar(
+    content: Text('Success! You have updated the user.'),
+    backgroundColor: Colors.green,
+  );
+
+  @override
+  void deactivate() {
+    _userDBStream.cancel();
+    super.deactivate();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,8 +102,8 @@ class _ProfileState extends State<Profile> {
               children: [
                 SizedBox(height: paddingBetween),
                 TextFormField(
-                  decoration: InputDecoration(labelText: 'Name'),
-                  initialValue: _user?.displayName ?? "",
+                  decoration: InputDecoration(labelText: 'First Name'),
+                  initialValue: _firstName,
                   validator: (value) {
                     if (value!.length < 4) {
                       return 'Enter at least 4 characters';
@@ -63,60 +112,91 @@ class _ProfileState extends State<Profile> {
                     }
                   },
                   maxLength: 30,
-                  onSaved: (value) =>
-                      setState(() => username = value.toString()),
+                  onChanged: (value) =>
+                      setState(() => _firstName = value.toString()),
                 ),
                 TextFormField(
-                  decoration: InputDecoration(labelText: 'Email'),
-                  initialValue: _user?.email ?? "",
+                  decoration: InputDecoration(labelText: 'Last Name'),
+                  initialValue: _lastName,
                   validator: (value) {
-                    final pattern =
-                        r'(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)';
-                    final regExp = RegExp(pattern);
-
-                    if (value!.isEmpty) {
-                      return 'Enter an email';
-                    } else if (!regExp.hasMatch(value.toString())) {
-                      return 'Enter a valid email';
+                    if (value!.length < 4) {
+                      return 'Enter at least 4 characters';
                     } else {
                       return null;
                     }
                   },
-                  keyboardType: TextInputType.emailAddress,
-                  onSaved: (value) => setState(() => email = value.toString()),
+                  maxLength: 30,
+                  onChanged: (value) =>
+                      setState(() => _lastName = value.toString()),
                 ),
+                Row(children: [
+                  Icon(Icons.assignment_ind),
+                  SizedBox(width: 16),
+                  Text("Age:", style: new TextStyle(fontSize: 18.0)),
+                  SizedBox(width: 16),
+                  DropdownButton<int>(
+                    value: _age,
+                    icon: const Icon(Icons.arrow_downward),
+                    iconSize: 24,
+                    elevation: 16,
+                    style: const TextStyle(color: Colors.deepPurple),
+                    underline: Container(
+                      height: 2,
+                      color: Colors.deepPurpleAccent,
+                    ),
+                    onChanged: (int? newValue) {
+                      setState(() {
+                        _age = newValue ?? 0;
+                      });
+                    },
+                    items: _listOfAges.map<DropdownMenuItem<int>>((value) {
+                      return DropdownMenuItem(
+                        value: value,
+                        child: Text(value.toString()),
+                      );
+                    }).toList(),
+                  )
+                ]),
                 SizedBox(height: paddingBetween),
-                ElevatedButton.icon(
-                    style: ElevatedButton.styleFrom(
-                        shape: new RoundedRectangleBorder(
-                          borderRadius: new BorderRadius.circular(12.0),
-                        ),
-                        primary: Colors.purple,
-                        padding:
-                        EdgeInsets.symmetric(horizontal: 50, vertical: 20),
-                        textStyle: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold)),
-                    icon: Icon(Icons.save),
-                    label: Text("Update Profile"),
-                    onPressed: () {
-                      print(_user);
-                      final isValid = formKey.currentState?.validate();
-                      // FocusScope.of(context).unfocus();
-
-                      if (isValid!) {
-                        formKey.currentState?.save();
-
-                        final message = 'Username: $username\nPassword: $email';
-                        final snackBar = SnackBar(
-                          content: Text(
-                            message,
-                            style: TextStyle(fontSize: 20),
+                Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                  ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                          shape: new RoundedRectangleBorder(
+                            borderRadius: new BorderRadius.circular(12.0),
                           ),
-                          backgroundColor: Colors.green,
-                        );
-                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                      }
-                    })
+                          primary: Colors.purple,
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 50, vertical: 20),
+                          textStyle: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold)),
+                      icon: Icon(Icons.save),
+                      label: Text("Update Profile"),
+                      onPressed: () {
+                        print(_currentUser?.email);
+                        final isValid = formKey.currentState?.validate();
+                        // FocusScope.of(context).unfocus();
+
+                        print(_dbkey);
+                        if (isValid!) {
+                          _database
+                              .child('/users')
+                              .child(_dbkey.toString())
+                              .update({
+                                'firstname': _firstName,
+                                'lastname': _lastName,
+                                'age': _age,
+                              })
+                              .then((value) => {
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(snackBarGreen)
+                                  })
+                              .catchError((error) => {
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(snackBarRed)
+                                  });
+                        }
+                      }),
+                ])
               ],
             ),
           ),
@@ -145,75 +225,3 @@ class _ProfileState extends State<Profile> {
     );
   }
 }
-
-class SnackBarPage extends StatelessWidget {
-  const SnackBarPage({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: ElevatedButton(
-        onPressed: () {
-          final snackBar = SnackBar(
-            content: const Text('Yay! A SnackBar!'),
-            action: SnackBarAction(
-              label: 'Undo',
-              onPressed: () {
-                // Some code to undo the change.
-              },
-            ),
-          );
-
-          // Find the ScaffoldMessenger in the widget tree
-          // and use it to show a SnackBar.
-          ScaffoldMessenger.of(context).showSnackBar(snackBar);
-        },
-        child: const Text('Show SnackBar'),
-      ),
-    );
-  }
-}
-
-/*          SizedBox(height: paddingBetween),
-          TextFieldWidget(
-            label: 'Full Name',
-            text: _user?.displayName ?? "",
-            onChanged: (name) {},
-          ),
-          SizedBox(height: paddingBetween),
-          TextFieldWidget(
-            label: 'Last Name',
-            text: _user?.email ?? "",
-            onChanged: (email) {
-              print(email);
-            },
-          ),
-          SizedBox(height: paddingBetween),
-          ElevatedButton.icon(
-              style: ElevatedButton.styleFrom(
-                  shape: new RoundedRectangleBorder(
-                    borderRadius: new BorderRadius.circular(12.0),
-                  ),
-                  primary: Colors.purple,
-                  padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
-                  textStyle:
-                  TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
-              icon: Icon(Icons.save),
-              label: Text("Update Profile"),
-              onPressed: () => {
-                print(_controller)
-              }),
-          SizedBox(height: paddingBetween),
-          TextFieldWidget(
-            label: 'About',
-            text: "Now you know about me",
-            maxLines: 3,
-            onChanged: (about) {},
-          ),
-
-
-
-
-
-
- */

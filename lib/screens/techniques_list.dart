@@ -21,7 +21,7 @@ class TechniquesList extends StatefulWidget {
 
 class _TechniquesListState extends State<TechniquesList> {
   DatabaseReference reference =
-      FirebaseDatabase.instance.reference().child('techniques');
+  FirebaseDatabase.instance.reference().child('techniques');
   @override
   void initState() {
     // TODO: implement initState
@@ -51,7 +51,7 @@ class _TechniquesListState extends State<TechniquesList> {
   Widget _buildTechniqueItem({Map? dbItem, myIndex}) {
     final double _beltHeight = 35;
     final double _borderRadius = 4;
-    final double _innerPadding = 15;
+    //final double _innerPadding = 15;
     double _stripeBorderWhite = 0;
 
     int stripe;

@@ -24,7 +24,9 @@ class _TechniquesHomeState extends State<TechniquesHome> {
 
   var myData;
   var myList;
-  bool verified = true;
+  bool _verified = true;
+  String _currentCurriculum = "jawara_muda";
+  String _currentBelt = "white";
 
   void getYourTechniques() {
     _database
@@ -40,6 +42,9 @@ class _TechniquesHomeState extends State<TechniquesHome> {
           data.forEach((key, value) {
             myList = value;
             print('My List ${myList}');
+            _currentCurriculum = myList?['curriculum'];
+            _verified = myList?['isApproved'];
+            _currentBelt = myList?['belt'];
           });
         });
       }
@@ -49,8 +54,8 @@ class _TechniquesHomeState extends State<TechniquesHome> {
   @override
   Widget build(BuildContext context) {
     const double _spacing = 18;
-    String currentCurriculum = myList?['curriculum'] ?? "jawara_muda";
 
+    //String _currentCurriculum = "satria_muda";
     List _fullBeltArray = [
       "white",
       "yellow",
@@ -71,17 +76,34 @@ class _TechniquesHomeState extends State<TechniquesHome> {
     }
 
     // Yet to be completed
-    void switchCurriculums() {
+    void switchCurriculums(_currCurric) {
       setState(() {
-        currentCurriculum = "satria_muda";
+        if (_currCurric == 'jawara_muda' || _currCurric == 'instructor') {
+          _currentCurriculum = "satria_muda";
+        } else {
+          _currentCurriculum = 'jawara_muda';
+        }
       });
+      print(_currentCurriculum);
+    }
+
+    Widget showSwitchCurriculumButton() {
+      return (_currentCurriculum == "instructor" || _currentBelt == "black")
+          ? ElevatedButton.icon(
+              label: Text('Switch Curriculums'),
+              icon: Icon(Icons.swap_horiz),
+              onPressed: () {
+                switchCurriculums(_currentCurriculum);
+              },
+            )
+          : SizedBox.shrink();
     }
 
     Widget produceBelts(List<dynamic> _allbelts) {
       return Column(
           children: _allbelts
               .map(
-                (item) => Belt(curriculum: currentCurriculum, color: item),
+                (item) => Belt(curriculum: _currentCurriculum, color: item),
               )
               .toList());
     }
@@ -98,29 +120,40 @@ class _TechniquesHomeState extends State<TechniquesHome> {
               stops: [0.0, 1.0],
               tileMode: TileMode.clamp),
         ),
+        width: double.infinity,
         //color: Color(0xff02252c),
         child: Column(children: [
-                  Padding(
-                    padding: const EdgeInsets.all(_spacing),
-                    child: Text(
-                      ("${myList?['firstname']}'s techniques").toUpperCase(),
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25, color:Colors.white),
-                    ),
-                  ),
-                  produceBelts(allYourBelts()),
-                  SizedBox(height: _spacing),
-                  ElevatedButton.icon(
-                    label: Text('Switch Curriculums'),
-                    icon: Icon(Icons.swap_horiz),
-                    onPressed: () {
-                      switchCurriculums();
-                    },
-                  )
-    ]));
+          Padding(
+            padding: const EdgeInsets.all(_spacing),
+            child: Text(
+              ("${myList?['firstname']}'s techniques").toUpperCase(),
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 25,
+                  color: Colors.white),
+            ),
+          ),
+          produceBelts(allYourBelts()),
+          SizedBox(height: _spacing),
+          showSwitchCurriculumButton(),
+        ]));
 
-    return verified
+    return _verified
         ? allTechniqueWidget
-        : Text("You need to be verified before you view.");
+        : Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.warning,
+                color: Colors.orangeAccent,
+                size: 50,
+              ),
+              SizedBox(width: 10),
+              Text(
+                  "You need to be _verified before you view. \nPlease contact your instructor\n or email: info@silatva.com",
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+            ],
+          );
   }
 }
 
@@ -139,7 +172,9 @@ class Belt extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (curriculum == 'jawara_muda' || curriculum == "instructor") {
+    if (curriculum == 'jawara_muda' ||
+        curriculum == "instructor" ||
+        curriculum == 'guest') {
       return TextButton(
         onPressed: () {
           Navigator.push(
