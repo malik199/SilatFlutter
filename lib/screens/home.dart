@@ -46,6 +46,10 @@ class _LandingPageDataState extends State<LandingPageData> {
     });
   }
 
+  String formatCurriculum(curriculum) {
+    return titleCase(curriculum.toString().replaceAll('_', ' '));
+  }
+
   Color _containerColor = Colors.yellow;
   bool _isSendingVerification = false;
   //bool _isSigningOut = false;
@@ -173,7 +177,7 @@ class _LandingPageDataState extends State<LandingPageData> {
                                 fontWeight: FontWeight.bold,
                                 fontSize: 17,
                                 color: Colors.white)),
-                        Text(titleCase(myUser?['curriculum']) ?? "",
+                        Text(titleCase(formatCurriculum(myUser?['curriculum'])) ?? "",
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 17,

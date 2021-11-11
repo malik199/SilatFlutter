@@ -25,16 +25,18 @@ class _LandingPageState extends State<LandingPage> {
   int _selectedIndex = 0;
 
   late User _currentUser;
-
+  bool _isAdmin = false;
   @override
   void initState() {
     _currentUser = widget.user;
     super.initState();
-    IsAdmin _isAdmin = IsAdmin();
-    _isAdmin.trueOrFalse();
+    IsAdmin().trueOrFalse().then((res) {
+      //print(res);
+      setState(() {
+        _isAdmin = res;
+      });
+    });
   }
-
-  bool isAdmin = false;
 
   void _signMeOut() async {
     await FirebaseAuth.instance.signOut();
@@ -126,7 +128,7 @@ class _LandingPageState extends State<LandingPage> {
                 );
               },
             ),
-            if (isAdmin) // admin only area
+            if (_isAdmin) // admin only area
               Column(
                 children: [
                   ListTile(

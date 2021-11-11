@@ -5,27 +5,25 @@ class IsAdmin {
   User? _user = FirebaseAuth.instance.currentUser;
   final _database = FirebaseDatabase.instance.reference();
 
-  bool trueOrFalse() {
-    bool adminYes = false;
+  Future<bool> trueOrFalse() {
     var _myList;
     var _currentCurriculum = "lkhkljklj";
-    _database
+    return _database
         .child('users')
         .orderByChild('email')
         .equalTo((_user?.email)?.toLowerCase())
         .limitToFirst(1)
         .once()
         .then((DataSnapshot snapshot) {
-      if (snapshot.value != null) {
-        final data = new Map<String?, dynamic>.from(snapshot.value);
-        data.forEach((key, value) {
-          _myList = value;
-          _currentCurriculum = _myList?['curriculum'];
+          if (snapshot.value != null) {
+            final data = new Map<String?, dynamic>.from(snapshot.value);
+            data.forEach((key, value) {
+              _myList = value;
+              _currentCurriculum = _myList?['curriculum'];
+            });
+          }
+          //print(_currentCurriculum);
+          return _currentCurriculum == "instructor" ? true : false;
         });
-      }
-    });
-
-    print("My Current Curriculum is: $_currentCurriculum");
-    return adminYes;
   }
 }
