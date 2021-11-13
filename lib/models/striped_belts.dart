@@ -6,7 +6,7 @@ class StripedBelts {
   Widget getStripes(int numberOfStripes, bool? yellowStripe) {
     final double _stripeWidth = 10;
     final double _stripeSpacing = 10;
-    final double _innerPadding = 15;
+    //final double _innerPadding = 15;
     final double _beltHeight = 35;
     Color _stripeColor = Colors.black;
 
@@ -21,7 +21,7 @@ class StripedBelts {
         {
           myWidget = Row(children: [
             Expanded(child: SizedBox.shrink())
-          ]); // dont return anything
+          ]); // don't return anything
         }
         break;
       case 2:
@@ -110,7 +110,7 @@ class StripedBelts {
                 ),
               ),
             ],
-          ); // dont return anything
+          ); // don't return anything
         }
         break;
       case 5:
@@ -153,10 +153,10 @@ class StripedBelts {
                 ),
               ),
             ],
-          ); // dont return anything
+          ); // don't return anything
         }
         break;
-      case 6: // doesent mean 6 stripes, just is the layout for black and red belts
+      case 6: // doesn't mean 6 stripes, just is the layout for black and red belts
         {
           myWidget = Row(
             children: [
@@ -185,7 +185,7 @@ class StripedBelts {
                 ),
               ),
             ],
-          ); // dont return anything
+          ); // don't return anything
         }
         break;
       case 7:
@@ -228,7 +228,7 @@ class StripedBelts {
                 ),
               ),
             ],
-          ); // dont return anything
+          ); // don't return anything
         }
         break;
       case 8:
@@ -281,7 +281,7 @@ class StripedBelts {
                 ),
               ),
             ],
-          ); // dont return anything
+          ); // don't return anything
         }
         break;
       case 9:
@@ -344,7 +344,7 @@ class StripedBelts {
                 ),
               ),
             ],
-          ); // dont return anything
+          ); // don't return anything
         }
         break;
       default:
