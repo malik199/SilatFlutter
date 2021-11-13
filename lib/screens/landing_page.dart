@@ -1,6 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:silat_flutter/login/login_page.dart';
+import 'package:silat_flutter/screens/advancement.dart';
+import 'package:silat_flutter/screens/header.dart';
 import 'package:silat_flutter/screens/scoring_portrait.dart';
 import 'package:silat_flutter/screens/rules_creed.dart';
 import 'package:silat_flutter/screens/techniques_home.dart';
@@ -128,6 +130,16 @@ class _LandingPageState extends State<LandingPage> {
                 );
               },
             ),
+            ListTile(
+              leading: Icon(Icons.playlist_add_check),
+              title: const Text('Belt Advancement'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Advancement()),
+                );
+              },
+            ),
             if (_isAdmin) // admin only area
               Column(
                 children: [
@@ -160,7 +172,7 @@ class _LandingPageState extends State<LandingPage> {
       ),
       appBar: AppBar(
         backgroundColor: Colors.teal,
-        title: Text('Silat Institute App'),
+        title: Header(headerText: "Silat Institute App"),
       ),
       body: Center(
         child: _pages.elementAt(_selectedIndex),

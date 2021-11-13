@@ -3,7 +3,6 @@ import 'package:fluttermoji/fluttermoji.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:silat_flutter/admin/avatar.dart';
-import 'dart:async';
 
 class Profile extends StatefulWidget {
   @override
@@ -14,66 +13,86 @@ class _ProfileState extends State<Profile> {
   final formKey = GlobalKey<FormState>(); //key for form
   User? _currentUser = FirebaseAuth.instance.currentUser;
   final _database = FirebaseDatabase.instance.reference();
-  late StreamSubscription _userDBStream;
+  //late StreamSubscription _userDBStream;
   var myUser;
 
-  late String? _firstName;
-  late String? _lastName;
-  late String? _dbkey;
+  late String? _firstName = "";
+  late String? _lastName = "";
+  late int? _1stplace = 0;
+  late int? _2ndplace = 0;
+  late int? _classParticipation = 0;
+  late int? _deeds = 0;
+  late int? _score = 0;
+  late int? _tournaments = 0;
+  late int? _stripe = 0;
+
+  List _listOfStripes = [0, 1, 2, 3, 4];
+
+  late String? _dbkey = "";
+
+  TextEditingController? firstNameController = TextEditingController();
+  TextEditingController? lastNameController = TextEditingController();
 
   int _age = 6;
   List _listOfAges = [for (var i = 6; i <= 50; i++) i];
+  double _numberSize = 35;
 
   @override
   void initState() {
+    super.initState();
     _listOfAges.add(0);
     _getUserData();
-    super.initState();
   }
 
-  void _getUserData() {
-    try {
-      _userDBStream = _database
-          .child('users')
-          .orderByChild('email')
-          .equalTo((_currentUser?.email)?.toLowerCase())
-          .limitToFirst(1)
-          .onValue
-          .listen((event) {
-        if (event.snapshot.value != null) {
-          final data = new Map<String?, dynamic>.from(event.snapshot.value);
+  var myData;
 
-          print(event.snapshot.key);
-          data.forEach((key, value) {
-            setState(() {
-              print(value['firstname']);
-              _dbkey = key;
-              _firstName = value['firstname'];
-              _lastName = value['lastname'];
-              _age = value['age'] ?? 0;
-            });
-          });
-        }
+  void _getUserData() {
+    _database
+        .child('users')
+        .orderByChild('email')
+        .equalTo((_currentUser?.email)?.toLowerCase())
+        .once()
+        .then((snapshot) {
+      final data = new Map<String, dynamic>.from(snapshot.value);
+      data.forEach((key, value) {
+        myData = value;
+        _dbkey = key;
       });
-    } catch (e) {
-      print("something went wrong");
-    }
+
+      setState(() {
+        _firstName = myData['firstname'];
+        _lastName = myData['lastname'];
+
+        _1stplace = myData['1stplace'];
+        _2ndplace = myData['2ndplace'];
+        _classParticipation = myData['classParticipation'];
+        _deeds = myData['deeds'];
+        _score = myData['score'];
+        _tournaments = myData['tournaments'];
+        _stripe = myData['stripe'];
+
+        firstNameController = TextEditingController(text: _firstName);
+        lastNameController = TextEditingController(text: _lastName);
+        _age = myData['age'];
+      });
+    });
   }
 
   final snackBarRed = SnackBar(
-    content: Text('A problem occured.'),
+    content: Text('A problem occurred.'),
     backgroundColor: Colors.red,
   );
   final snackBarGreen = SnackBar(
-    content: Text('Success! You have updated the user.'),
+    content: Text('Success! You have updated your profile.'),
     backgroundColor: Colors.green,
   );
 
+  /*
   @override
   void deactivate() {
     _userDBStream.cancel();
     super.deactivate();
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -99,10 +118,10 @@ class _ProfileState extends State<Profile> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: paddingBetween),
+                SizedBox(height: 8),
                 TextFormField(
                   decoration: InputDecoration(labelText: 'First Name'),
-                  initialValue: _firstName,
+                  controller: firstNameController,
                   validator: (value) {
                     if (value!.length < 4) {
                       return 'Enter at least 4 characters';
@@ -110,13 +129,13 @@ class _ProfileState extends State<Profile> {
                       return null;
                     }
                   },
-                  maxLength: 30,
+                  maxLength: 15,
                   onChanged: (value) =>
                       setState(() => _firstName = value.toString()),
                 ),
                 TextFormField(
                   decoration: InputDecoration(labelText: 'Last Name'),
-                  initialValue: _lastName,
+                  controller: lastNameController,
                   validator: (value) {
                     if (value!.length < 4) {
                       return 'Enter at least 4 characters';
@@ -124,7 +143,7 @@ class _ProfileState extends State<Profile> {
                       return null;
                     }
                   },
-                  maxLength: 30,
+                  maxLength: 15,
                   onChanged: (value) =>
                       setState(() => _lastName = value.toString()),
                 ),
@@ -156,7 +175,35 @@ class _ProfileState extends State<Profile> {
                     }).toList(),
                   )
                 ]),
-                SizedBox(height: paddingBetween),
+                Row(children: [
+                  Icon(Icons.list),
+                  SizedBox(width: 16),
+                  Text("Stripe:", style: new TextStyle(fontSize: 18.0)),
+                  SizedBox(width: 16),
+                  DropdownButton<int>(
+                    value: _stripe,
+                    icon: const Icon(Icons.arrow_downward),
+                    iconSize: 24,
+                    elevation: 16,
+                    style: const TextStyle(color: Colors.deepPurple),
+                    underline: Container(
+                      height: 2,
+                      color: Colors.deepPurpleAccent,
+                    ),
+                    onChanged: (int? newValue) {
+                      setState(() {
+                        _stripe = newValue ?? 0;
+                      });
+                    },
+                    items: _listOfStripes.map<DropdownMenuItem<int>>((value) {
+                      return DropdownMenuItem(
+                        value: value,
+                        child: Text(value.toString()),
+                      );
+                    }).toList(),
+                  )
+                ]),
+                SizedBox(height: 8),
                 Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                   ElevatedButton.icon(
                       style: ElevatedButton.styleFrom(
@@ -171,11 +218,11 @@ class _ProfileState extends State<Profile> {
                       icon: Icon(Icons.save),
                       label: Text("Update Profile"),
                       onPressed: () {
-                        print(_currentUser?.email);
                         final isValid = formKey.currentState?.validate();
                         // FocusScope.of(context).unfocus();
 
                         print(_dbkey);
+
                         if (isValid!) {
                           _database
                               .child('/users')
@@ -184,6 +231,7 @@ class _ProfileState extends State<Profile> {
                                 'firstname': _firstName,
                                 'lastname': _lastName,
                                 'age': _age,
+                                'stripe': _stripe,
                               })
                               .then((value) => {
                                     ScaffoldMessenger.of(context)
@@ -200,16 +248,101 @@ class _ProfileState extends State<Profile> {
             ),
           ),
           SizedBox(height: paddingBetween),
-          Divider(
-            height: 20,
-            thickness: 2,
-            indent: 0,
-            endIndent: 0,
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.3),
+                  spreadRadius: 5,
+                  blurRadius: 7,
+                  offset: Offset(0, 3), // changes position of shadow
+                ),
+              ],
+              color: Colors.white,
+            ),
+            child: Column(children: [
+              SizedBox(height: 10),
+              Text("STATS",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+              Divider(),
+              ListTile(
+                leading: Icon(Icons.follow_the_signs, size: 40.0),
+                title: Text(
+                  "Tournaments",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                subtitle:
+                    Text("Number of tournaments that you have competed in."),
+                trailing: Text(_tournaments.toString(),
+                    style: TextStyle(
+                        fontSize: _numberSize, fontWeight: FontWeight.bold)),
+              ),
+              ListTile(
+                leading: Icon(Icons.filter_1, size: 40.0),
+                title: Text(
+                  "1st Place",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                subtitle: Text("Number of first place wins."),
+                trailing: Text(_1stplace.toString(),
+                    style: TextStyle(
+                        fontSize: _numberSize, fontWeight: FontWeight.bold)),
+              ),
+              ListTile(
+                leading: Icon(Icons.filter_2, size: 40.0),
+                title: Text(
+                  "2nd Place",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                subtitle: Text("Number of 2nd place wins."),
+                trailing: Text(_2ndplace.toString(),
+                    style: TextStyle(
+                        fontSize: _numberSize, fontWeight: FontWeight.bold)),
+              ),
+              ListTile(
+                leading: Icon(Icons.store, size: 40.0),
+                title: Text(
+                  "Class Grade (out of 5)",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                subtitle: Text(
+                    "Good attendance, coming on time, participation, following rules, etc."),
+                trailing: Text(_classParticipation.toString(),
+                    style: TextStyle(
+                        fontSize: _numberSize, fontWeight: FontWeight.bold)),
+              ),
+              SizedBox(height: 10),
+              ListTile(
+                leading: Icon(Icons.verified, size: 40.0),
+                title: Text(
+                  "Good Deeds",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                subtitle: Text(
+                    "Significant good deeds, helping the poor, volunteering, etc."),
+                trailing: Text(_deeds.toString(),
+                    style: TextStyle(
+                        fontSize: _numberSize, fontWeight: FontWeight.bold)),
+              ),
+              SizedBox(height: 10),
+              Divider(),
+              Text("Total Score: ${_score.toString()}",
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 30,
+                      color: Colors.deepPurple)),
+              SizedBox(height: 10),
+            ]),
           ),
-          Center(child: Text("Change Avatar", style: TextStyle(fontWeight: FontWeight.bold))),
+          SizedBox(height: paddingBetween),
+          /*Center(
+              child: Text("Change Avatar",
+                  style: TextStyle(fontWeight: FontWeight.bold))),
           OutlinedButton(
             style: ButtonStyle(
-              shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0))),
+              shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12.0))),
             ),
             onPressed: () => Navigator.push(
                 context, new MaterialPageRoute(builder: (context) => Avatar())),
@@ -220,9 +353,28 @@ class _ProfileState extends State<Profile> {
                 radius: 100,
               ),
             ),
-          ),
+          ),*/
         ],
       ),
     );
   }
 }
+
+/*
+
+
+if (event.snapshot.value != null) {
+          final data = new Map<String?, dynamic>.from(event.snapshot.value);
+
+          print(event.snapshot.key);
+          data.forEach((key, value) {
+            setState(() {
+              print(value['firstname']);
+              _dbkey = key;
+              _firstName = value['firstname'];
+              _lastName = value['lastname'];
+              _age = value['age'] ?? 0;
+            });
+          });
+        }
+ */

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'techniques_list.dart';
-import '../models/pull_color_model.dart';
+import 'package:silat_flutter/models/belts.dart';
 
 class TechniquesHome extends StatefulWidget {
   const TechniquesHome({Key? key}) : super(key: key);
@@ -27,6 +26,7 @@ class _TechniquesHomeState extends State<TechniquesHome> {
   bool _verified = true;
   String _currentCurriculum = "jawara_muda";
   String _currentBelt = "white";
+  String _unchangingCurriculum = "satria_muda";
 
   void getYourTechniques() {
     _database
@@ -41,10 +41,11 @@ class _TechniquesHomeState extends State<TechniquesHome> {
         setState(() {
           data.forEach((key, value) {
             myList = value;
-            print('My List ${myList}');
+            //print('My List ${myList}');
             _currentCurriculum = myList?['curriculum'];
             _verified = myList?['isApproved'];
             _currentBelt = myList?['belt'];
+            _unchangingCurriculum = myList?['curriculum'];
           });
         });
       }
@@ -84,11 +85,11 @@ class _TechniquesHomeState extends State<TechniquesHome> {
           _currentCurriculum = 'jawara_muda';
         }
       });
-      print(_currentCurriculum);
+      //print(_currentCurriculum);
     }
 
     Widget showSwitchCurriculumButton() {
-      return (_currentCurriculum == "instructor" || _currentBelt == "black")
+      return (_unchangingCurriculum == "instructor" || _currentBelt == "black")
           ? ElevatedButton.icon(
               label: Text('Switch Curriculums'),
               icon: Icon(Icons.swap_horiz),
@@ -154,76 +155,5 @@ class _TechniquesHomeState extends State<TechniquesHome> {
                   style: TextStyle(fontWeight: FontWeight.bold)),
             ],
           );
-  }
-}
-
-class Belt extends StatelessWidget {
-  final String curriculum;
-  final String color;
-  const Belt({
-    Key? key,
-    required this.curriculum,
-    required this.color,
-  }) : super(key: key);
-
-  final double _beltHeight = 50;
-  final double _innerPadding = 15;
-  final double _borderRadius = 4;
-
-  @override
-  Widget build(BuildContext context) {
-    if (curriculum == 'jawara_muda' ||
-        curriculum == "instructor" ||
-        curriculum == 'guest') {
-      return TextButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) =>
-                    TechniquesList(curriculum: "jawara_muda", color: color)),
-          );
-        },
-        child: Container(
-          height: _beltHeight,
-          decoration: BoxDecoration(
-            color: PullColor().getColor(color),
-            border: Border.all(
-              color: Colors.black26,
-              width: 1,
-            ),
-            borderRadius: BorderRadius.circular(_borderRadius),
-          ),
-        ),
-      );
-    } else {
-      return TextButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) =>
-                    TechniquesList(curriculum: "satria_muda", color: color)),
-          );
-        },
-        child: Container(
-          height: _beltHeight,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            border: Border.all(
-              color: Colors.grey,
-              width: 1,
-            ),
-            borderRadius: BorderRadius.circular(_borderRadius),
-          ),
-          child: Padding(
-            padding: EdgeInsets.symmetric(vertical: _innerPadding),
-            child: Container(
-              color: PullColor().getColor(color),
-            ),
-          ),
-        ),
-      );
-    }
   }
 }

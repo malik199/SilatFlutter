@@ -26,8 +26,8 @@ class _TechniquesListState extends State<TechniquesList> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    print("this is my curriculum ${widget.curriculum}");
-    print("this is my color ${widget.color}");
+    //print("this is my curriculum ${widget.curriculum}");
+    //print("this is my color ${widget.color}");
   }
 
   final vimeoKey = "a7dba65b5ca93ee1c513b8926987343c";
@@ -63,7 +63,7 @@ class _TechniquesListState extends State<TechniquesList> {
       stripe = dbItem?["sm_showstripe"] == "" ? 0 : dbItem?["sm_showstripe"];
       _stripeBorderWhite = 10;
     }
-    print('STRIPE $stripe');
+    //print('STRIPE $stripe');
 
     Widget showHeader() {
       if (stripe != 0 && stripe is int) {
@@ -91,7 +91,7 @@ class _TechniquesListState extends State<TechniquesList> {
                   ),
                 ),
               ),
-              StripedBelts().getStripes(stripe),
+              StripedBelts().getStripes(stripe, false),
             ]),
           ),
         );
@@ -159,26 +159,6 @@ class _TechniquesListState extends State<TechniquesList> {
           },
         ),
       ),
-    );
-  }
-}
-
-class Album {
-  final int userId;
-  final int id;
-  final String title;
-
-  Album({
-    required this.userId,
-    required this.id,
-    required this.title,
-  });
-
-  factory Album.fromJson(Map<String, dynamic> json) {
-    return Album(
-      userId: json['userId'],
-      id: json['id'],
-      title: json['title'],
     );
   }
 }
