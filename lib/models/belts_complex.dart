@@ -18,7 +18,7 @@ class BeltsComplex extends StatelessWidget {
       : super(key: key);
 
   final double _beltHeight = 35;
-  final double _innerPadding = 10;
+  //final double _innerPadding = 10;
   final double _borderRadius = 4;
 
   @override
@@ -38,6 +38,14 @@ class BeltsComplex extends StatelessWidget {
                   width: 1,
                 ),
                 borderRadius: BorderRadius.circular(_borderRadius),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.8),
+                    spreadRadius: 2,
+                    blurRadius: 4,
+                    offset: Offset(0, 1), // changes position of shadow
+                  ),
+                ],
               )),
           if (jawaraStripe == true)
             Container(
@@ -70,7 +78,22 @@ class BeltsComplex extends StatelessWidget {
         child: Stack(children: [
           Container(
             height: _beltHeight,
-            color: PullColor().getColor(color),
+            decoration: BoxDecoration(
+              color: PullColor().getColor(color),
+              border: Border.all(
+                color: Colors.black26,
+                width: 1,
+              ),
+              borderRadius: BorderRadius.circular(_borderRadius),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.8),
+                  spreadRadius: 2,
+                  blurRadius: 4,
+                  offset: Offset(0, 1), // changes position of shadow
+                ),
+              ],
+            ),
           ),
           Container(
             height: _beltHeight,
@@ -80,6 +103,7 @@ class BeltsComplex extends StatelessWidget {
                     width: 10, color: Colors.white),
               ),
             ),
+
           ),
           StripedBelts().getStripes(stripes ?? 1, hasYellowStripe),
         ]),

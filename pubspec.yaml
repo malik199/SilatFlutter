@@ -1,5 +1,5 @@
 name: silat_flutter
-description: A new Flutter project.
+description: An app for Silat Institute.
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `pub publish`. This is preferred for private packages.
@@ -31,11 +31,11 @@ dependencies:
   firebase_core: ^1.7.0
   firebase_auth: ^3.1.2
   firebase_database: "^8.0.0"
-  flutter_vibrate: ^1.1.0
   http: ^0.13.4
   vimeo_player_flutter: ^0.0.3
   fluttermoji: ^0.2.2
   quartet: ^0.1.1
+  connectivity_plus: ^2.0.2
 
 dev_dependencies:
   flutter_test:

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:silat_flutter/models/belts_complex.dart';
+import 'package:silat_flutter/utils/connectivity.dart';
 import 'package:silat_flutter/utils/fire_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:fluttermoji/fluttermoji.dart';
@@ -21,6 +22,12 @@ class _LandingPageDataState extends State<LandingPageData> {
   final _database = FirebaseDatabase.instance.reference();
   late StreamSubscription _userDBStream;
   var myUser;
+  String _firstName = "";
+  String _lastName = "";
+  String _belt = "white";
+  String _curriculum = "satria_muda";
+  int _stripe = 0;
+  int _age = 0;
 
   @override
   void initState() {
@@ -41,7 +48,12 @@ class _LandingPageDataState extends State<LandingPageData> {
         final data = new Map<String?, dynamic>.from(event.snapshot.value);
         setState(() {
           data.forEach((key, value) {
-            myUser = value;
+            _firstName = value['firstname'];
+            _lastName = value['lastname'];
+            _belt = value['belt'];
+            _curriculum = value['curriculum'];
+            _age = value['age'];
+            _stripe = value['stripe'];
           });
         });
       }
@@ -68,7 +80,7 @@ class _LandingPageDataState extends State<LandingPageData> {
 
   int getStripes(numOfStripes) {
     int _realNumbOfStripes = numOfStripes ?? 0;
-    if(myUser?['belt'] == "black" || myUser?['belt'] == "red") {
+    if (_belt == "black" || _belt == "red") {
       _realNumbOfStripes = numOfStripes + 5;
     } else {
       _realNumbOfStripes = _realNumbOfStripes + 1;
@@ -111,30 +123,6 @@ class _LandingPageDataState extends State<LandingPageData> {
     'Item 1',
     'Item 2',
     'Item 3',
-    'Item 1',
-    'Item 2',
-    'Item 3',
-    'Item 1',
-    'Item 2',
-    'Item 3',
-    'Item 1',
-    'Item 2',
-    'Item 3',
-    'Item 1',
-    'Item 2',
-    'Item 3',
-    'Item 1',
-    'Item 2',
-    'Item 3',
-    'Item 1',
-    'Item 2',
-    'Item 3',
-    'Item 1',
-    'Item 2',
-    'Item 3',
-    'Item 1',
-    'Item 2',
-    'Item 3'
   ];
 
   @override
@@ -148,7 +136,7 @@ class _LandingPageDataState extends State<LandingPageData> {
     double spacingBetween = 16;
 
     return Container(
-     /* decoration: BoxDecoration(
+      /* decoration: BoxDecoration(
         gradient: LinearGradient(
             colors: [
               const Color(0xff000000),
@@ -165,6 +153,7 @@ class _LandingPageDataState extends State<LandingPageData> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
+            InternetConnection(),
             SizedBox(height: 3),
             Container(
                 decoration: BoxDecoration(
@@ -175,40 +164,31 @@ class _LandingPageDataState extends State<LandingPageData> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                              myUser?['firstname'] != null
-                                  ? titleCase(
-                                      '${myUser?['firstname']}')
-                                  : "",
+                          Text(titleCase(_firstName),
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 26,
                                   color: Colors.white)),
-                          Text(
-                              myUser?['firstname'] != null
-                                  ? titleCase(
-                                  '${myUser?['lastname']}')
-                                  : "",
+                          Text(titleCase(_lastName),
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 26,
                                   color: Colors.white)),
                           SizedBox(height: 10),
-                          Text(titleCase('${myUser?['belt']} Belt') ?? "",
+                          Text(_belt != "" ? titleCase('$_belt Belt') : "",
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 17,
                                   color: Colors.white)),
-                          Text(titleCase(formatCurriculum(myUser?['curriculum'])) ?? "",
+                          Text(titleCase(formatCurriculum(_curriculum)) ?? "",
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 17,
                                   color: Colors.white)),
-                          Text('Age: ${titleCase(myUser?['age'].toString())}',
+                          Text(_age != 0 ? 'Age: ${titleCase(_age.toString())}' : "",
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 17,
@@ -218,7 +198,9 @@ class _LandingPageDataState extends State<LandingPageData> {
                       SizedBox(width: 20),
                       TextButton(
                         onPressed: () => Navigator.push(
-                            context, new MaterialPageRoute(builder: (context) => Avatar())),
+                            context,
+                            new MaterialPageRoute(
+                                builder: (context) => Avatar())),
                         child: FluttermojiCircleAvatar(
                           radius: 70,
                         ),
@@ -226,14 +208,16 @@ class _LandingPageDataState extends State<LandingPageData> {
                     ],
                   ),
                 )),
+            SizedBox(height: 5),
             BeltsComplex(
-                curriculum: myUser?['curriculum'] ?? "satria_muda",
-                color: myUser?['belt'] ?? "white",
-                stripes: getStripes(myUser?['stripe']),
-                hasYellowStripe: myUser?['belt'] == "black" ? true : false),
+                curriculum: _curriculum,
+                color: _belt,
+                stripes: getStripes(_stripe),
+                hasYellowStripe: _belt == "black" ? true : false),
             SizedBox(height: spacingBetween),
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0),
+              padding:
+                  const EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0),
               child: _currentUser.emailVerified
                   ? Text('Your email <${_currentUser.email}> \nis verified',
                       style: TextStyle(color: Colors.green))
@@ -254,7 +238,8 @@ class _LandingPageDataState extends State<LandingPageData> {
                                       setState(() {
                                         _isSendingVerification = true;
                                       });
-                                      await _currentUser.sendEmailVerification();
+                                      await _currentUser
+                                          .sendEmailVerification();
                                       setState(() {
                                         _isSendingVerification = false;
                                       });
@@ -264,8 +249,8 @@ class _LandingPageDataState extends State<LandingPageData> {
                                   ),
                                   SizedBox(width: 8.0),
                                   IconButton(
-                                    icon:
-                                        Icon(Icons.refresh, color: Colors.white),
+                                    icon: Icon(Icons.refresh,
+                                        color: Colors.white),
                                     onPressed: () async {
                                       User? user = await FireAuth.refreshUser(
                                           _currentUser);

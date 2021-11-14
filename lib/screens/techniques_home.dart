@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:silat_flutter/models/belts.dart';
+import 'package:silat_flutter/utils/connectivity.dart';
 
 class TechniquesHome extends StatefulWidget {
   const TechniquesHome({Key? key}) : super(key: key);
@@ -24,9 +25,11 @@ class _TechniquesHomeState extends State<TechniquesHome> {
   var myData;
   var myList;
   bool _verified = true;
+  String _firstName = "";
   String _currentCurriculum = "jawara_muda";
   String _currentBelt = "white";
   String _unchangingCurriculum = "satria_muda";
+  String _belt = "";
 
   void getYourTechniques() {
     _database
@@ -40,12 +43,12 @@ class _TechniquesHomeState extends State<TechniquesHome> {
         final data = new Map<String?, dynamic>.from(snapshot.value);
         setState(() {
           data.forEach((key, value) {
-            myList = value;
-            //print('My List ${myList}');
-            _currentCurriculum = myList?['curriculum'];
-            _verified = myList?['isApproved'];
-            _currentBelt = myList?['belt'];
-            _unchangingCurriculum = myList?['curriculum'];
+            _currentCurriculum = value['curriculum'];
+            _verified = value['isApproved'];
+            _currentBelt = value['belt'];
+            _unchangingCurriculum = value['curriculum'];
+            _firstName = value['firstname'];
+            _belt = value['belt'];
           });
         });
       }
@@ -70,7 +73,7 @@ class _TechniquesHomeState extends State<TechniquesHome> {
 
     List allYourBelts() {
       List myBeltLevels = [];
-      for (var i = 0; i <= _fullBeltArray.indexOf(myList?['belt']); i++) {
+      for (var i = 0; i <= _fullBeltArray.indexOf(_belt); i++) {
         myBeltLevels.add(_fullBeltArray[i]);
       }
       return myBeltLevels;
@@ -124,10 +127,13 @@ class _TechniquesHomeState extends State<TechniquesHome> {
         width: double.infinity,
         //color: Color(0xff02252c),
         child: Column(children: [
+          InternetConnection(),
           Padding(
             padding: const EdgeInsets.all(_spacing),
             child: Text(
-              ("${myList?['firstname']}'s techniques").toUpperCase(),
+              _firstName != ""
+                  ? ("$_firstName's techniques").toUpperCase()
+                  : "",
               style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 25,
@@ -142,7 +148,7 @@ class _TechniquesHomeState extends State<TechniquesHome> {
     return _verified
         ? allTechniqueWidget
         : Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
                 Icons.warning,

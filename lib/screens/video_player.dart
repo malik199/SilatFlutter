@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:vimeo_player_flutter/vimeo_player_flutter.dart';
+import 'package:quartet/quartet.dart';
 
 class VideoPlayer extends StatefulWidget {
-  VideoPlayer({Key? key, required this.title, required this.videoId})
-      : super(key: key);
+  VideoPlayer({Key? key, required this.dbItem}) : super(key: key);
 
-  final String title;
-  var videoId;
+  var dbItem;
 
   @override
   _VideoPlayerState createState() => _VideoPlayerState();
@@ -15,11 +14,13 @@ class VideoPlayer extends StatefulWidget {
 class _VideoPlayerState extends State<VideoPlayer> {
   @override
   Widget build(BuildContext context) {
+    //double _fontSize = 10;
+    double _iconSize = 30;
     return Scaffold(
       backgroundColor: Color(0xff264d55),
       appBar: AppBar(
         backgroundColor: Colors.teal,
-        title: Text(widget.title),
+        title: Text(widget.dbItem['technique']),
       ),
       body: Center(
         child: Column(
@@ -27,45 +28,54 @@ class _VideoPlayerState extends State<VideoPlayer> {
             Container(
               height: 250,
               child: VimeoPlayer(
-                videoId: widget.videoId.toString(),
+                videoId: widget.dbItem['vidID'].toString(),
               ),
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Column(
-                children: [
-                  Text(
-                    "Technique Name: Kuda-Kuda Tenga",
-                    style: TextStyle(
-                      color: Colors.white,
-                    ),
+              child: Column(children: [
+                ListTile(
+                  leading: Icon(Icons.sports_kabaddi,
+                      color: Colors.white, size: _iconSize),
+                  title: Text("Use in Sparring: ${widget.dbItem['useInSparring'] ?? "?"}",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, color: Colors.white)),
+                ),
+                ListTile(
+                  leading: Icon(Icons.sticky_note_2,
+                      color: Colors.white, size: _iconSize),
+                  title: Text("Technique Family: ${widget.dbItem['family']}",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, color: Colors.white)),
+                ),
+                if (widget.dbItem['satria_muda'] != "")
+                  ListTile(
+                    leading: Icon(Icons.calendar_view_day,
+                        color: Colors.white, size: _iconSize),
+                    title: Text(
+                        "Satria Muda: ${titleCase(widget.dbItem['satria_muda'])} Belt - Stripe ${widget.dbItem['sm_stripe']}",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, color: Colors.white)),
                   ),
-                  Text(
-                    "Alernate Name: Kuda-Kuda Badak",
+                ListTile(
+                  leading: Icon(Icons.table_rows,
+                      color: Colors.white, size: _iconSize),
+                  title: Text(
+                      "Jawara Muda: ${titleCase(widget.dbItem['jawara_muda'])} Belt - Stripe ${widget.dbItem['jm_stripe']}",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, color: Colors.white)),
+                ),
+                Divider(color: Colors.white),
+                Text("More Information",
                     style: TextStyle(
-                      color: Colors.white,
-                    ),
-                  ),
-                  Text(
-                    "Technique Family: Stances",
-                    style: TextStyle(
-                      color: Colors.white,
-                    ),
-                  ),
-                  Text(
-                    "Can Use During Sparring: Yes",
-                    style: TextStyle(
-                      color: Colors.white,
-                    ),
-                  ),
-                  Text(
-                    "Notes: Be sure your front foot is forward",
-                    style: TextStyle(
-                      color: Colors.white,
-                    ),
-                  )
-                ]
-              ),
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        fontSize: 25)),
+                SizedBox(height: 10),
+                Text(widget.dbItem['desc'], style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16))
+              ]),
             )
           ],
         ),

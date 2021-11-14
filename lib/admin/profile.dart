@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:fluttermoji/fluttermoji.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:silat_flutter/admin/avatar.dart';
+import 'package:silat_flutter/utils/connectivity.dart';
 
 class Profile extends StatefulWidget {
   @override
@@ -113,11 +112,13 @@ class _ProfileState extends State<Profile> {
         padding: EdgeInsets.symmetric(horizontal: 32),
         physics: BouncingScrollPhysics(),
         children: [
-          Form(
+            Form(
             key: formKey, //key for form
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                SizedBox(height: 8),
+                InternetConnection(),
                 SizedBox(height: 8),
                 TextFormField(
                   decoration: InputDecoration(labelText: 'First Name'),
@@ -274,7 +275,7 @@ class _ProfileState extends State<Profile> {
                 ),
                 subtitle:
                     Text("Number of tournaments that you have competed in."),
-                trailing: Text(_tournaments.toString(),
+                trailing: Text(_tournaments != null ? _tournaments.toString() : "",
                     style: TextStyle(
                         fontSize: _numberSize, fontWeight: FontWeight.bold)),
               ),
@@ -285,7 +286,7 @@ class _ProfileState extends State<Profile> {
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 subtitle: Text("Number of first place wins."),
-                trailing: Text(_1stplace.toString(),
+                trailing: Text(_1stplace != null ? _1stplace.toString() : "",
                     style: TextStyle(
                         fontSize: _numberSize, fontWeight: FontWeight.bold)),
               ),
@@ -296,7 +297,7 @@ class _ProfileState extends State<Profile> {
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 subtitle: Text("Number of 2nd place wins."),
-                trailing: Text(_2ndplace.toString(),
+                trailing: Text(_2ndplace != null ? _2ndplace.toString() : "",
                     style: TextStyle(
                         fontSize: _numberSize, fontWeight: FontWeight.bold)),
               ),
@@ -308,7 +309,7 @@ class _ProfileState extends State<Profile> {
                 ),
                 subtitle: Text(
                     "Good attendance, coming on time, participation, following rules, etc."),
-                trailing: Text(_classParticipation.toString(),
+                trailing: Text(_classParticipation != null ? _classParticipation.toString() : "",
                     style: TextStyle(
                         fontSize: _numberSize, fontWeight: FontWeight.bold)),
               ),
@@ -321,13 +322,13 @@ class _ProfileState extends State<Profile> {
                 ),
                 subtitle: Text(
                     "Significant good deeds, helping the poor, volunteering, etc."),
-                trailing: Text(_deeds.toString(),
+                trailing: Text(_deeds != null ? _deeds.toString() : "",
                     style: TextStyle(
                         fontSize: _numberSize, fontWeight: FontWeight.bold)),
               ),
               SizedBox(height: 10),
               Divider(),
-              Text("Total Score: ${_score.toString()}",
+              Text("Total Score: ${(_score ?? "").toString()}",
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 30,

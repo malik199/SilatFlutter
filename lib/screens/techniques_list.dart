@@ -127,8 +127,7 @@ class _TechniquesListState extends State<TechniquesList> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => VideoPlayer(
-                      title: dbItem?['technique'], videoId: dbItem?['vidID']),
+                  builder: (context) => VideoPlayer(dbItem: dbItem),
                 ),
               )
             },

@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'dart:async';
 
 class ScoringPortrait extends StatefulWidget {
@@ -15,7 +14,6 @@ class _ScoringPageState extends State<ScoringPortrait> {
   int _current = 90;
 
   String _pausePlay = "play";
-  bool _canVibrate = true;
   final Iterable<Duration> pauses = [
     const Duration(milliseconds: 500),
     const Duration(milliseconds: 1000),
@@ -25,19 +23,7 @@ class _ScoringPageState extends State<ScoringPortrait> {
   @override
   initState() {
     super.initState();
-    init();
   }
-
-  init() async {
-    bool canVibrate = await Vibrate.canVibrate;
-    setState(() {
-      _canVibrate = canVibrate;
-      _canVibrate
-          ? print("This device can vibrate")
-          : print("This device cannot vibrate");
-    });
-  }
-
 
 
   IconData getTimerIcon(String pause) {
@@ -78,7 +64,6 @@ class _ScoringPageState extends State<ScoringPortrait> {
                 _pausePlay = "pause";
                 _current = _matchTime;
                 _containerColor = Colors.green;
-                Vibrate.vibrate();
                 print("done");
               } else {
                 _current = _current - 1;
@@ -96,8 +81,8 @@ class _ScoringPageState extends State<ScoringPortrait> {
     m = ((value - h * 3600)) ~/ 60;
     s = value - (h * 3600) - (m * 60);
 
-    String hourLeft =
-        h.toString().length < 2 ? "0" + h.toString() : h.toString();
+    /*String hourLeft =
+        h.toString().length < 2 ? "0" + h.toString() : h.toString();*/
     String minuteLeft = m.toString();
 
     // m.toString().length < 2 ? "0" + m.toString() :
@@ -211,7 +196,7 @@ class _ScoringPageState extends State<ScoringPortrait> {
     const double _smallFont = 22;
     const double _padding = 10.0;
     const double _spacing = 10.0;
-    const double _middleSpacing = 15.0;
+    //const double _middleSpacing = 15.0;
     const double _bottomFont = 80;
     const double _borderRadius = 8;
 
