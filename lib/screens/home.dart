@@ -185,7 +185,9 @@ class _LandingPageDataState extends State<LandingPageData> {
                                       fontWeight: FontWeight.bold,
                                       fontSize: 17,
                                       color: Colors.white)),
-                              Text(titleCase(formatCurriculum(_curriculum)) ?? "",
+                              Text(
+                                  titleCase(formatCurriculum(_curriculum)) ??
+                                      "",
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 17,
@@ -224,8 +226,7 @@ class _LandingPageDataState extends State<LandingPageData> {
           ),
           SizedBox(height: spacingBetween),
           Padding(
-            padding:
-                const EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0),
+            padding: const EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0),
             child: _currentUser.emailVerified
                 ? Text('Your email <${_currentUser.email}> \nis verified',
                     style: TextStyle(color: Colors.green))
@@ -246,8 +247,7 @@ class _LandingPageDataState extends State<LandingPageData> {
                                     setState(() {
                                       _isSendingVerification = true;
                                     });
-                                    await _currentUser
-                                        .sendEmailVerification();
+                                    await _currentUser.sendEmailVerification();
                                     setState(() {
                                       _isSendingVerification = false;
                                     });
@@ -257,8 +257,8 @@ class _LandingPageDataState extends State<LandingPageData> {
                                 ),
                                 SizedBox(width: 8.0),
                                 IconButton(
-                                  icon: Icon(Icons.refresh,
-                                      color: Colors.white),
+                                  icon:
+                                      Icon(Icons.refresh, color: Colors.white),
                                   onPressed: () async {
                                     User? user = await FireAuth.refreshUser(
                                         _currentUser);
@@ -287,91 +287,98 @@ class _LandingPageDataState extends State<LandingPageData> {
                       color: Colors.black)),
             ],
           ),
+          Row(children: [
+            Expanded(
+                child: Container(
+              padding: EdgeInsets.all(6),
+              color: Colors.red,
+              child: Text("Jawara Muda",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      fontSize: 17)),
+            )),
+            Expanded(
+                child: Container(
+                  padding: EdgeInsets.all(6),
+              color: Colors.blue,
+
+              child: Text("Satria Muda",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      fontSize: 17)),
+            )),
+          ]),
           Expanded(
             child: Row(children: [
               Expanded(
                 child: Container(
                   color: Colors.red,
-                  child: ListView(children: [
-                    Column(
-                      children: <Widget>[
-                        SizedBox(height: 5),
-                        Text("Jawara Muda",
-                            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 17)),
-                        ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: items.length,
-                            itemBuilder: (context, index) {
-                              return Card(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(6.0),
-                                  child: Row(
-                                      mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Flexible(
-                                          child: Text(
-                                            '${items[index]} (MD)',
-                                            overflow: TextOverflow.fade,
-                                            style: TextStyle(
-                                                fontSize: 15, color: Colors.blue),
-                                          ),
-                                        ),
-                                        Text("33",
-                                            style: TextStyle(
-                                                fontSize: 15,
-                                                color: Colors.blue,
-                                                fontWeight: FontWeight.bold))
-                                      ]),
-                                ),
-                              );
-                            })
-                      ],
-                    ),
-                  ]),
+                  child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: items.length,
+                      itemBuilder: (context, index) {
+                        return Card(
+                          child: Padding(
+                            padding: const EdgeInsets.all(6.0),
+                            child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Flexible(
+                                    child: Text(
+                                      '${items[index]} (MD)',
+                                      overflow: TextOverflow.fade,
+                                      style: TextStyle(
+                                          fontSize: 15, color: Colors.blue),
+                                    ),
+                                  ),
+                                  Text("33",
+                                      style: TextStyle(
+                                          fontSize: 15,
+                                          color: Colors.blue,
+                                          fontWeight: FontWeight.bold))
+                                ]),
+                          ),
+                        );
+                      }),
                 ),
               ),
               SizedBox(width: 0),
               Expanded(
                 child: Container(
                   color: Colors.blue,
-                  child: ListView(children: [
-                    Column(
-                      children: <Widget>[
-                        SizedBox(height: 5),
-                        Text("Satria Muda",
-                            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 17)),
-                        ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: items.length,
-                            itemBuilder: (context, index) {
-                              return Card(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(6.0),
-                                  child: Row(
-                                      mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Flexible(
-                                          child: Text(
-                                            '${items[index]} (MD)',
-                                            overflow: TextOverflow.fade,
-                                            style: TextStyle(
-                                                fontSize: 15, color: Colors.blue),
-                                          ),
-                                        ),
-                                        Text("33",
-                                            style: TextStyle(
-                                                fontSize: 15,
-                                                color: Colors.blue,
-                                                fontWeight: FontWeight.bold))
-                                      ]),
-                                ),
-                              );
-                            })
-                      ],
-                    ),
-                  ]),
+                  child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: items.length,
+                      itemBuilder: (context, index) {
+                        return Card(
+                          child: Padding(
+                            padding: const EdgeInsets.all(6.0),
+                            child: Row(
+                                mainAxisAlignment:
+                                MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Flexible(
+                                    child: Text(
+                                      '${items[index]} (MD)',
+                                      overflow: TextOverflow.fade,
+                                      style: TextStyle(
+                                          fontSize: 15, color: Colors.blue),
+                                    ),
+                                  ),
+                                  Text("33",
+                                      style: TextStyle(
+                                          fontSize: 15,
+                                          color: Colors.blue,
+                                          fontWeight: FontWeight.bold))
+                                ]),
+                          ),
+                        );
+                      }),
                 ),
               ),
             ]),
