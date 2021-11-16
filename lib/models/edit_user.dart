@@ -21,14 +21,34 @@ class _EditUserWidgetState extends State<EditUserWidget> {
   double spacingHeight = 10;
   String _beltColor = "";
   String _curriculum = "";
+  int _tournaments = 0;
+  int _firstPlaceWins = 0;
+  int _secondPlaceWins = 0;
+  int _classMerits = 0;
+  int _goodDeeds = 0;
   bool _isApprov = false;
+  int _finalScore = 0;
+
+  List<int> _listOfNumbers = [for (var i = 0; i <= 50; i++) i];
 
   void initState() {
     _beltColor = widget.dbItem?['belt'];
     _curriculum = widget.dbItem?['curriculum'];
     _isApprov = widget.dbItem?['isApproved'];
-    print(widget.dbItem);
+    _tournaments = widget.dbItem?['tournaments'] ?? 0;
+    _firstPlaceWins = widget.dbItem?['1stplace'] ?? 0;
+    _secondPlaceWins = widget.dbItem?['2ndplace'] ?? 0;
+    _classMerits = widget.dbItem?['classMerits'] ?? 0;
+    _goodDeeds = widget.dbItem?['deeds'] ?? 0;
+    _finalScore = widget.dbItem?['score'] ?? 0;
+    //print(widget.dbItem);
     super.initState();
+  }
+
+  void calculateScore(){
+    setState(() {
+      _finalScore = (_firstPlaceWins * 10 ) + (_secondPlaceWins * 8) + (_tournaments * 6) + (_classMerits) + (_goodDeeds);
+    });
   }
 
   final snackBarRed = SnackBar(
@@ -42,13 +62,14 @@ class _EditUserWidgetState extends State<EditUserWidget> {
 
   @override
   Widget build(BuildContext context) {
+    double _spacingFromEdge = 40;
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
         children: [
           Row(
             children: [
-              SizedBox(width: 16),
+              SizedBox(width: _spacingFromEdge),
               Icon(Icons.email),
               SizedBox(width: spacingWidth),
               Text(widget.dbItem?['email']),
@@ -56,7 +77,7 @@ class _EditUserWidgetState extends State<EditUserWidget> {
           ),
           SizedBox(height: spacingHeight),
           Row(children: [
-            SizedBox(width: 16),
+            SizedBox(width: _spacingFromEdge),
             Icon(Icons.horizontal_split),
             SizedBox(width: spacingWidth),
             DropdownButton<String>(
@@ -89,10 +110,8 @@ class _EditUserWidgetState extends State<EditUserWidget> {
                   child: Text(value),
                 );
               }).toList(),
-            )
-          ]),
-          Row(children: [
-            SizedBox(width: 16),
+            ),
+            SizedBox(width: 36),
             Icon(Icons.assignment),
             SizedBox(width: spacingWidth),
             DropdownButton<String>(
@@ -124,19 +143,208 @@ class _EditUserWidgetState extends State<EditUserWidget> {
               }).toList(),
             )
           ]),
-          SwitchListTile(
-              title: Row(children: [
-                Icon(Icons.thumb_up_alt),
+          Row(
+            children: [
+              SizedBox(width: _spacingFromEdge),
+              Icon(Icons.thumb_up_alt),
+              SizedBox(width: spacingWidth),
+              Text(
+                "Approval",
+                style: TextStyle(fontSize: 15),
+              ),
+              Switch(
+                  value: _isApprov,
+                  onChanged: (bool value) {
+                    setState(() => _isApprov = value);
+                  }),
+            ],
+          ),
+          Divider(thickness: 2),
+          SizedBox(height: 20),
+          Row(children: [
+            SizedBox(width: _spacingFromEdge),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.follow_the_signs),
+                    SizedBox(width: 10),
+                    Text("Tournaments"),
+                  ],
+                ),
+                DropdownButton<int>(
+                  value: _tournaments,
+                  icon: const Icon(Icons.arrow_downward),
+                  iconSize: 24,
+                  elevation: 16,
+                  style: const TextStyle(color: Colors.deepPurple),
+                  underline: Container(
+                    height: 2,
+                    color: Colors.deepPurpleAccent,
+                  ),
+                  onChanged: (int? newValue) {
+                    setState(() {
+                      _tournaments = newValue!;
+                    });
+                    calculateScore();
+                  },
+                  items: _listOfNumbers.map<DropdownMenuItem<int>>((int value) {
+                    return DropdownMenuItem<int>(
+                      value: value,
+                      child: Text(value.toString()),
+                    );
+                  }).toList(),
+                ),
+              ],
+            ),
+            SizedBox(width: 54),
+            Column(
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.filter_1),
+                    SizedBox(width: 10),
+                    Text("1st Place Wins"),
+                  ],
+                ),
+                DropdownButton<int>(
+                  value: _firstPlaceWins,
+                  icon: const Icon(Icons.arrow_downward),
+                  iconSize: 24,
+                  elevation: 16,
+                  style: const TextStyle(color: Colors.deepPurple),
+                  underline: Container(
+                    height: 2,
+                    color: Colors.deepPurpleAccent,
+                  ),
+                  onChanged: (int? newValue) {
+                    setState(() {
+                      _firstPlaceWins = newValue!;
+                    });
+                    calculateScore();
+                  },
+                  items: _listOfNumbers.map<DropdownMenuItem<int>>((int value) {
+                    return DropdownMenuItem<int>(
+                      value: value,
+                      child: Text(value.toString()),
+                    );
+                  }).toList(),
+                ),
+              ],
+            )
+          ]),
+          SizedBox(height: 30),
+          Row(children: [
+            SizedBox(width: _spacingFromEdge),
+            Column(
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.filter_2),
+                    SizedBox(width: spacingWidth),
+                    Text("2nd Place Wins"),
+                  ],
+                ),
                 SizedBox(width: spacingWidth),
-                Text(
-                  "Approval",
-                  style: TextStyle(fontSize: 15),
-                )
-              ]),
-              value: _isApprov,
-              onChanged: (bool value) {
-                setState(() => _isApprov = value);
-              }),
+                DropdownButton<int>(
+                  value: _secondPlaceWins,
+                  icon: const Icon(Icons.arrow_downward),
+                  iconSize: 24,
+                  elevation: 16,
+                  style: const TextStyle(color: Colors.deepPurple),
+                  underline: Container(
+                    height: 2,
+                    color: Colors.deepPurpleAccent,
+                  ),
+                  onChanged: (int? newValue) {
+                    setState(() {
+                      _secondPlaceWins = newValue!;
+                    });
+                    calculateScore();
+                  },
+                  items: _listOfNumbers.map<DropdownMenuItem<int>>((int value) {
+                    return DropdownMenuItem<int>(
+                      value: value,
+                      child: Text(value.toString()),
+                    );
+                  }).toList(),
+                ),
+              ],
+            ),
+            SizedBox(width: 36),
+            Column(
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.store),
+                    SizedBox(width: 8),
+                    Text("Class Merits"),
+                  ],
+                ),
+                SizedBox(width: spacingWidth),
+                DropdownButton<int>(
+                  value: _classMerits,
+                  icon: const Icon(Icons.arrow_downward),
+                  iconSize: 24,
+                  elevation: 16,
+                  style: const TextStyle(color: Colors.deepPurple),
+                  underline: Container(
+                    height: 2,
+                    color: Colors.deepPurpleAccent,
+                  ),
+                  onChanged: (int? newValue) {
+                    setState(() {
+                      _classMerits = newValue!;
+                    });
+                    calculateScore();
+                  },
+                  items: _listOfNumbers.map<DropdownMenuItem<int>>((int value) {
+                    return DropdownMenuItem<int>(
+                      value: value,
+                      child: Text(value.toString()),
+                    );
+                  }).toList(),
+                ),
+              ],
+            )
+          ]),
+          SizedBox(height: 20),
+          Row(children: [
+            SizedBox(width: _spacingFromEdge),
+            Icon(Icons.verified),
+            SizedBox(width: spacingWidth),
+            Text("Good Deeds:"),
+            SizedBox(width: spacingWidth),
+            DropdownButton<int>(
+              value: _goodDeeds,
+              icon: const Icon(Icons.arrow_downward),
+              iconSize: 24,
+              elevation: 16,
+              style: const TextStyle(color: Colors.deepPurple),
+              underline: Container(
+                height: 2,
+                color: Colors.deepPurpleAccent,
+              ),
+              onChanged: (int? newValue) {
+                setState(() {
+                  _goodDeeds = newValue!;
+                });
+                calculateScore();
+              },
+              items: _listOfNumbers.map<DropdownMenuItem<int>>((int value) {
+                return DropdownMenuItem<int>(
+                  value: value,
+                  child: Text(value.toString()),
+                );
+              }).toList(),
+            ),
+            SizedBox(width: 50),
+            Text(_finalScore.toString(), style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold, color: Colors.deepPurpleAccent))
+          ]),
+          Divider(
+            thickness: 2,
+          ),
           SizedBox(height: 20),
           ElevatedButton.icon(
               style: ElevatedButton.styleFrom(
@@ -157,9 +365,15 @@ class _EditUserWidgetState extends State<EditUserWidget> {
                       'belt': _beltColor,
                       'curriculum': _curriculum,
                       'isApproved': _isApprov,
+                      'tournaments': _tournaments,
+                      '1stplace': _firstPlaceWins,
+                      '2ndplace': _secondPlaceWins,
+                      'classMerits': _classMerits,
+                      'deeds': _goodDeeds,
+                      'score': _finalScore
                     })
-                    .then((value) =>
-                        ScaffoldMessenger.of(context).showSnackBar(snackBarGreen))
+                    .then((value) => ScaffoldMessenger.of(context)
+                        .showSnackBar(snackBarGreen))
                     .catchError((error) => ScaffoldMessenger.of(context)
                         .showSnackBar(snackBarRed));
               }),

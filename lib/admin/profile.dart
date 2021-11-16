@@ -19,7 +19,7 @@ class _ProfileState extends State<Profile> {
   late String? _lastName = "";
   late int? _1stplace = 0;
   late int? _2ndplace = 0;
-  late int? _classParticipation = 0;
+  late int? _classMerits = 0;
   late int? _deeds = 0;
   late int? _score = 0;
   late int? _tournaments = 0;
@@ -64,7 +64,7 @@ class _ProfileState extends State<Profile> {
 
         _1stplace = myData['1stplace'];
         _2ndplace = myData['2ndplace'];
-        _classParticipation = myData['classParticipation'];
+        _classMerits = myData['classMerits'];
         _deeds = myData['deeds'];
         _score = myData['score'];
         _tournaments = myData['tournaments'];
@@ -304,12 +304,12 @@ class _ProfileState extends State<Profile> {
               ListTile(
                 leading: Icon(Icons.store, size: 40.0),
                 title: Text(
-                  "Class Grade (out of 5)",
+                  "Class Merits",
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 subtitle: Text(
-                    "Good attendance, coming on time, participation, following rules, etc."),
-                trailing: Text(_classParticipation != null ? _classParticipation.toString() : "",
+                    "Winning a class event, being an outstanding student in class."),
+                trailing: Text(_classMerits != null ? _classMerits.toString() : "",
                     style: TextStyle(
                         fontSize: _numberSize, fontWeight: FontWeight.bold)),
               ),

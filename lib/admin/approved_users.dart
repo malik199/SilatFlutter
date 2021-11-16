@@ -38,10 +38,10 @@ class _ApprovedUsersState extends State<ApprovedUsers> {
             title: ListTile(
               leading: (dbItem?['curriculum'] == 'jawara_muda'
                   ? Icon(Icons.person,
-                      size: 50.0, color: PullColor().getColor(dbItem?['belt']))
+                  size: 50.0, color: PullColor().getColor(dbItem?['belt']))
                   : Icon(Icons.perm_identity,
-                      size: 50.0,
-                      color: PullColor().getColor(dbItem?['belt']))),
+                  size: 50.0,
+                  color: PullColor().getColor(dbItem?['belt']))),
               title: Text(
                 titleCase(dbItem?['firstname'] + " " + dbItem?['lastname']),
                 style: TextStyle(fontWeight: FontWeight.bold),
@@ -49,7 +49,7 @@ class _ApprovedUsersState extends State<ApprovedUsers> {
               subtitle: Text(formatCurriculum(dbItem?['curriculum'])),
             ),
             children: [
-                EditUserWidget(dbItem: dbItem, dbkey: dbkey)
+              EditUserWidget(dbItem: dbItem, dbkey: dbkey)
             ],
           ),
         )
