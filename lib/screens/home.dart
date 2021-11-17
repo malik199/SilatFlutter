@@ -8,6 +8,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:fluttermoji/fluttermoji.dart';
 import 'package:quartet/quartet.dart';
 import 'package:silat_flutter/admin/avatar.dart';
+//import 'package:firebase_database/ui/firebase_animated_list.dart';
 
 class LandingPageData extends StatefulWidget {
   final User userPassed;
@@ -21,6 +22,7 @@ class _LandingPageDataState extends State<LandingPageData> {
   late User _currentUser;
   final _database = FirebaseDatabase.instance.reference();
   late StreamSubscription _userDBStream;
+  late StreamSubscription _topStudentsDBStream;
   var myUser;
   String _firstName = "";
   String _lastName = "";
@@ -34,6 +36,37 @@ class _LandingPageDataState extends State<LandingPageData> {
     super.initState();
     _currentUser = widget.userPassed;
     _getUserData();
+    _getToStudentData();
+  }
+
+  late List<dynamic> _satriaMudaData = [];
+  late List<dynamic> _reversedSatriaMudaData = [];
+  late List<dynamic> _jawaraMudaData = [];
+  late List<dynamic> _reversedJawaraMudaData = [];
+  void _getToStudentData() {
+    _topStudentsDBStream = _database.child('users').orderByChild('score').onValue.listen((event) {
+      if (event.snapshot.value != null) {
+        _satriaMudaData = [];
+        _jawaraMudaData= [];
+        final data = new Map<String, dynamic>.from(event.snapshot.value);
+        setState(() {
+          data.forEach((key, value) {
+            if (value["isApproved"] == true &&
+                value['score'] != null &&
+                value['curriculum'] == 'satria_muda') {
+              _satriaMudaData.add(value);
+            }
+            if (value["isApproved"] == true &&
+                value['score'] != null &&
+                value['curriculum'] == 'jawara_muda') {
+              _jawaraMudaData.add(value);
+            }
+          });
+          _reversedSatriaMudaData = _satriaMudaData.reversed.toList();
+          _reversedJawaraMudaData = _jawaraMudaData.reversed.toList();
+        });
+      }
+    });
   }
 
   void _getUserData() {
@@ -127,6 +160,7 @@ class _LandingPageDataState extends State<LandingPageData> {
   @override
   void deactivate() {
     _userDBStream.cancel();
+    _topStudentsDBStream.cancel();
     super.deactivate();
   }
 
@@ -276,16 +310,22 @@ class _LandingPageDataState extends State<LandingPageData> {
                   ),
           ),
           SizedBox(height: spacingBetween),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.assignment, size: 40, color: Colors.black38),
-              Text("LEADER BOARD",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 27,
-                      color: Colors.black)),
-            ],
+          Container(
+            color: Colors.black87,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.control_camera, size: 20, color: Colors.grey),
+                SizedBox(width: 10),
+                Text("TOP STUDENTS",
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 27,
+                        color: Colors.white)),
+                SizedBox(width: 10),
+                Icon(Icons.control_camera, size: 20, color: Colors.grey),
+              ],
+            ),
           ),
           Row(children: [
             Expanded(
@@ -301,9 +341,8 @@ class _LandingPageDataState extends State<LandingPageData> {
             )),
             Expanded(
                 child: Container(
-                  padding: EdgeInsets.all(6),
+              padding: EdgeInsets.all(6),
               color: Colors.blue,
-
               child: Text("Satria Muda",
                   textAlign: TextAlign.center,
                   style: TextStyle(
@@ -318,33 +357,35 @@ class _LandingPageDataState extends State<LandingPageData> {
                 child: Container(
                   color: Colors.red,
                   child: ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: items.length,
-                      itemBuilder: (context, index) {
-                        return Card(
-                          child: Padding(
-                            padding: const EdgeInsets.all(6.0),
-                            child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Flexible(
-                                    child: Text(
-                                      '${items[index]} (MD)',
-                                      overflow: TextOverflow.fade,
-                                      style: TextStyle(
-                                          fontSize: 15, color: Colors.blue),
-                                    ),
+                    itemCount: _reversedJawaraMudaData.length,
+                    itemBuilder: (context, index) {
+                      return Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(6.0),
+                          child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Flexible(
+                                  child: Text(
+                                    '${titleCase(_reversedJawaraMudaData[index]['firstname'])} ${titleCase(_reversedJawaraMudaData[index]['lastname'])} (MD)',
+                                    overflow: TextOverflow.fade,
+                                    style: TextStyle(
+                                        fontSize: 15, color: Colors.blue),
                                   ),
-                                  Text("33",
-                                      style: TextStyle(
-                                          fontSize: 15,
-                                          color: Colors.blue,
-                                          fontWeight: FontWeight.bold))
-                                ]),
-                          ),
-                        );
-                      }),
+                                ),
+                                Text(
+                                    (_reversedJawaraMudaData[index]['score'] ??
+                                            "0")
+                                        .toString(),
+                                    style: TextStyle(
+                                        fontSize: 15,
+                                        color: Colors.blue,
+                                        fontWeight: FontWeight.bold))
+                              ]),
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ),
               SizedBox(width: 0),
@@ -352,33 +393,35 @@ class _LandingPageDataState extends State<LandingPageData> {
                 child: Container(
                   color: Colors.blue,
                   child: ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: items.length,
-                      itemBuilder: (context, index) {
-                        return Card(
-                          child: Padding(
-                            padding: const EdgeInsets.all(6.0),
-                            child: Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Flexible(
-                                    child: Text(
-                                      '${items[index]} (MD)',
-                                      overflow: TextOverflow.fade,
-                                      style: TextStyle(
-                                          fontSize: 15, color: Colors.blue),
-                                    ),
+                    itemCount: _reversedSatriaMudaData.length,
+                    itemBuilder: (context, index) {
+                      return Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(6.0),
+                          child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Flexible(
+                                  child: Text(
+                                    '${titleCase(_reversedSatriaMudaData[index]['firstname'])} ${titleCase(_reversedSatriaMudaData[index]['lastname'])} (MD)',
+                                    overflow: TextOverflow.fade,
+                                    style: TextStyle(
+                                        fontSize: 15, color: Colors.blue),
                                   ),
-                                  Text("33",
-                                      style: TextStyle(
-                                          fontSize: 15,
-                                          color: Colors.blue,
-                                          fontWeight: FontWeight.bold))
-                                ]),
-                          ),
-                        );
-                      }),
+                                ),
+                                Text(
+                                    (_reversedSatriaMudaData[index]['score'] ??
+                                            "0")
+                                        .toString(),
+                                    style: TextStyle(
+                                        fontSize: 15,
+                                        color: Colors.blue,
+                                        fontWeight: FontWeight.bold))
+                              ]),
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ),
             ]),
