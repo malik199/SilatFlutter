@@ -27,6 +27,10 @@ class _RegisterPageState extends State<RegisterPage> {
 
   double _spacing = 16.0;
   bool _isProcessing = false;
+  int _age = 6;
+  List _listOfAges = [for (var i = 6; i <= 50; i++) i];
+  late String? _location = "VA";
+  List _listOfLocations = ["MD", "DC", "VA", "Other"];
 
   @override
   Widget build(BuildContext context) {
@@ -118,6 +122,62 @@ class _RegisterPageState extends State<RegisterPage> {
                           ),
                         ),
                       ),
+                      Row(children: [
+                        Icon(Icons.assignment_ind),
+                        SizedBox(width: 16),
+                        Text("Age:", style: new TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold)),
+                        SizedBox(width: 16),
+                        DropdownButton<int>(
+                          value: _age,
+                          icon: const Icon(Icons.arrow_downward),
+                          iconSize: 24,
+                          elevation: 16,
+                          style: const TextStyle(color: Colors.deepPurple),
+                          underline: Container(
+                            height: 2,
+                            color: Colors.deepPurpleAccent,
+                          ),
+                          onChanged: (int? newValue) {
+                            setState(() {
+                              _age = newValue ?? 0;
+                            });
+                          },
+                          items: _listOfAges.map<DropdownMenuItem<int>>((value) {
+                            return DropdownMenuItem(
+                              value: value,
+                              child: Text(value.toString()),
+                            );
+                          }).toList(),
+                        )
+                      ]),
+                      Row(children: [
+                        Icon(Icons.place),
+                        SizedBox(width: 16),
+                        Text("Location:", style: new TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold)),
+                        SizedBox(width: 16),
+                        DropdownButton<String>(
+                          value: _location,
+                          icon: const Icon(Icons.arrow_downward),
+                          iconSize: 24,
+                          elevation: 16,
+                          style: const TextStyle(color: Colors.deepPurple),
+                          underline: Container(
+                            height: 2,
+                            color: Colors.deepPurpleAccent,
+                          ),
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              _location = newValue ?? "";
+                            });
+                          },
+                          items: _listOfLocations.map<DropdownMenuItem<String>>((value) {
+                            return DropdownMenuItem(
+                              value: value,
+                              child: Text(value.toString()),
+                            );
+                          }).toList(),
+                        )
+                      ]),
                       SizedBox(height: 32.0),
                       _isProcessing
                           ? CircularProgressIndicator()
@@ -147,7 +207,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                                 'belt': 'white',
                                                 'comments':
                                                     'Welcome to Silat martial arts.',
-                                                'curriculum': "jawara_muda",
+                                                'curriculum': _age > 11 ? "jawara_muda" : "satria_muda",
                                                 'email':
                                                     _emailTextController.text,
                                                 'firstname':
@@ -157,7 +217,10 @@ class _RegisterPageState extends State<RegisterPage> {
                                                     _lastnameTextController
                                                         .text,
                                                 'isApproved': false,
-                                                'stripe': 0
+                                                'stripe': 0,
+                                                'age': _age,
+                                                'location': _location
+
                                               }).catchError((error) => print(
                                                   'You got an error! $error'));
                                               Navigator.of(context)

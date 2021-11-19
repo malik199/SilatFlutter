@@ -21,6 +21,7 @@ class _EditUserWidgetState extends State<EditUserWidget> {
   double spacingHeight = 10;
   String _beltColor = "";
   String _curriculum = "";
+  String _location = "";
   int _tournaments = 0;
   int _firstPlaceWins = 0;
   int _secondPlaceWins = 0;
@@ -28,9 +29,10 @@ class _EditUserWidgetState extends State<EditUserWidget> {
   int _goodDeeds = 0;
   bool _isApprov = false;
   int _finalScore = 0;
-
+  List<String> _listOfLocations = [];
   List<int> _listOfNumbers = [for (var i = 0; i <= 50; i++) i];
 
+  @override
   void initState() {
     _beltColor = widget.dbItem?['belt'];
     _curriculum = widget.dbItem?['curriculum'];
@@ -41,8 +43,25 @@ class _EditUserWidgetState extends State<EditUserWidget> {
     _classMerits = widget.dbItem?['classMerits'] ?? 0;
     _goodDeeds = widget.dbItem?['deeds'] ?? 0;
     _finalScore = widget.dbItem?['score'] ?? 0;
-    //print(widget.dbItem);
+    _location = widget.dbItem?['location'] ?? "";
+    _getSchoolData();
     super.initState();
+  }
+
+  void _getSchoolData() {
+    _database
+        .child('locations')
+        .once()
+        .then((snapshot) {
+      final data = new Map<String, dynamic>.from(snapshot.value);
+      _listOfLocations.add("");
+      setState(() {
+        data.forEach((key, value) {
+          _listOfLocations.add(value['state']);
+          print(value['state']);
+        });
+      });
+    });
   }
 
   void calculateScore(){
@@ -157,6 +176,30 @@ class _EditUserWidgetState extends State<EditUserWidget> {
                   onChanged: (bool value) {
                     setState(() => _isApprov = value);
                   }),
+              SizedBox(width: 20),
+              Icon(Icons.place),
+              DropdownButton<String>(
+                value: _location,
+                icon: const Icon(Icons.arrow_downward),
+                iconSize: 24,
+                elevation: 16,
+                style: const TextStyle(color: Colors.deepPurple),
+                underline: Container(
+                  height: 2,
+                  color: Colors.deepPurpleAccent,
+                ),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    _location = newValue!;
+                  });
+                },
+                items: _listOfLocations.map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+              ),
             ],
           ),
           Divider(thickness: 2),
@@ -370,7 +413,8 @@ class _EditUserWidgetState extends State<EditUserWidget> {
                       '2ndplace': _secondPlaceWins,
                       'classMerits': _classMerits,
                       'deeds': _goodDeeds,
-                      'score': _finalScore
+                      'score': _finalScore,
+                      'location': _location
                     })
                     .then((value) => ScaffoldMessenger.of(context)
                         .showSnackBar(snackBarGreen))

@@ -26,7 +26,8 @@ class _VideoPlayerState extends State<VideoPlayer> {
         child: Column(
           children: [
             Container(
-              height: 250,
+              color: Colors.black,
+              height: 370,
               child: VimeoPlayer(
                 videoId: widget.dbItem['vidID'].toString(),
               ),

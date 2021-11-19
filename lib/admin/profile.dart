@@ -69,7 +69,6 @@ class _ProfileState extends State<Profile> {
         _score = myData['score'];
         _tournaments = myData['tournaments'];
         _stripe = myData['stripe'];
-
         firstNameController = TextEditingController(text: _firstName);
         lastNameController = TextEditingController(text: _lastName);
         _age = myData['age'];

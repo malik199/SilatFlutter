@@ -30,6 +30,7 @@ class _LandingPageDataState extends State<LandingPageData> {
   String _curriculum = "satria_muda";
   int _stripe = 0;
   int _age = 0;
+  String _location = "";
 
   @override
   void initState() {
@@ -44,10 +45,11 @@ class _LandingPageDataState extends State<LandingPageData> {
   late List<dynamic> _jawaraMudaData = [];
   late List<dynamic> _reversedJawaraMudaData = [];
   void _getToStudentData() {
-    _topStudentsDBStream = _database.child('users').orderByChild('score').onValue.listen((event) {
+    _topStudentsDBStream =
+        _database.child('users').orderByChild('score').onValue.listen((event) {
       if (event.snapshot.value != null) {
         _satriaMudaData = [];
-        _jawaraMudaData= [];
+        _jawaraMudaData = [];
         final data = new Map<String, dynamic>.from(event.snapshot.value);
         setState(() {
           data.forEach((key, value) {
@@ -87,6 +89,7 @@ class _LandingPageDataState extends State<LandingPageData> {
             _curriculum = value['curriculum'];
             _age = value['age'];
             _stripe = value['stripe'];
+            _location = value['location'];
           });
         });
       }
@@ -122,41 +125,6 @@ class _LandingPageDataState extends State<LandingPageData> {
     return _realNumbOfStripes;
   }
 
-  List items = [
-    'Lizbeth-remimeara Solisoriantorisa',
-    'Hazel Joyce',
-    'Frankie Chase',
-    'Remington Phelps',
-    'Frank Lane',
-    'Areli Pacheco',
-    'Rachael Meyers',
-    'Gavyn Gentry',
-    'Holly Dixon',
-    'Alexandria Swanson',
-    'Daisy Petersen',
-    'Katelynn Case',
-    'Cade Mcdowell',
-    'Raphael Barr',
-    'Mareli Evans',
-    'Beckett Reilly',
-    'Trystan Mcmillan',
-    'Tyler Cochran',
-    'Deacon Cobb',
-    'Lorelei Pierce',
-    'Gordon Burgess',
-    'Giovanni Blackwell',
-    'Cade Mcdowell',
-    'Raphael Barr',
-    'Mareli Evans',
-    'Beckett Reilly',
-    'Trystan Mcmillan',
-    'Tyler Cochran',
-    'Deacon Cobb',
-    'Lorelei Pierce',
-    'Gordon Burgess',
-    'Giovanni Blackwell',
-  ];
-
   @override
   void deactivate() {
     _userDBStream.cancel();
@@ -166,7 +134,7 @@ class _LandingPageDataState extends State<LandingPageData> {
 
   @override
   Widget build(BuildContext context) {
-    double spacingBetween = 16;
+    //double spacingBetween = 16;
 
     return Container(
       /* decoration: BoxDecoration(
@@ -186,7 +154,59 @@ class _LandingPageDataState extends State<LandingPageData> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           InternetConnection(),
-          SizedBox(height: 3),
+          Padding(
+            padding: const EdgeInsets.all(0.0),
+            child: _currentUser.emailVerified
+                ? null /*Text('Your email <${_currentUser.email}> is verified',
+                style: TextStyle(color: Colors.green))*/
+                : Row(
+              children: [
+                Flexible(
+                  child: Text(
+                    'Your email "${_currentUser.email}" is not verified',
+                    style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                SizedBox(width:10),
+                _isSendingVerification
+                    ? CircularProgressIndicator()
+                    : Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () async {
+                        setState(() {
+                          _isSendingVerification = true;
+                        });
+                        await _currentUser.sendEmailVerification();
+                        setState(() {
+                          _isSendingVerification = false;
+                        });
+                      },
+                      child: Text('VERIFY EMAIL',
+                          style: TextStyle(fontSize: 15)),
+                    ),
+                    SizedBox(width: 8.0),
+                    IconButton(
+                      icon:
+                      Icon(Icons.refresh, color: Colors.white),
+                      onPressed: () async {
+                        User? user = await FireAuth.refreshUser(
+                            _currentUser);
+
+                        if (user != null) {
+                          setState(() {
+                            _currentUser = user;
+                          });
+                        }
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
@@ -198,54 +218,72 @@ class _LandingPageDataState extends State<LandingPageData> {
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(titleCase(_firstName),
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 26,
-                                      color: Colors.white)),
-                              Text(titleCase(_lastName),
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 26,
-                                      color: Colors.white)),
-                              SizedBox(height: 10),
-                              Text(_belt != "" ? titleCase('$_belt Belt') : "",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 17,
-                                      color: Colors.white)),
-                              Text(
-                                  titleCase(formatCurriculum(_curriculum)) ??
-                                      "",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 17,
-                                      color: Colors.white)),
-                              Text(
-                                  _age != 0
-                                      ? 'Age: ${titleCase(_age.toString())}'
-                                      : "",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 17,
-                                      color: Colors.white)),
-                            ],
-                          ),
-                          SizedBox(width: 20),
-                          TextButton(
-                            onPressed: () => Navigator.push(
-                                context,
-                                new MaterialPageRoute(
-                                    builder: (context) => Avatar())),
-                            child: FluttermojiCircleAvatar(
-                              radius: 70,
+                          Flexible(
+                            flex: 2,
+                            child: Container(
+                              padding: EdgeInsets.symmetric(horizontal: 18.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                      '${titleCase(_firstName)} ${titleCase(_lastName)}',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 26,
+                                          color: Colors.white)),
+                                  SizedBox(height: 10),
+                                  Text(_belt != "" ? titleCase('$_belt Belt') : "",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 17,
+                                          color: Colors.white)),
+                                  Text(
+                                      titleCase(formatCurriculum(_curriculum)) ??
+                                          "",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 17,
+                                          color: Colors.white)),
+                                  Row(
+                                    children: [
+                                      Text(
+                                          _age != 0
+                                              ? 'Age: ${titleCase(_age.toString())}'
+                                              : "",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 17,
+                                              color: Colors.white)),
+                                      SizedBox(width: 30),
+                                      Text("Location: ", style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 17,
+                                          color: Colors.white)),
+                                      Text(_location, style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 17,
+                                          color: Colors.white)),
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
+                          Flexible(
+                            flex: 1,
+                            child: TextButton(
+                              onPressed: () => Navigator.push(
+                                  context,
+                                  new MaterialPageRoute(
+                                      builder: (context) => Avatar())),
+                              child: FluttermojiCircleAvatar(
+                                radius: 70,
+                              ),
+                            ),
+                          )
                         ],
                       ),
                     )),
@@ -258,58 +296,34 @@ class _LandingPageDataState extends State<LandingPageData> {
               ],
             ),
           ),
-          SizedBox(height: spacingBetween),
+          Divider(),
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0),
-            child: _currentUser.emailVerified
-                ? Text('Your email <${_currentUser.email}> \nis verified',
-                    style: TextStyle(color: Colors.green))
-                : Column(
+            padding: const EdgeInsets.all(8.0),
+            child: Card(
+              color: Colors.limeAccent,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ListTile(
+                  leading: Icon(Icons.event, size: 50),
+                  title: Text("John Chung Tournament", style: TextStyle(fontWeight: FontWeight.bold)),
+                  subtitle: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'Your email\n${_currentUser.email}\nis not verified',
-                        style: TextStyle(color: Colors.red),
-                        textAlign: TextAlign.center,
-                      ),
-                      _isSendingVerification
-                          ? CircularProgressIndicator()
-                          : Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                ElevatedButton(
-                                  onPressed: () async {
-                                    setState(() {
-                                      _isSendingVerification = true;
-                                    });
-                                    await _currentUser.sendEmailVerification();
-                                    setState(() {
-                                      _isSendingVerification = false;
-                                    });
-                                  },
-                                  child: Text('VERIFY EMAIL',
-                                      style: TextStyle(fontSize: 15)),
-                                ),
-                                SizedBox(width: 8.0),
-                                IconButton(
-                                  icon:
-                                      Icon(Icons.refresh, color: Colors.white),
-                                  onPressed: () async {
-                                    User? user = await FireAuth.refreshUser(
-                                        _currentUser);
-
-                                    if (user != null) {
-                                      setState(() {
-                                        _currentUser = user;
-                                      });
-                                    }
-                                  },
-                                ),
-                              ],
-                            ),
+                      Text('Date: 12/21/2003'),
+                      Text('Location: 12/21/2003'),
                     ],
                   ),
+                  trailing: Column(
+                    children: [
+                      Text('DAYS LEFT', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 8)),
+                      Text('1', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 35)),
+                    ],
+                  ),
+                ),
+              ),
+            ),
           ),
-          SizedBox(height: spacingBetween),
           Container(
             color: Colors.black87,
             child: Row(
