@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:silat_flutter/login/login_page.dart';
+import 'package:silat_flutter/screens/add_events.dart';
 import 'package:silat_flutter/screens/advancement.dart';
 import 'package:silat_flutter/screens/header.dart';
 import 'package:silat_flutter/screens/scoring_portrait.dart';
@@ -162,6 +163,17 @@ class _LandingPageState extends State<LandingPage> {
                         context,
                         MaterialPageRoute(
                             builder: (context) => UnapprovedUsers()),
+                      );
+                    },
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.event),
+                    title: const Text('Add Event'),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => AddEventsPage()),
                       );
                     },
                   ),
