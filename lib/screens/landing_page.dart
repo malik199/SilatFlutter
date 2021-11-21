@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:silat_flutter/login/login_page.dart';
 import 'package:silat_flutter/screens/add_events.dart';
 import 'package:silat_flutter/screens/advancement.dart';
+import 'package:silat_flutter/screens/events.dart';
 import 'package:silat_flutter/screens/header.dart';
 import 'package:silat_flutter/screens/scoring_portrait.dart';
 import 'package:silat_flutter/screens/rules_creed.dart';
@@ -92,10 +93,7 @@ class _LandingPageState extends State<LandingPage> {
       TechniquesHome(),
       RulesCreed(),
       ScoringPortrait(),
-      Icon(
-        Icons.event,
-        size: 150,
-      ),
+      Events(),
       Text("logging out..."),
     ];
 

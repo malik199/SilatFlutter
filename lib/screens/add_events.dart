@@ -28,39 +28,70 @@ class _AddEventsPageState extends State<AddEventsPage> {
   double _spacing = 16.0;
   bool _isProcessing = false;
 
-  DateTime selectedDate = DateTime.parse("2019-08-09T06:55:01.8968264+00:00");
+  late DateTime _selectedDate;
   String eventDate = "";
 
   void _selectEventDate(BuildContext context) async {
     final DateTime? selected = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
-      firstDate: DateTime(2020),
+      firstDate: DateTime.now(),
       lastDate: DateTime(2040),
     );
-    if (selected != null && selected != selectedDate)
+    if (selected != null && selected != _selectedDate)
       setState(() {
-        selectedDate = selected;
+        _selectedDate = selected;
       });
   }
 
-  DateTime selectedDeadline =
-      DateTime.parse("2019-08-09T06:55:01.8968264+00:00");
+  final String _initDate = "2019-08-09T06:55:01.8968264+00:00";
+  late DateTime _selectedDeadline;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedDeadline = DateTime.parse(_initDate);
+    _selectedDate = DateTime.parse(_initDate);
+  }
+
+
   String eventDeadline = "";
 
+  bool _validateDate() {
+    return _selectedDate == DateTime.parse(_initDate)
+        ? true
+        : false;
+  }
+
   void _selectDeadline(BuildContext context) async {
-    print(selectedDeadline);
+    print(_selectedDeadline);
     final DateTime? selected = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
-      firstDate: DateTime(2021),
+      firstDate: DateTime.now(),
       lastDate: DateTime(2040),
     );
-    if (selected != null && selected != selectedDeadline)
+    if (selected != null && selected != _selectedDeadline)
       setState(() {
-        selectedDeadline = selected;
+        _selectedDeadline = selected;
       });
   }
+
+  bool _validateDeadline() {
+    return _selectedDeadline ==
+            DateTime.parse(_initDate)
+        ? true
+        : false;
+  }
+
+  final snackBarRed = SnackBar(
+    content: Text('A problem occurred.'),
+    backgroundColor: Colors.red,
+  );
+  final snackBarGreen = SnackBar(
+    content: Text('Success! You added an event!'),
+    backgroundColor: Colors.green,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -122,9 +153,9 @@ class _AddEventsPageState extends State<AddEventsPage> {
                     TextFormField(
                       controller: _urlTextController,
                       focusNode: _focusUrl,
-                      validator: (value) => Validator.validateUrl(
+                     /* validator: (value) => Validator.validateUrl(
                         url: value,
-                      ),
+                      ),*/
                       decoration: InputDecoration(
                         hintText: "Link",
                         errorBorder: UnderlineInputBorder(
@@ -139,7 +170,6 @@ class _AddEventsPageState extends State<AddEventsPage> {
                     TextFormField(
                       controller: _descriptionTextController,
                       focusNode: _focusDescription,
-                      obscureText: true,
                       validator: (value) => Validator.validateDescription(
                         description: value,
                       ),
@@ -174,21 +204,19 @@ class _AddEventsPageState extends State<AddEventsPage> {
                           ),
                         ),
                         SizedBox(width: 15),
-                        selectedDate ==
-                            DateTime.parse(
-                                "2019-08-09T06:55:01.8968264+00:00")
+                        _validateDate()
                             ? Text(
-                          "Please choose a date",
-                          style: TextStyle(color: Colors.red),
-                        )
+                                "Please choose a date",
+                                style: TextStyle(color: Colors.red),
+                              )
                             : Text(
-                          DateFormat('MMMM dd, yyyy')
-                              .format(selectedDate),
-                          style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.purple),
-                        ),
+                                DateFormat('MMMM dd, yyyy')
+                                    .format(_selectedDate),
+                                style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.purple),
+                              ),
                       ],
                     ),
                     SizedBox(height: 10),
@@ -212,16 +240,14 @@ class _AddEventsPageState extends State<AddEventsPage> {
                           ),
                         ),
                         SizedBox(width: 15),
-                        selectedDeadline ==
-                                DateTime.parse(
-                                    "2019-08-09T06:55:01.8968264+00:00")
+                        _validateDeadline()
                             ? Text(
                                 "Please choose a date",
                                 style: TextStyle(color: Colors.red),
                               )
                             : Text(
                                 DateFormat('MMMM dd, yyyy')
-                                    .format(selectedDeadline),
+                                    .format(_selectedDeadline),
                                 style: TextStyle(
                                     fontSize: 20,
                                     fontWeight: FontWeight.bold,
@@ -237,7 +263,53 @@ class _AddEventsPageState extends State<AddEventsPage> {
                               Expanded(
                                   child: ElevatedButton(
                                       onPressed: () {
+                                        setState(() {
+                                          _isProcessing = true;
+                                        });
+                                        final nextEvent = <String, dynamic>{
+                                          'name': _eventNameTextController.text,
+                                          'location':
+                                              _locationTextController.text,
+                                          'url': _urlTextController.text,
+                                          'desc': _descriptionTextController.text,
+                                          'date': _selectedDate.toString(),
+                                          'deadline': _selectedDeadline.toString()
+                                        };
+                                        if (_registerFormKey.currentState!
+                                                .validate() &&
+                                            !_validateDate() &&
+                                            !_validateDeadline()) {
+                                          _database
+                                              .child('events')
+                                              .push()
+                                              .set(nextEvent)
+                                              .then((value) {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(snackBarGreen);
+                                            
+                                            //Clear out data
+                                             setState(() {
+                                              _eventNameTextController.text = "";
+                                              _locationTextController.text = "";
+                                              _urlTextController.text = "";
+                                              _descriptionTextController.text  = "";
+                                               _selectedDate = DateTime.parse(_initDate);
+                                               _selectedDeadline = DateTime.parse(_initDate);
+                                            });
 
+                                          }).catchError((error) {
+                                            print(error);
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(snackBarRed);
+                                          });
+                                        } else {
+                                          setState(() {
+                                            _isProcessing = false;
+                                          });
+                                        }
+                                        setState(() {
+                                          _isProcessing = false;
+                                        });
                                       },
                                       child: Text("ADD EVENT",
                                           style: TextStyle(
@@ -274,28 +346,28 @@ class Validator {
     }
 
     if (location.isEmpty) {
-      return 'Last name can\'t be empty';
+      return 'Locataion can\'t be empty';
     }
 
     return null;
   }
-
-  static String? validateUrl({required String? url}) {
+/*
+  static String? validateUrl({ required String? url}) {
     if (url == null) {
       return null;
     }
 
     RegExp urlRegExp = RegExp(
-        r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$");
+        "((http|https)://)(www.)?[a-zA-Z0-9@:%._\\+~#?&//=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%._\\+~#?&//=]*)");
 
     if (url.isEmpty) {
-      return 'Url can\'t be empty';
+      return "";
     } else if (!urlRegExp.hasMatch(url)) {
       return 'Enter a correct url';
     }
 
     return null;
-  }
+  }*/
 
   static String? validateDescription({required String? description}) {
     if (description == null) {

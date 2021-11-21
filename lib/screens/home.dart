@@ -8,6 +8,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:fluttermoji/fluttermoji.dart';
 import 'package:quartet/quartet.dart';
 import 'package:silat_flutter/admin/avatar.dart';
+import 'package:intl/intl.dart';
 //import 'package:firebase_database/ui/firebase_animated_list.dart';
 
 class LandingPageData extends StatefulWidget {
@@ -23,6 +24,7 @@ class _LandingPageDataState extends State<LandingPageData> {
   final _database = FirebaseDatabase.instance.reference();
   late StreamSubscription _userDBStream;
   late StreamSubscription _topStudentsDBStream;
+  late StreamSubscription _eventsDBStream;
   var myUser;
   String _firstName = "";
   String _lastName = "";
@@ -38,6 +40,7 @@ class _LandingPageDataState extends State<LandingPageData> {
     _currentUser = widget.userPassed;
     _getUserData();
     _getToStudentData();
+    _getEventsData();
   }
 
   late List<dynamic> _satriaMudaData = [];
@@ -96,6 +99,43 @@ class _LandingPageDataState extends State<LandingPageData> {
     });
   }
 
+  String _eventName = "";
+  String _eventLocation = "";
+  //String _eventUrl = "";
+  //String _eventDescription = "";
+  String _eventDate = "2019-08-09T06:55:01.8968264+00:00";
+  //String _eventDeadline = "";
+  int _difference = 0;
+  void _getEventsData() {
+    _eventsDBStream = _database
+        .child('events')
+        .orderByChild('date')
+        .limitToFirst(1)
+        .onValue
+        .listen((event) {
+      if (event.snapshot.value != null) {
+        final data = new Map<String?, dynamic>.from(event.snapshot.value);
+
+        setState(() {
+          data.forEach((key, value) {
+            _eventName = value['name'];
+            _eventLocation = value['location'];
+            //_eventUrl = value['url'];
+            //_eventDescription = value['curriculum'];
+            _eventDate = value['date'];
+            //_eventDeadline = value['stripe'];
+
+            final eventDate = DateTime.parse(value['date']);
+            final date2 = DateTime.now();
+            _difference = -(date2.difference(eventDate).inDays);
+
+          });
+        });
+      }
+    });
+  }
+
+
   String formatCurriculum(curriculum) {
     return titleCase(curriculum.toString().replaceAll('_', ' '));
   }
@@ -129,6 +169,7 @@ class _LandingPageDataState extends State<LandingPageData> {
   void deactivate() {
     _userDBStream.cancel();
     _topStudentsDBStream.cancel();
+    _eventsDBStream.cancel();
     super.deactivate();
   }
 
@@ -305,19 +346,36 @@ class _LandingPageDataState extends State<LandingPageData> {
                 padding: const EdgeInsets.all(8.0),
                 child: ListTile(
                   leading: Icon(Icons.event, size: 50),
-                  title: Text("John Chung Tournament", style: TextStyle(fontWeight: FontWeight.bold)),
+                  title: Text(_eventName, style: TextStyle(fontWeight: FontWeight.bold)),
                   subtitle: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Date: 12/21/2003'),
-                      Text('Location: 12/21/2003'),
+                      SizedBox(height: 10),
+                      Row(
+                        children: [
+                          Text('Event Date: ',
+                              style:
+                              TextStyle(fontWeight: FontWeight.bold)),
+                          Text((DateFormat('MMM dd, yyyy').format(
+                              DateTime.parse(_eventDate)))
+                              .toString()),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Text('Location: ',
+                              style:
+                              TextStyle(fontWeight: FontWeight.bold)),
+                          Text(_eventLocation),
+                        ],
+                      ),
                     ],
                   ),
                   trailing: Column(
                     children: [
                       Text('DAYS LEFT', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 8)),
-                      Text('1', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 35)),
+                      Text(_difference.toString(), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 35)),
                     ],
                   ),
                 ),

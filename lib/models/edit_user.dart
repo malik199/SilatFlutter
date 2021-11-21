@@ -71,7 +71,7 @@ class _EditUserWidgetState extends State<EditUserWidget> {
   }
 
   final snackBarRed = SnackBar(
-    content: Text('A problem occured.'),
+    content: Text('A problem occurred.'),
     backgroundColor: Colors.red,
   );
   final snackBarGreen = SnackBar(

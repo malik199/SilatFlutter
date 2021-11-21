@@ -7,7 +7,7 @@ class IsAdmin {
 
   Future<bool> trueOrFalse() {
     var _myList;
-    var _currentCurriculum = "lkhkljklj";
+    var _currentCurriculum = "nothing";
     return _database
         .child('users')
         .orderByChild('email')
