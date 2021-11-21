@@ -3,23 +3,21 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:silat_flutter/models/belts_complex.dart';
 import 'package:silat_flutter/utils/connectivity.dart';
-import 'package:silat_flutter/utils/fire_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:fluttermoji/fluttermoji.dart';
 import 'package:quartet/quartet.dart';
 import 'package:silat_flutter/admin/avatar.dart';
 import 'package:intl/intl.dart';
-//import 'package:firebase_database/ui/firebase_animated_list.dart';
 
-class LandingPageData extends StatefulWidget {
+class HomePage extends StatefulWidget {
   final User userPassed;
-  const LandingPageData({required this.userPassed});
+  const HomePage({required this.userPassed});
 
   @override
-  _LandingPageDataState createState() => _LandingPageDataState();
+  _HomePageState createState() => _HomePageState();
 }
 
-class _LandingPageDataState extends State<LandingPageData> {
+class _HomePageState extends State<HomePage> {
   late User _currentUser;
   final _database = FirebaseDatabase.instance.reference();
   late StreamSubscription _userDBStream;
@@ -141,8 +139,6 @@ class _LandingPageDataState extends State<LandingPageData> {
   }
 
   Color _containerColor = Colors.yellow;
-  bool _isSendingVerification = false;
-  //bool _isSigningOut = false;
 
   void changeColor() {
     setState(() {
@@ -195,59 +191,6 @@ class _LandingPageDataState extends State<LandingPageData> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           InternetConnection(),
-          Padding(
-            padding: const EdgeInsets.all(0.0),
-            child: _currentUser.emailVerified
-                ? null /*Text('Your email <${_currentUser.email}> is verified',
-                style: TextStyle(color: Colors.green))*/
-                : Row(
-              children: [
-                Flexible(
-                  child: Text(
-                    'Your email "${_currentUser.email}" is not verified',
-                    style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-                SizedBox(width:10),
-                _isSendingVerification
-                    ? CircularProgressIndicator()
-                    : Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ElevatedButton(
-                      onPressed: () async {
-                        setState(() {
-                          _isSendingVerification = true;
-                        });
-                        await _currentUser.sendEmailVerification();
-                        setState(() {
-                          _isSendingVerification = false;
-                        });
-                      },
-                      child: Text('VERIFY EMAIL',
-                          style: TextStyle(fontSize: 15)),
-                    ),
-                    SizedBox(width: 8.0),
-                    IconButton(
-                      icon:
-                      Icon(Icons.refresh, color: Colors.white),
-                      onPressed: () async {
-                        User? user = await FireAuth.refreshUser(
-                            _currentUser);
-
-                        if (user != null) {
-                          setState(() {
-                            _currentUser = user;
-                          });
-                        }
-                      },
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(

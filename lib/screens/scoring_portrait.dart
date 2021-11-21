@@ -25,7 +25,6 @@ class _ScoringPageState extends State<ScoringPortrait> {
     super.initState();
   }
 
-
   IconData getTimerIcon(String pause) {
     if (pause == "pause") {
       return Icons.pause;
@@ -191,6 +190,15 @@ class _ScoringPageState extends State<ScoringPortrait> {
   }
 
   @override
+  void deactivate() {
+    if(_timer != null){
+      _timer.cancel();
+    }
+    super.deactivate();
+  }
+
+
+  @override
   Widget build(BuildContext context) {
     const double _largeFont = 70;
     const double _smallFont = 22;
@@ -342,13 +350,36 @@ class _ScoringPageState extends State<ScoringPortrait> {
                                 ),
                                 SizedBox(height: _spacing),
                                 Expanded(
-                                  child: ElevatedButton(
-                                    style: redStyle,
-                                    onPressed: () => redButtonClicked(3),
-                                    child: FittedBox(
-                                      child: const Text('3'),
-                                    ),
-                                  ),
+                                  flex: 1,
+                                  child: Row(
+                                      //ROW 2
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.stretch,
+                                      children: [
+                                        Expanded(
+                                          child: ElevatedButton(
+                                            style: redStyle,
+                                            onPressed: () =>
+                                                redButtonClicked(3),
+                                            child: FittedBox(
+                                              child: const Text('3'),
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(width: _spacing),
+                                        Expanded(
+                                          child: ElevatedButton(
+                                            style: redStyle,
+                                            onPressed: () =>
+                                                redButtonClicked(4),
+                                            child: FittedBox(
+                                              child: const Text('1+3'),
+                                            ),
+                                          ),
+                                        ),
+                                      ]),
                                 ),
                               ]),
                         ),
@@ -474,13 +505,32 @@ class _ScoringPageState extends State<ScoringPortrait> {
                               ),
                               SizedBox(height: _spacing),
                               Expanded(
-                                child: ElevatedButton(
-                                  style: blueStyle,
-                                  onPressed: () => blueButtonClicked(3),
-                                  child: FittedBox(
-                                    child: const Text('3'),
-                                  ),
-                                ),
+                                flex: 1,
+                                child: Row(
+                                    //ROW 2
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.stretch,
+                                    children: [
+                                      Expanded(
+                                        child: ElevatedButton(
+                                          style: blueStyle,
+                                          onPressed: () => blueButtonClicked(3),
+                                          child:
+                                              const FittedBox(child: Text('3')),
+                                        ),
+                                      ),
+                                      SizedBox(width: _spacing),
+                                      Expanded(
+                                        child: ElevatedButton(
+                                          style: blueStyle,
+                                          onPressed: () => blueButtonClicked(4),
+                                          child: FittedBox(
+                                              child: const Text('1+3')),
+                                        ),
+                                      ),
+                                    ]),
                               ),
                             ]),
                       ),
@@ -529,17 +579,16 @@ class _ScoringPageState extends State<ScoringPortrait> {
                     context: context,
                     builder: (BuildContext context) => AlertDialog(
                       title: const Text('Reset Match?'),
-                      content: const Text('Are you sure you want to reset match and erase all the scores?'),
+                      content: const Text(
+                          'Are you sure you want to reset match and erase all the scores?'),
                       actions: <Widget>[
                         TextButton(
                           onPressed: () => Navigator.pop(context, 'Cancel'),
                           child: const Text('Cancel'),
                         ),
                         TextButton(
-                          onPressed: () => {
-                            Navigator.pop(context, 'OK'),
-                            resetGame()
-                          },
+                          onPressed: () =>
+                              {Navigator.pop(context, 'OK'), resetGame()},
                           child: const Text('OK'),
                         ),
                       ],

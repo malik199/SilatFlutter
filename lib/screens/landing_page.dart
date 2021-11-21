@@ -13,6 +13,7 @@ import 'package:silat_flutter/admin/profile.dart';
 import 'package:silat_flutter/admin/approved_users.dart';
 import 'package:silat_flutter/admin/unapproved_users.dart';
 import 'package:silat_flutter/models/isAdmin.dart';
+import 'package:silat_flutter/utils/fire_auth.dart';
 
 class LandingPage extends StatefulWidget {
   final User user;
@@ -27,7 +28,7 @@ class LandingPage extends StatefulWidget {
 
 class _LandingPageState extends State<LandingPage> {
   int _selectedIndex = 0;
-
+  bool _isSendingVerification = false;
   late User _currentUser;
   bool _isAdmin = false;
   @override
@@ -86,23 +87,78 @@ class _LandingPageState extends State<LandingPage> {
     });
   }
 
+  Widget pleaseVerifyWidget() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          'Your email:',
+          style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 20),
+        ),
+        Text("${_currentUser.email}", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.black45)),
+        Text(
+          'is not verified',
+          style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 20),
+        ),
+        SizedBox(height: 20),
+        Text(
+          "Please click on the link below to verify email.\nThen check your email account for a verification link",
+          style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 10),
+          textAlign: TextAlign.center,
+
+        ),
+        SizedBox(height: 10),
+        _isSendingVerification
+            ? CircularProgressIndicator()
+            : Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: () async {
+                setState(() {
+                  _isSendingVerification = true;
+                });
+                await _currentUser.sendEmailVerification();
+                setState(() {
+                  _isSendingVerification = false;
+                });
+              },
+              child: Text('VERIFY EMAIL',
+                  style: TextStyle(fontSize: 15)),
+            ),
+            IconButton(
+              icon:
+              Icon(Icons.refresh, color: Colors.blue),
+              onPressed: () async {
+                User? user = await FireAuth.refreshUser(
+                    _currentUser);
+
+                if (user != null) {
+                  setState(() {
+                    _currentUser = user;
+                  });
+                }
+              },
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     List<Widget> _pages = <Widget>[
-      LandingPageData(userPassed: _currentUser),
+      HomePage(userPassed: _currentUser),
       TechniquesHome(),
       RulesCreed(),
       ScoringPortrait(),
       Events(),
       Text("logging out..."),
     ];
-
     return Scaffold(
       drawer: Drawer(
-        // Add a ListView to the drawer. This ensures the user can scroll
-        // through the options in the drawer if there isn't enough vertical
-        // space to fit everything.
-        child: ListView(
+        child: _currentUser.emailVerified ? ListView(
           // Important: Remove any padding from the ListView.
           padding: EdgeInsets.zero,
           children: [
@@ -178,14 +234,14 @@ class _LandingPageState extends State<LandingPage> {
                 ],
               ),
           ],
-        ),
+        ) : null,
       ),
       appBar: AppBar(
         backgroundColor: Colors.teal,
         title: Header(headerText: "Silat Institute App"),
       ),
       body: Center(
-        child: _pages.elementAt(_selectedIndex),
+        child: _currentUser.emailVerified ? _pages.elementAt(_selectedIndex) : pleaseVerifyWidget(),
       ),
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: Colors.teal,
