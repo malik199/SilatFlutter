@@ -8,6 +8,7 @@ import 'package:fluttermoji/fluttermoji.dart';
 import 'package:quartet/quartet.dart';
 import 'package:silat_flutter/admin/avatar.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter/services.dart' ;
 
 class HomePage extends StatefulWidget {
   final User userPassed;
@@ -24,6 +25,7 @@ class _HomePageState extends State<HomePage> {
   late StreamSubscription _topStudentsDBStream;
   late StreamSubscription _eventsDBStream;
   var myUser;
+
   String _firstName = "";
   String _lastName = "";
   String _belt = "white";
@@ -173,6 +175,10 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     //double spacingBetween = 16;
 
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
+
     return Container(
       /* decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -280,7 +286,6 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
           ),
-          Divider(),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Card(
@@ -382,12 +387,13 @@ class _HomePageState extends State<HomePage> {
                               children: [
                                 Flexible(
                                   child: Text(
-                                    '${titleCase(_reversedJawaraMudaData[index]['firstname'])} ${titleCase(_reversedJawaraMudaData[index]['lastname'])} (MD)',
+                                    '${titleCase(_reversedJawaraMudaData[index]['firstname'])} ${titleCase(_reversedJawaraMudaData[index]['lastname'])}- ${capitalize(_reversedJawaraMudaData[index]['location'])}',
                                     overflow: TextOverflow.fade,
                                     style: TextStyle(
                                         fontSize: 15, color: Colors.blue),
                                   ),
                                 ),
+                                SizedBox(width: 10),
                                 Text(
                                     (_reversedJawaraMudaData[index]['score'] ??
                                             "0")
@@ -418,7 +424,7 @@ class _HomePageState extends State<HomePage> {
                               children: [
                                 Flexible(
                                   child: Text(
-                                    '${titleCase(_reversedSatriaMudaData[index]['firstname'])} ${titleCase(_reversedSatriaMudaData[index]['lastname'])} (MD)',
+                                    '${titleCase(_reversedSatriaMudaData[index]['firstname'])} ${titleCase(_reversedSatriaMudaData[index]['lastname'])}- ${capitalize(_reversedSatriaMudaData[index]['location'])}',
                                     overflow: TextOverflow.fade,
                                     style: TextStyle(
                                         fontSize: 15, color: Colors.blue),

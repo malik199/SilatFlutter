@@ -22,7 +22,7 @@ class _VideoPlayerState extends State<VideoPlayer> {
         backgroundColor: Colors.teal,
         title: Text(widget.dbItem['technique']),
       ),
-      body: Center(
+      body: SingleChildScrollView(
         child: Column(
           children: [
             Container(

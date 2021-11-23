@@ -24,6 +24,7 @@ class _ProfileState extends State<Profile> {
   late int? _score = 0;
   late int? _tournaments = 0;
   late int? _stripe = 0;
+  late String? _email = "";
 
   List _listOfStripes = [0, 1, 2, 3, 4];
 
@@ -61,7 +62,7 @@ class _ProfileState extends State<Profile> {
       setState(() {
         _firstName = myData['firstname'];
         _lastName = myData['lastname'];
-
+        _email = myData['email'];
         _1stplace = myData['1stplace'];
         _2ndplace = myData['2ndplace'];
         _classMerits = myData['classMerits'];
@@ -119,6 +120,16 @@ class _ProfileState extends State<Profile> {
                 SizedBox(height: 8),
                 InternetConnection(),
                 SizedBox(height: 8),
+                Center(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.email, color: Colors.teal),
+                      SizedBox(width:10),
+                      Text('$_email', style: TextStyle(color: Colors.teal, fontWeight: FontWeight.bold)),
+                    ],
+                  ),
+                ),
                 TextFormField(
                   decoration: InputDecoration(labelText: 'First Name'),
                   controller: firstNameController,

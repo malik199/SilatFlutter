@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -16,6 +17,7 @@ class _TechniquesHomeState extends State<TechniquesHome> {
   final _database = FirebaseDatabase.instance.reference();
   //final Future<FirebaseApp> _future = Firebase.initializeApp();
   User? _user = FirebaseAuth.instance.currentUser;
+  late StreamSubscription _beltsDBStream;
 
   @override
   void initState() {
@@ -32,27 +34,42 @@ class _TechniquesHomeState extends State<TechniquesHome> {
   String _belt = "";
 
   void getYourTechniques() {
-    _database
+    _beltsDBStream = _database
         .child('users')
         .orderByChild('email')
         .equalTo((_user?.email)?.toLowerCase())
         .limitToFirst(1)
-        .once()
-        .then((DataSnapshot snapshot) {
-      if (snapshot.value != null) {
-        final data = new Map<String?, dynamic>.from(snapshot.value);
+        .onValue
+        .listen((event) {
+      if (event.snapshot.value != null) {
+        final data = new Map<String?, dynamic>.from(event.snapshot.value);
         setState(() {
           data.forEach((key, value) {
             _currentCurriculum = value['curriculum'];
             _verified = value['isApproved'];
             _currentBelt = value['belt'];
-            _unchangingCurriculum = value['curriculum'];
+            _unchangingCurriculum =
+                getUnchangingCurriculum(value['curriculum']);
             _firstName = value['firstname'];
             _belt = value['belt'];
           });
         });
       }
     });
+  }
+
+  String getUnchangingCurriculum(_unchangingCurr) {
+    String computedCurr = _unchangingCurr;
+    if (_unchangingCurr == 'guest') {
+      computedCurr = 'jawara_muda';
+    }
+    return computedCurr;
+  }
+
+  @override
+  void deactivate() {
+    _beltsDBStream.cancel();
+    super.deactivate();
   }
 
   @override
@@ -112,54 +129,64 @@ class _TechniquesHomeState extends State<TechniquesHome> {
               .toList());
     }
 
-    Widget allTechniqueWidget = Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-              colors: [
-                const Color(0xff000000),
-                const Color(0xff0c3e40),
-              ],
-              begin: const FractionalOffset(0.0, 0.0),
-              end: const FractionalOffset(0.0, 1.0),
-              stops: [0.0, 1.0],
-              tileMode: TileMode.clamp),
-        ),
-        width: double.infinity,
-        //color: Color(0xff02252c),
-        child: Column(children: [
-          InternetConnection(),
-          Padding(
-            padding: const EdgeInsets.all(_spacing),
-            child: Text(
-              _firstName != ""
-                  ? ("$_firstName's techniques").toUpperCase()
-                  : "",
-              style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 25,
-                  color: Colors.white),
+    Widget allTechniqueWidget = SingleChildScrollView(
+        child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                  colors: [
+                    Colors.black38,
+                    const Color(0xfffffff),
+                  ],
+                  begin: const FractionalOffset(0.0, 0.0),
+                  end: const FractionalOffset(0.0, 1.0),
+                  stops: [0.0, 1.0],
+                  tileMode: TileMode.clamp),
             ),
-          ),
-          produceBelts(allYourBelts()),
-          SizedBox(height: _spacing),
-          showSwitchCurriculumButton(),
-        ]));
+            width: double.infinity,
+            //color: Color(0xff02252c),
+            child: Column(children: [
+              InternetConnection(),
+              Padding(
+                padding: const EdgeInsets.all(_spacing),
+                child: Text(
+                  _firstName != ""
+                      ? ("$_firstName's techniques").toUpperCase()
+                      : "",
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 25,
+                      color: Colors.white),
+                ),
+              ),
+              produceBelts(allYourBelts()),
+              SizedBox(height: _spacing),
+              showSwitchCurriculumButton(),
+            ])));
 
     return _verified
         ? allTechniqueWidget
-        : Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.warning,
-                color: Colors.orangeAccent,
-                size: 50,
+        : Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Row(
+                children: [
+                  SizedBox(width: 20),
+                  Icon(
+                    Icons.warning,
+                    color: Colors.orangeAccent,
+                    size: 50,
+                  ),
+                  SizedBox(width: 10),
+                  Flexible(
+                    child: Text(
+                        "You need to be approved before you can view techniques. Please contact your instructor\n or email: info@silatva.com",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, color: Colors.red)),
+                  ),
+                ],
               ),
-              SizedBox(width: 10),
-              Text(
-                  "You need to be _verified before you view. \nPlease contact your instructor\n or email: info@silatva.com",
-                  style: TextStyle(fontWeight: FontWeight.bold)),
-            ],
-          );
+          ],
+        );
   }
 }

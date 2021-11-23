@@ -2,23 +2,23 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
+import '../models/pull_color_model.dart';
 import 'package:quartet/quartet.dart';
 import '../models/edit_user.dart';
 
-class UnapprovedUsers extends StatefulWidget {
-  const UnapprovedUsers({Key? key}) : super(key: key);
+class Guests extends StatefulWidget {
+  const Guests({Key? key}) : super(key: key);
 
   @override
-  _UnapprovedUsersState createState() => _UnapprovedUsersState();
+  _GuestsState createState() => _GuestsState();
 }
 
-class _UnapprovedUsersState extends State<UnapprovedUsers> {
+class _GuestsState extends State<Guests> {
   double spacingWidth = 10;
   double spacingHeight = 10;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 
@@ -32,12 +32,16 @@ class _UnapprovedUsersState extends State<UnapprovedUsers> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Card(
-          color: Colors.orangeAccent,
+          color: Colors.lightGreenAccent,
           child: ExpansionTile(
             backgroundColor: Colors.grey[100],
             title: ListTile(
-              leading:  Icon(Icons.no_accounts,
-                      size: 50.0, color: Colors.red),
+              leading: (dbItem?['curriculum'] == 'jawara_muda'
+                  ? Icon(Icons.person,
+                  size: 50.0, color: PullColor().getColor(dbItem?['belt']))
+                  : Icon(Icons.perm_identity,
+                  size: 50.0,
+                  color: PullColor().getColor(dbItem?['belt']))),
               title: Text(
                 titleCase(dbItem?['firstname'] + " " + dbItem?['lastname']),
                 style: TextStyle(fontWeight: FontWeight.bold),
@@ -45,10 +49,9 @@ class _UnapprovedUsersState extends State<UnapprovedUsers> {
               subtitle: Text(formatCurriculum(dbItem?['curriculum'])),
             ),
             children: [
-                EditUserWidget(dbItem: dbItem, dbkey: dbkey)
+              EditUserWidget(dbItem: dbItem, dbkey: dbkey)
             ],
           ),
-
         )
       ],
     );
@@ -58,8 +61,7 @@ class _UnapprovedUsersState extends State<UnapprovedUsers> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.orange,
-        title: Text('Unapproved Users'),
+        title: Text('Guests'),
       ),
       body: SafeArea(
         child: FirebaseAnimatedList(
@@ -67,12 +69,12 @@ class _UnapprovedUsersState extends State<UnapprovedUsers> {
               .reference()
               .child('users')
               .orderByChild('isApproved')
-              .equalTo(false),
+              .equalTo(true),
           itemBuilder: (BuildContext context, DataSnapshot snapshot,
               Animation<double> animation, int index) {
             Map dbItemValue = snapshot.value;
             dbItemValue['key'] = snapshot.key;
-            return _buildUsers(dbItem: dbItemValue, myIndex: index, dbkey: snapshot.key);
+            return (dbItemValue['curriculum'] == "guest" ? _buildUsers(dbItem: dbItemValue, myIndex: index, dbkey: snapshot.key) : SizedBox.shrink());
           },
         ),
       ),

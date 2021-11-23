@@ -53,4 +53,16 @@ class Validator {
 
     return null;
   }
+
+  static String? validateConfirmPassword({required String? firstPassword, required String? secondPassword}) {
+    if (secondPassword == null) {
+      return null;
+    }
+
+    if (firstPassword != secondPassword) {
+      return 'Passwords must match';
+    }
+
+    return null;
+  }
 }

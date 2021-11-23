@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:quartet/quartet.dart';
 
 class EditUserWidget extends StatefulWidget {
   const EditUserWidget({
@@ -49,10 +50,7 @@ class _EditUserWidgetState extends State<EditUserWidget> {
   }
 
   void _getSchoolData() {
-    _database
-        .child('locations')
-        .once()
-        .then((snapshot) {
+    _database.child('locations').once().then((snapshot) {
       final data = new Map<String, dynamic>.from(snapshot.value);
       _listOfLocations.add("");
       setState(() {
@@ -64,10 +62,52 @@ class _EditUserWidgetState extends State<EditUserWidget> {
     });
   }
 
-  void calculateScore(){
+  void calculateScore() {
     setState(() {
-      _finalScore = (_firstPlaceWins * 10 ) + (_secondPlaceWins * 8) + (_tournaments * 6) + (_classMerits) + (_goodDeeds);
+      _finalScore = (_firstPlaceWins * 10) +
+          (_secondPlaceWins * 8) +
+          (_tournaments * 6) +
+          (_classMerits) +
+          (_goodDeeds);
     });
+  }
+
+  void deleteItem(dbKey) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return AlertDialog(
+          title: new Text("You are about to delete user '${capitalize(widget.dbItem['firstname'])} ${capitalize(widget.dbItem['lastname'])}'"),
+          content: new Text("Are you sure you want delete this user? Email: ${widget.dbItem['email']}"),
+          actions: <Widget>[
+            // usually buttons at the bottom of the dialog
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context, true);
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                FirebaseDatabase.instance
+                    .reference()
+                    .child('users')
+                    .child(dbKey)
+                    .remove()
+                    .whenComplete(() {
+                  print("User Deleted!");
+                  Navigator.pop(context, true);
+                }).catchError((error) {
+                  print("Problem Deleting Item: ${error}");
+                });
+              },
+              child: const Text('Delete'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   final snackBarRed = SnackBar(
@@ -193,7 +233,8 @@ class _EditUserWidgetState extends State<EditUserWidget> {
                     _location = newValue!;
                   });
                 },
-                items: _listOfLocations.map<DropdownMenuItem<String>>((String value) {
+                items: _listOfLocations
+                    .map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
                     child: Text(value),
@@ -383,44 +424,66 @@ class _EditUserWidgetState extends State<EditUserWidget> {
               }).toList(),
             ),
             SizedBox(width: 50),
-            Text(_finalScore.toString(), style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold, color: Colors.deepPurpleAccent))
+            Text(_finalScore.toString(),
+                style: TextStyle(
+                    fontSize: 40,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.deepPurpleAccent))
           ]),
           Divider(
             thickness: 2,
           ),
           SizedBox(height: 20),
-          ElevatedButton.icon(
-              style: ElevatedButton.styleFrom(
-                  shape: new RoundedRectangleBorder(
-                    borderRadius: new BorderRadius.circular(12.0),
-                  ),
-                  primary: Colors.purple,
-                  padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
-                  textStyle:
-                      TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-              icon: Icon(Icons.save),
-              label: Text("Update Profile"),
-              onPressed: () {
-                _database
-                    .child('/users')
-                    .child(widget.dbkey)
-                    .update({
-                      'belt': _beltColor,
-                      'curriculum': _curriculum,
-                      'isApproved': _isApprov,
-                      'tournaments': _tournaments,
-                      '1stplace': _firstPlaceWins,
-                      '2ndplace': _secondPlaceWins,
-                      'classMerits': _classMerits,
-                      'deeds': _goodDeeds,
-                      'score': _finalScore,
-                      'location': _location
-                    })
-                    .then((value) => ScaffoldMessenger.of(context)
-                        .showSnackBar(snackBarGreen))
-                    .catchError((error) => ScaffoldMessenger.of(context)
-                        .showSnackBar(snackBarRed));
-              }),
+          Row(
+            children: [
+              Expanded(
+                flex: 3,
+                child: ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                        shape: new RoundedRectangleBorder(
+                          borderRadius: new BorderRadius.circular(12.0),
+                        ),
+                        primary: Colors.purple,
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 50, vertical: 20),
+                        textStyle: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold)),
+                    icon: Icon(Icons.save),
+                    label: Text("Update Profile"),
+                    onPressed: () {
+                      _database
+                          .child('/users')
+                          .child(widget.dbkey)
+                          .update({
+                            'belt': _beltColor,
+                            'curriculum': _curriculum,
+                            'isApproved': _isApprov,
+                            'tournaments': _tournaments,
+                            '1stplace': _firstPlaceWins,
+                            '2ndplace': _secondPlaceWins,
+                            'classMerits': _classMerits,
+                            'deeds': _goodDeeds,
+                            'score': _finalScore,
+                            'location': _location
+                          })
+                          .then((value) => ScaffoldMessenger.of(context)
+                              .showSnackBar(snackBarGreen))
+                          .catchError((error) => ScaffoldMessenger.of(context)
+                              .showSnackBar(snackBarRed));
+                    }),
+              ),
+              Expanded(
+                flex: 1,
+                child: TextButton.icon(
+                  onPressed: () {
+                    deleteItem(widget.dbkey);
+                  },
+                  icon: Icon(Icons.delete, size: 30),
+                  label: SizedBox.shrink(),
+                ),
+              )
+            ],
+          ),
           SizedBox(height: 20),
         ],
       ),

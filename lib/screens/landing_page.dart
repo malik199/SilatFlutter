@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:silat_flutter/admin/guests.dart';
 import 'package:silat_flutter/login/login_page.dart';
 import 'package:silat_flutter/screens/add_events.dart';
 import 'package:silat_flutter/screens/advancement.dart';
@@ -210,17 +211,6 @@ class _LandingPageState extends State<LandingPage> {
                     },
                   ),
                   ListTile(
-                    leading: Icon(Icons.thumb_down),
-                    title: const Text('Unapproved Users'),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => UnapprovedUsers()),
-                      );
-                    },
-                  ),
-                  ListTile(
                     leading: Icon(Icons.event),
                     title: const Text('Add Event'),
                     onTap: () {
@@ -228,6 +218,28 @@ class _LandingPageState extends State<LandingPage> {
                         context,
                         MaterialPageRoute(
                             builder: (context) => AddEventsPage()),
+                      );
+                    },
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.event),
+                    title: const Text('Guests'),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => Guests()),
+                      );
+                    },
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.help_outline),
+                    title: const Text('Unapproved Users'),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => UnapprovedUsers()),
                       );
                     },
                   ),
@@ -241,7 +253,12 @@ class _LandingPageState extends State<LandingPage> {
         title: Header(headerText: "Silat Institute App"),
       ),
       body: Center(
-        child: _currentUser.emailVerified ? _pages.elementAt(_selectedIndex) : pleaseVerifyWidget(),
+        child: _currentUser.emailVerified ?
+        IndexedStack(
+          index: _selectedIndex,
+          children: _pages,
+        )
+            : pleaseVerifyWidget(),
       ),
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: Colors.teal,

@@ -11,8 +11,8 @@ class Belt extends StatelessWidget {
     required this.color,
   }) : super(key: key);
 
-  final double _beltHeight = 50;
-  final double _innerPadding = 15;
+  final double _beltHeight = 40;
+  final double _innerPadding = 12;
   final double _borderRadius = 4;
 
   @override
@@ -32,6 +32,14 @@ class Belt extends StatelessWidget {
         child: Container(
           height: _beltHeight,
           decoration: BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.4),
+                spreadRadius: 2,
+                blurRadius: 4,
+                offset: Offset(0, 2), // changes position of shadow
+              ),
+            ],
             color: PullColor().getColor(color),
             border: Border.all(
               color: Colors.black26,

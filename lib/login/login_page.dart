@@ -5,7 +5,6 @@ import 'package:silat_flutter/screens/landing_page.dart';
 import 'package:silat_flutter/login/register_page.dart';
 import 'package:silat_flutter/utils/fire_auth.dart';
 import 'package:silat_flutter/utils/validator.dart';
-import 'package:silat_flutter/screens/home.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -31,8 +30,8 @@ class _LoginPageState extends State<LoginPage> {
     if (user != null) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-         /* builder: (context) => Home(), */
-         builder: (context) => LandingPage(
+          /* builder: (context) => Home(), */
+          builder: (context) => LandingPage(
             user: user,
           ),
         ),
@@ -43,7 +42,6 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   showAlertDialog(BuildContext context) {
-
     // set up the button
     Widget okButton = TextButton(
       child: Text("OK"),
@@ -70,7 +68,6 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -89,11 +86,13 @@ class _LoginPageState extends State<LoginPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(bottom: 24.0),
-                      child: Text(
-                        'Silat Login',
-                        style: Theme.of(context).textTheme.headline1,
-                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                      child: Image.asset('assets/images/silatlogo.png', width: 200,),
+                    ),
+                    SizedBox(height: 20),
+                    Text(
+                      'Please Sign In',
+                      style: Theme.of(context).textTheme.headline6,
                     ),
                     Form(
                       key: _formKey,
@@ -140,63 +139,60 @@ class _LoginPageState extends State<LoginPage> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Expanded(
-                                      child: ElevatedButton(
-                                        onPressed: () async {
-                                          _focusEmail.unfocus();
-                                          _focusPassword.unfocus();
+                                    ElevatedButton(
+                                      onPressed: () async {
+                                        _focusEmail.unfocus();
+                                        _focusPassword.unfocus();
 
-                                          if (_formKey.currentState!
-                                              .validate()) {
-                                            setState(() {
-                                              _isProcessing = true;
-                                            });
+                                        if (_formKey.currentState!.validate()) {
+                                          setState(() {
+                                            _isProcessing = true;
+                                          });
 
-                                            User? user = await FireAuth
-                                                .signInUsingEmailPassword(
-                                              email: _emailTextController.text,
-                                              password:
-                                                  _passwordTextController.text,
+                                          User? user = await FireAuth
+                                              .signInUsingEmailPassword(
+                                            email: _emailTextController.text,
+                                            password:
+                                                _passwordTextController.text,
+                                          );
+
+                                          setState(() {
+                                            _isProcessing = false;
+                                          });
+
+                                          if (user != null) {
+                                            Navigator.of(context)
+                                                .pushReplacement(
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    LandingPage(user: user),
+                                              ),
                                             );
-
-                                            setState(() {
-                                              _isProcessing = false;
-                                            });
-
-                                            if (user != null) {
-                                              Navigator.of(context)
-                                                  .pushReplacement(
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      LandingPage(user: user),
-                                                ),
-                                              );
-                                            } else {
-                                              showAlertDialog(context);
-                                            }
+                                          } else {
+                                            showAlertDialog(context);
                                           }
-                                        },
-                                        child: Text(
-                                          'Sign In',
-                                          style: TextStyle(color: Colors.white),
-                                        ),
+                                        }
+                                      },
+                                      child: Text(
+                                        'SIGN IN',
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold),
                                       ),
                                     ),
                                     SizedBox(width: 24.0),
-                                    Expanded(
-                                      child: ElevatedButton(
-                                        onPressed: () {
-                                          Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  RegisterPage(),
-                                            ),
-                                          );
-                                        },
-                                        child: Text(
-                                          'Register',
-                                          style: TextStyle(color: Colors.white),
-                                        ),
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                RegisterPage(),
+                                          ),
+                                        );
+                                      },
+                                      child: Text(
+                                        'Register',
+                                        style: TextStyle(color: Colors.blue),
                                       ),
                                     ),
                                   ],

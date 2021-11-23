@@ -74,7 +74,7 @@ class _ApprovedUsersState extends State<ApprovedUsers> {
               Animation<double> animation, int index) {
             Map dbItemValue = snapshot.value;
             dbItemValue['key'] = snapshot.key;
-            return _buildUsers(dbItem: dbItemValue, myIndex: index, dbkey: snapshot.key);
+            return (dbItemValue['curriculum'] != "guest" ? _buildUsers(dbItem: dbItemValue, myIndex: index, dbkey: snapshot.key) : SizedBox.shrink());
           },
         ),
       ),

@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:silat_flutter/screens/landing_page.dart';
-import 'package:silat_flutter/utils/fire_auth.dart';
-import 'dart:async';
 import 'package:intl/intl.dart';
 
 class AddEventsPage extends StatefulWidget {
@@ -106,7 +102,7 @@ class _AddEventsPageState extends State<AddEventsPage> {
         appBar: AppBar(
           title: Text('Add Events'),
         ),
-        body: Padding(
+        body: SingleChildScrollView(
           padding: const EdgeInsets.all(24.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,

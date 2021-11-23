@@ -3,9 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:silat_flutter/models/isAdmin.dart';
-import '../models/pull_color_model.dart';
-import 'package:quartet/quartet.dart';
-import '../models/edit_user.dart';
 import 'package:intl/intl.dart';
 
 class Events extends StatefulWidget {
@@ -133,7 +130,7 @@ class _EventsState extends State<Events> {
                             ),
                             Row(
                               children: [
-                                Text('Event Date: ',
+                                Text('Deadline: ',
                                     style:
                                         TextStyle(fontWeight: FontWeight.bold)),
                                 Text((DateFormat('MMM dd, yyyy').format(
@@ -142,6 +139,8 @@ class _EventsState extends State<Events> {
                                     .toString()),
                               ],
                             ),
+                            SizedBox(height: 10),
+                            Text(dbItemValue['desc'])
                           ],
                         ),
                         trailing: Column(
