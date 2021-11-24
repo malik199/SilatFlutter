@@ -8,7 +8,7 @@ import 'package:fluttermoji/fluttermoji.dart';
 import 'package:quartet/quartet.dart';
 import 'package:silat_flutter/admin/avatar.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter/services.dart' ;
+import 'package:flutter/services.dart';
 
 class HomePage extends StatefulWidget {
   final User userPassed;
@@ -33,6 +33,7 @@ class _HomePageState extends State<HomePage> {
   int _stripe = 0;
   int _age = 0;
   String _location = "";
+  double _numberSize = 35;
 
   @override
   void initState() {
@@ -128,13 +129,11 @@ class _HomePageState extends State<HomePage> {
             final eventDate = DateTime.parse(value['date']);
             final date2 = DateTime.now();
             _difference = -(date2.difference(eventDate).inDays);
-
           });
         });
       }
     });
   }
-
 
   String formatCurriculum(curriculum) {
     return titleCase(curriculum.toString().replaceAll('_', ' '));
@@ -163,6 +162,98 @@ class _HomePageState extends State<HomePage> {
     return _realNumbOfStripes;
   }
 
+  void popupStats(obj) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return AlertDialog(
+          title: Column(children: [
+            SizedBox(height: 10),
+            Text("${capitalize(obj['firstname'])}'s Stats",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30)),
+            Divider(),
+            ListTile(
+              leading: Icon(Icons.follow_the_signs, size: 40.0),
+              title: Text(
+                "Tournaments",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              subtitle:
+              Text("Number of tournaments that you have competed in."),
+              trailing: Text(obj['tournaments'] != null ? obj['tournaments'].toString() : "",
+                  style: TextStyle(
+                      fontSize: _numberSize, fontWeight: FontWeight.bold)),
+            ),
+            ListTile(
+              leading: Icon(Icons.filter_1, size: 40.0),
+              title: Text(
+                "1st Place",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              subtitle: Text("Number of first place wins."),
+              trailing: Text(obj['1stplace'] != null ? obj['1stplace'].toString() : "",
+                  style: TextStyle(
+                      fontSize: _numberSize, fontWeight: FontWeight.bold)),
+            ),
+            ListTile(
+              leading: Icon(Icons.filter_2, size: 40.0),
+              title: Text(
+                "2nd Place",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              subtitle: Text("Number of 2nd place wins."),
+              trailing: Text(obj['2ndplace'] != null ? obj['2ndplace'].toString() : "",
+                  style: TextStyle(
+                      fontSize: _numberSize, fontWeight: FontWeight.bold)),
+            ),
+            ListTile(
+              leading: Icon(Icons.store, size: 40.0),
+              title: Text(
+                "Class Merits",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              subtitle: Text(
+                  "Winning a class event, being an outstanding student in class."),
+              trailing: Text(obj['classMerits'] != null ? obj['classMerits'].toString() : "",
+                  style: TextStyle(
+                      fontSize: _numberSize, fontWeight: FontWeight.bold)),
+            ),
+            SizedBox(height: 10),
+            ListTile(
+              leading: Icon(Icons.verified, size: 40.0),
+              title: Text(
+                "Good Deeds",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              subtitle: Text(
+                  "Significant good deeds, helping the poor, volunteering, etc."),
+              trailing: Text(obj['deeds'] != null ? obj['deeds'].toString() : "",
+                  style: TextStyle(
+                      fontSize: _numberSize, fontWeight: FontWeight.bold)),
+            ),
+            SizedBox(height: 10),
+            Divider(),
+            Text("Total Score: ${(obj['score'] ?? "").toString()}",
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 30,
+                    color: Colors.deepPurple)),
+          ]),
+          actions: <Widget>[
+            // usually buttons at the bottom of the dialog
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context, true);
+              },
+              child: const Text('Close'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   void deactivate() {
     _userDBStream.cancel();
@@ -180,18 +271,6 @@ class _HomePageState extends State<HomePage> {
     ]);
 
     return Container(
-      /* decoration: BoxDecoration(
-        gradient: LinearGradient(
-            colors: [
-              const Color(0xff000000),
-              const Color(0xff0c3e40),
-            ],
-            begin: const FractionalOffset(0.0, 0.0),
-            end: const FractionalOffset(0.0, 1.0),
-            stops: [0.0, 1.0],
-            tileMode: TileMode.clamp),
-      ),*/
-      //color: Color(0xff0c2c2d),
       color: Colors.grey[300],
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -225,13 +304,17 @@ class _HomePageState extends State<HomePage> {
                                           fontSize: 26,
                                           color: Colors.white)),
                                   SizedBox(height: 10),
-                                  Text(_belt != "" ? titleCase('$_belt Belt') : "",
+                                  Text(
+                                      _belt != ""
+                                          ? titleCase('$_belt Belt')
+                                          : "",
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 17,
                                           color: Colors.white)),
                                   Text(
-                                      titleCase(formatCurriculum(_curriculum)) ??
+                                      titleCase(
+                                              formatCurriculum(_curriculum)) ??
                                           "",
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
@@ -248,14 +331,16 @@ class _HomePageState extends State<HomePage> {
                                               fontSize: 17,
                                               color: Colors.white)),
                                       SizedBox(width: 30),
-                                      Text("Location: ", style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 17,
-                                          color: Colors.white)),
-                                      Text(_location, style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 17,
-                                          color: Colors.white)),
+                                      Text("Location: ",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 17,
+                                              color: Colors.white)),
+                                      Text(_location,
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 17,
+                                              color: Colors.white)),
                                     ],
                                   ),
                                 ],
@@ -294,7 +379,8 @@ class _HomePageState extends State<HomePage> {
                 padding: const EdgeInsets.all(8.0),
                 child: ListTile(
                   leading: Icon(Icons.event, size: 50),
-                  title: Text(_eventName, style: TextStyle(fontWeight: FontWeight.bold)),
+                  title: Text(_eventName,
+                      style: TextStyle(fontWeight: FontWeight.bold)),
                   subtitle: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -303,18 +389,16 @@ class _HomePageState extends State<HomePage> {
                       Row(
                         children: [
                           Text('Event Date: ',
-                              style:
-                              TextStyle(fontWeight: FontWeight.bold)),
-                          Text((DateFormat('MMM dd, yyyy').format(
-                              DateTime.parse(_eventDate)))
+                              style: TextStyle(fontWeight: FontWeight.bold)),
+                          Text((DateFormat('MMM dd, yyyy')
+                                  .format(DateTime.parse(_eventDate)))
                               .toString()),
                         ],
                       ),
                       Row(
                         children: [
                           Text('Location: ',
-                              style:
-                              TextStyle(fontWeight: FontWeight.bold)),
+                              style: TextStyle(fontWeight: FontWeight.bold)),
                           Text(_eventLocation),
                         ],
                       ),
@@ -322,8 +406,12 @@ class _HomePageState extends State<HomePage> {
                   ),
                   trailing: Column(
                     children: [
-                      Text('DAYS LEFT', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 8)),
-                      Text(_difference.toString(), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 35)),
+                      Text('DAYS LEFT',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 8)),
+                      Text(_difference.toString(),
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 35)),
                     ],
                   ),
                 ),
@@ -379,15 +467,20 @@ class _HomePageState extends State<HomePage> {
                   child: ListView.builder(
                     itemCount: _reversedJawaraMudaData.length,
                     itemBuilder: (context, index) {
-                      return Card(
-                        child: Padding(
-                          padding: const EdgeInsets.all(6.0),
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: ElevatedButton(
+                          style:
+                              ElevatedButton.styleFrom(primary: Colors.white, onPrimary: Colors.grey),
+                          onPressed: () {
+                            popupStats(_reversedJawaraMudaData[index]);
+                          },
                           child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Flexible(
                                   child: Text(
-                                    '${titleCase(_reversedJawaraMudaData[index]['firstname'])} ${titleCase(_reversedJawaraMudaData[index]['lastname'])}- ${capitalize(_reversedJawaraMudaData[index]['location'])}',
+                                    '${titleCase(_reversedJawaraMudaData[index]['firstname'])} ${titleCase(_reversedJawaraMudaData[index]['lastname'])} - ${capitalize(_reversedJawaraMudaData[index]['location'])}',
                                     overflow: TextOverflow.fade,
                                     style: TextStyle(
                                         fontSize: 15, color: Colors.blue),
@@ -416,23 +509,29 @@ class _HomePageState extends State<HomePage> {
                   child: ListView.builder(
                     itemCount: _reversedSatriaMudaData.length,
                     itemBuilder: (context, index) {
-                      return Card(
-                        child: Padding(
-                          padding: const EdgeInsets.all(6.0),
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: ElevatedButton(
+                          style:
+                          ElevatedButton.styleFrom(primary: Colors.white, onPrimary: Colors.grey),
+                          onPressed: () {
+                            popupStats(_reversedSatriaMudaData[index]);
+                          },
                           child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Flexible(
                                   child: Text(
-                                    '${titleCase(_reversedSatriaMudaData[index]['firstname'])} ${titleCase(_reversedSatriaMudaData[index]['lastname'])}- ${capitalize(_reversedSatriaMudaData[index]['location'])}',
+                                    '${titleCase(_reversedSatriaMudaData[index]['firstname'])} ${titleCase(_reversedSatriaMudaData[index]['lastname'])} - ${capitalize(_reversedSatriaMudaData[index]['location'])}',
                                     overflow: TextOverflow.fade,
                                     style: TextStyle(
                                         fontSize: 15, color: Colors.blue),
                                   ),
                                 ),
+                                SizedBox(width: 10),
                                 Text(
                                     (_reversedSatriaMudaData[index]['score'] ??
-                                            "0")
+                                        "0")
                                         .toString(),
                                     style: TextStyle(
                                         fontSize: 15,
