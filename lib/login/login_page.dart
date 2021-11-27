@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:silat_flutter/login/reset_password.dart';
 import 'package:silat_flutter/screens/landing_page.dart';
 import 'package:silat_flutter/login/register_page.dart';
 import 'package:silat_flutter/utils/fire_auth.dart';
@@ -87,12 +89,10 @@ class _LoginPageState extends State<LoginPage> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 30.0),
-                      child: Image.asset('assets/images/silatlogo.png', width: 200,),
-                    ),
-                    SizedBox(height: 20),
-                    Text(
-                      'Please Sign In',
-                      style: Theme.of(context).textTheme.headline6,
+                      child: Image.asset(
+                        'assets/images/silatlogo.png',
+                        width: 200,
+                      ),
                     ),
                     Form(
                       key: _formKey,
@@ -139,48 +139,54 @@ class _LoginPageState extends State<LoginPage> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    ElevatedButton(
-                                      onPressed: () async {
-                                        _focusEmail.unfocus();
-                                        _focusPassword.unfocus();
+                                    Expanded(
+                                      child: ElevatedButton(
+                                        style: TextButton.styleFrom(
+                                          backgroundColor: Colors.teal,
+                                        ),
+                                        onPressed: () async {
+                                          _focusEmail.unfocus();
+                                          _focusPassword.unfocus();
 
-                                        if (_formKey.currentState!.validate()) {
-                                          setState(() {
-                                            _isProcessing = true;
-                                          });
+                                          if (_formKey.currentState!
+                                              .validate()) {
+                                            setState(() {
+                                              _isProcessing = true;
+                                            });
 
-                                          User? user = await FireAuth
-                                              .signInUsingEmailPassword(
-                                            email: _emailTextController.text,
-                                            password:
-                                                _passwordTextController.text,
-                                          );
-
-                                          setState(() {
-                                            _isProcessing = false;
-                                          });
-
-                                          if (user != null) {
-                                            Navigator.of(context)
-                                                .pushReplacement(
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    LandingPage(user: user),
-                                              ),
+                                            User? user = await FireAuth
+                                                .signInUsingEmailPassword(
+                                              email: _emailTextController.text,
+                                              password:
+                                                  _passwordTextController.text,
                                             );
-                                          } else {
-                                            showAlertDialog(context);
+
+                                            setState(() {
+                                              _isProcessing = false;
+                                            });
+
+                                            if (user != null) {
+                                              Navigator.of(context)
+                                                  .pushReplacement(
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      LandingPage(user: user),
+                                                ),
+                                              );
+                                            } else {
+                                              showAlertDialog(context);
+                                            }
                                           }
-                                        }
-                                      },
-                                      child: Text(
-                                        'SIGN IN',
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold),
+                                        },
+                                        child: Text(
+                                          'SIGN IN',
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold),
+                                        ),
                                       ),
                                     ),
-                                    SizedBox(width: 24.0),
+                                    SizedBox(width: 20),
                                     TextButton(
                                       onPressed: () {
                                         Navigator.of(context).push(
@@ -192,11 +198,28 @@ class _LoginPageState extends State<LoginPage> {
                                       },
                                       child: Text(
                                         'Register',
-                                        style: TextStyle(color: Colors.blue),
+                                        style:
+                                            TextStyle(color: Colors.blue),
                                       ),
                                     ),
                                   ],
-                                )
+                                ),
+                          SizedBox(height: 10),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      ResetPassword(),
+                                ),
+                              );
+                            },
+                            child: Text(
+                              'Forgot Password',
+                              style:
+                              TextStyle(color: Colors.blue),
+                            ),
+                          ),
                         ],
                       ),
                     )

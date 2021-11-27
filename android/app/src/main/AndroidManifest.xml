@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.flutter_authentication">
    <application
-        android:label="flutter_authentication"
+        android:label="Silat App"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

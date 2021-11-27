@@ -21,7 +21,7 @@ class TechniquesList extends StatefulWidget {
 
 class _TechniquesListState extends State<TechniquesList> {
   DatabaseReference reference =
-  FirebaseDatabase.instance.reference().child('techniques');
+      FirebaseDatabase.instance.reference().child('techniques');
   @override
   void initState() {
     // TODO: implement initState
@@ -140,9 +140,7 @@ class _TechniquesListState extends State<TechniquesList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('My Techniques'),
-      ),
+      appBar: AppBar(title: Text('My Techniques'),),
       body: SafeArea(
         child: FirebaseAnimatedList(
           query: FirebaseDatabase.instance

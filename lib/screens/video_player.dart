@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vimeo_player_flutter/vimeo_player_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:quartet/quartet.dart';
 
 class VideoPlayer extends StatefulWidget {
@@ -12,6 +13,13 @@ class VideoPlayer extends StatefulWidget {
 }
 
 class _VideoPlayerState extends State<VideoPlayer> {
+
+  String _url = 'https://silatva.com';
+
+  void _launchURL(link) async {
+    if (!await launch(link)) throw 'Could not launch $_url';
+  }
+
   @override
   Widget build(BuildContext context) {
     //double _fontSize = 10;
@@ -20,8 +28,16 @@ class _VideoPlayerState extends State<VideoPlayer> {
       backgroundColor: Color(0xff264d55),
       appBar: AppBar(
         backgroundColor: Colors.teal,
-        title: Text(widget.dbItem['technique']),
-      ),
+        title: Text(widget.dbItem['technique']), actions: <Widget>[
+        IconButton(
+          icon: const Icon(Icons.link),
+          tooltip: 'Launch URL',
+          onPressed: () {
+            _url = widget.dbItem['videoUrl'];
+            _launchURL(_url);
+          },
+        )
+      ]),
       body: SingleChildScrollView(
         child: Column(
           children: [
