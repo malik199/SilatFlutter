@@ -206,7 +206,7 @@ class _AddEventsPageState extends State<AddEventsPage> {
                                 style: TextStyle(color: Colors.red),
                               )
                             : Text(
-                                DateFormat('MMMM dd, yyyy')
+                                DateFormat('MMM dd, yyyy')
                                     .format(_selectedDate),
                                 style: TextStyle(
                                     fontSize: 20,
@@ -242,7 +242,7 @@ class _AddEventsPageState extends State<AddEventsPage> {
                                 style: TextStyle(color: Colors.red),
                               )
                             : Text(
-                                DateFormat('MMMM dd, yyyy')
+                                DateFormat('MMM dd, yyyy')
                                     .format(_selectedDeadline),
                                 style: TextStyle(
                                     fontSize: 20,

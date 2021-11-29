@@ -103,7 +103,7 @@ class _LandingPageState extends State<LandingPage> {
         ),
         SizedBox(height: 20),
         Text(
-          "Please click on the link below to verify email.\nThen check your email account for a verification link",
+          "Please click on the link below to verify email.\nThen check your email account for a verification link.",
           style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 10),
           textAlign: TextAlign.center,
 
@@ -120,6 +120,12 @@ class _LandingPageState extends State<LandingPage> {
                   _isSendingVerification = true;
                 });
                 await _currentUser.sendEmailVerification();
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(SnackBar(
+                  content: Text(
+                      'Verification email sent. Please check your email and click the verification link.'),
+                  backgroundColor: Colors.green,
+                ));
                 setState(() {
                   _isSendingVerification = false;
                 });
@@ -133,6 +139,12 @@ class _LandingPageState extends State<LandingPage> {
               onPressed: () async {
                 User? user = await FireAuth.refreshUser(
                     _currentUser);
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(SnackBar(
+                  content: Text(
+                      'If you have verified your email, the refresh button should load all the app data.'),
+                  backgroundColor: Colors.deepOrange,
+                ));
 
                 if (user != null) {
                   setState(() {

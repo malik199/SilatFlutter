@@ -113,6 +113,7 @@ class _HomePageState extends State<HomePage> {
     _eventsDBStream = _database
         .child('events')
         .orderByChild('date')
+        .startAt(DateTime.now().toString())
         .limitToFirst(1)
         .onValue
         .listen((event) {
@@ -121,6 +122,8 @@ class _HomePageState extends State<HomePage> {
 
         setState(() {
           data.forEach((key, value) {
+
+
             _eventName = value['name'];
             _eventLocation = value['location'];
             //_eventUrl = value['url'];
@@ -437,7 +440,7 @@ class _HomePageState extends State<HomePage> {
                       Text('DAYS LEFT',
                           style: TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 8)),
-                      Text(_difference.toString(),
+                      Text((_difference + 1).toString(),
                           style: TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 35)),
                     ],

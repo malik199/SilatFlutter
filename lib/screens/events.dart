@@ -74,7 +74,8 @@ class _EventsState extends State<Events> {
       ),
       body: SafeArea(
         child: FirebaseAnimatedList(
-          query: FirebaseDatabase.instance.reference().child('events'),
+          query: FirebaseDatabase.instance.reference().child('events').orderByChild('date')
+              .startAt(DateTime.now().toString()),
           itemBuilder: (BuildContext context, DataSnapshot snapshot,
               Animation<double> animation, int index) {
             // ------------------- BEGINNING OF DATABASE STUFF -------------------
@@ -89,8 +90,10 @@ class _EventsState extends State<Events> {
                 ? Card(
                     color: Colors.yellow,
                     child: Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.fromLTRB(3, 8, 8, 9),
                       child: ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        horizontalTitleGap: 6,
                         leading: _isAdmin == true
                             ? TextButton.icon(
                                 onPressed: () {
@@ -148,7 +151,7 @@ class _EventsState extends State<Events> {
                             Text('DAYS LEFT',
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold, fontSize: 8)),
-                            Text(difference.toString(),
+                            Text((difference + 1).toString(),
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 38,
