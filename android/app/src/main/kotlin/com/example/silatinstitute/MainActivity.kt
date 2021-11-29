@@ -1,4 +1,4 @@
-package com.example.flutter_authentication
+package com.example.silatinstitute
 
 import io.flutter.embedding.android.FlutterActivity
 

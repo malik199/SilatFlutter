@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:quartet/quartet.dart';
 
 class EditUserWidget extends StatefulWidget {
   const EditUserWidget({
@@ -16,7 +15,7 @@ class EditUserWidget extends StatefulWidget {
 }
 
 class _EditUserWidgetState extends State<EditUserWidget> {
-  final _database = FirebaseDatabase.instance.reference();
+  DatabaseReference _database = FirebaseDatabase.instance.reference();
 
   double spacingWidth = 10;
   double spacingHeight = 10;
@@ -51,7 +50,7 @@ class _EditUserWidgetState extends State<EditUserWidget> {
 
   void _getSchoolData() {
     _database.child('locations').once().then((snapshot) {
-      final data = new Map<String, dynamic>.from(snapshot.value);
+      final data = new Map<String, dynamic>.from(snapshot.snapshot.value as Map);
       _listOfLocations.add("");
       setState(() {
         data.forEach((key, value) {
@@ -78,7 +77,7 @@ class _EditUserWidgetState extends State<EditUserWidget> {
       builder: (BuildContext context) {
         // return object of type Dialog
         return AlertDialog(
-          title: new Text("You are about to delete user '${capitalize(widget.dbItem['firstname'])} ${capitalize(widget.dbItem['lastname'])}'"),
+          title: new Text("You are about to delete user '${widget.dbItem['firstname'].toUpperCase()} ${widget.dbItem['lastname'].toUpperCase()}'"),
           content: new Text("Are you sure you want delete this user? Email: ${widget.dbItem['email']}"),
           actions: <Widget>[
             // usually buttons at the bottom of the dialog

@@ -53,7 +53,7 @@ class _ProfileState extends State<Profile> {
         .equalTo((_currentUser?.email)?.toLowerCase())
         .once()
         .then((snapshot) {
-      final data = new Map<String, dynamic>.from(snapshot.value);
+      final data = new Map<String, dynamic>.from(snapshot.snapshot.value as Map);
       data.forEach((key, value) {
         myData = value;
         _dbkey = key;

@@ -79,7 +79,7 @@ class _EventsState extends State<Events> {
           itemBuilder: (BuildContext context, DataSnapshot snapshot,
               Animation<double> animation, int index) {
             // ------------------- BEGINNING OF DATABASE STUFF -------------------
-            Map dbItemValue = snapshot.value;
+            Map dbItemValue = snapshot.value as Map;
             String? dbKey = snapshot.key;
 
             final eventDate = DateTime.parse(dbItemValue['date']);

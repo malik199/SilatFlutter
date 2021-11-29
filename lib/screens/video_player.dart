@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vimeo_player_flutter/vimeo_player_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:quartet/quartet.dart';
 
 class VideoPlayer extends StatefulWidget {
   VideoPlayer({Key? key, required this.dbItem}) : super(key: key);
@@ -70,7 +69,7 @@ class _VideoPlayerState extends State<VideoPlayer> {
                     leading: Icon(Icons.calendar_view_day,
                         color: Colors.white, size: _iconSize),
                     title: Text(
-                        "Satria Muda: ${titleCase(widget.dbItem['satria_muda'])} Belt - Stripe ${widget.dbItem['sm_stripe']}",
+                        "Satria Muda: ${widget.dbItem['satria_muda']} Belt - Stripe ${widget.dbItem['sm_stripe']}",
                         style: TextStyle(
                             fontWeight: FontWeight.bold, color: Colors.white)),
                   ),
@@ -78,7 +77,7 @@ class _VideoPlayerState extends State<VideoPlayer> {
                   leading: Icon(Icons.table_rows,
                       color: Colors.white, size: _iconSize),
                   title: Text(
-                      "Jawara Muda: ${titleCase(widget.dbItem['jawara_muda'])} Belt - Stripe ${widget.dbItem['jm_stripe']}",
+                      "Jawara Muda: ${widget.dbItem['jawara_muda']} Belt - Stripe ${widget.dbItem['jm_stripe']}",
                       style: TextStyle(
                           fontWeight: FontWeight.bold, color: Colors.white)),
                 ),

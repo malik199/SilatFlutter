@@ -42,7 +42,7 @@ class _TechniquesHomeState extends State<TechniquesHome> {
         .onValue
         .listen((event) {
       if (event.snapshot.value != null) {
-        final data = new Map<String?, dynamic>.from(event.snapshot.value);
+        final data = new Map<String?, dynamic>.from(event.snapshot.value as Map);
         setState(() {
           data.forEach((key, value) {
             _currentCurriculum = value['curriculum'];

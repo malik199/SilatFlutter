@@ -210,17 +210,21 @@ class _ScoringPageState extends State<ScoringPortrait> {
 
     final ButtonStyle redStyle = ButtonStyle(
         backgroundColor: MaterialStateProperty.all(Colors.red),
+        shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius:BorderRadius.circular(2) )),
         textStyle: MaterialStateProperty.all(
             TextStyle(fontSize: _largeFont, fontWeight: FontWeight.bold)));
     final ButtonStyle blueStyle = ButtonStyle(
+        shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius:BorderRadius.circular(2) )),
         backgroundColor: MaterialStateProperty.all(Colors.blue),
         textStyle: MaterialStateProperty.all(
             TextStyle(fontSize: _largeFont, fontWeight: FontWeight.bold)));
     final ButtonStyle redSmallerStyle = ButtonStyle(
+        shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius:BorderRadius.circular(2) )),
         backgroundColor: MaterialStateProperty.all(Colors.red),
         textStyle: MaterialStateProperty.all(
             TextStyle(fontSize: _smallFont, fontWeight: FontWeight.bold)));
     final ButtonStyle blueSmallerStyle = ButtonStyle(
+        shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius:BorderRadius.circular(2) )),
         backgroundColor: MaterialStateProperty.all(Colors.blue),
         textStyle: MaterialStateProperty.all(
             TextStyle(fontSize: _smallFont, fontWeight: FontWeight.bold)));

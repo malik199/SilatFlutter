@@ -140,7 +140,9 @@ class _TechniquesListState extends State<TechniquesList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('My Techniques'),),
+      appBar: AppBar(
+        title: Text('My Techniques'),
+      ),
       body: SafeArea(
         child: FirebaseAnimatedList(
           query: FirebaseDatabase.instance
@@ -150,7 +152,7 @@ class _TechniquesListState extends State<TechniquesList> {
               .equalTo(widget.color),
           itemBuilder: (BuildContext context, DataSnapshot snapshot,
               Animation<double> animation, int index) {
-            Map dbItemValue = snapshot.value;
+            Map dbItemValue = snapshot.value as Map;
             dbItemValue['key'] = snapshot.key;
             return _buildTechniqueItem(dbItem: dbItemValue, myIndex: index);
           },

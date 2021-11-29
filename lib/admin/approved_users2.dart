@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:silat_flutter/models/edit_user.dart';
 import 'package:silat_flutter/models/pull_color_model.dart';
-import 'package:quartet/quartet.dart';
 
 
 class ApprovedUsers extends StatefulWidget {
@@ -32,7 +31,7 @@ class _ApprovedUsersState extends State<ApprovedUsers> {
         .equalTo(true)
         .once()
         .then((snapshot) {
-      final data = new Map<String, dynamic>.from(snapshot.value);
+      final data = new Map<String, dynamic>.from(snapshot.snapshot.value as Map);
       setState(() {
         data.forEach((key, value) {
           value["id"] = key;
@@ -42,8 +41,16 @@ class _ApprovedUsersState extends State<ApprovedUsers> {
     });
   }
 
-  String formatCurriculum(curriculum) {
-    return titleCase(curriculum.toString().replaceAll('_', ' '));
+
+
+  String formatCurriculum(dynamic curriculum) {
+    return convertToTitleCase(curriculum.toString().replaceAll('_', ' '));
+  }
+
+  String convertToTitleCase(String input) {
+    return input.replaceAllMapped(RegExp(r'\b\w'), (match) {
+      return match.group(0)!.toUpperCase();
+    });
   }
 
   @override
@@ -67,7 +74,7 @@ class _ApprovedUsersState extends State<ApprovedUsers> {
                     : Icon(Icons.perm_identity,
                     size: 50.0, color: PullColor().getColor(dbItem?['belt']))),
                 title: Text(
-                  titleCase(dbItem?['firstname'] + " " + dbItem?['lastname']),
+                  dbItem?['firstname'].capitalizeFirstLetter() + " " + dbItem?['lastname'].capitalizeFirstLetter(),
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 subtitle: Text(formatCurriculum(dbItem?['curriculum'])),

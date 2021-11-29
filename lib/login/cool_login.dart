@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:silat_flutter/utils/constants.dart';
 
-
 class CoolLoginScreen extends StatefulWidget {
   @override
   _LoginScreenState createState() => _LoginScreenState();
@@ -84,9 +83,9 @@ class _LoginScreenState extends State<CoolLoginScreen> {
   Widget _buildForgotPasswordBtn() {
     return Container(
       alignment: Alignment.centerRight,
-      child: FlatButton(
+      child: ElevatedButton(
         onPressed: () => print('Forgot Password Button Pressed'),
-        padding: EdgeInsets.only(right: 0.0),
+        // padding: EdgeInsets.only(right: 0.0),
         child: Text(
           'Forgot Password?',
           style: kLabelStyle,
@@ -126,14 +125,23 @@ class _LoginScreenState extends State<CoolLoginScreen> {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 25.0),
       width: double.infinity,
-      child: RaisedButton(
-        elevation: 5.0,
+      child: ElevatedButton(
+        // elevation: 5.0,
         onPressed: () => print('Login Button Pressed'),
-        padding: EdgeInsets.all(15.0),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(30.0),
-        ),
-        color: Colors.white,
+        // padding: EdgeInsets.all(15.0),
+        style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all(Colors.white),
+            padding: MaterialStateProperty.all(
+              EdgeInsets.all(15.0),
+            ),
+            elevation: MaterialStateProperty.all(5.0),
+            shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30.0)))),
+        // shape: RoundedRectangleBorder(
+        //   borderRadius: BorderRadius.circular(30.0),
+        // ),
+
+        // color: Colors.white,
         child: Text(
           'LOGIN',
           style: TextStyle(
@@ -196,8 +204,7 @@ class _LoginScreenState extends State<CoolLoginScreen> {
       padding: EdgeInsets.symmetric(vertical: 30.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: <Widget>[
-        ],
+        children: <Widget>[],
       ),
     );
   }
@@ -260,10 +267,8 @@ class _LoginScreenState extends State<CoolLoginScreen> {
                 height: double.infinity,
                 child: SingleChildScrollView(
                   physics: AlwaysScrollableScrollPhysics(),
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 40.0,
-                    vertical: 80.0
-                  ),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 40.0, vertical: 80.0),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[

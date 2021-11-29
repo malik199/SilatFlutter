@@ -5,10 +5,16 @@ import 'package:silat_flutter/models/belts_complex.dart';
 import 'package:silat_flutter/utils/connectivity.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:fluttermoji/fluttermoji.dart';
-import 'package:quartet/quartet.dart';
 import 'package:silat_flutter/admin/avatar.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/services.dart';
+
+extension StringExtension on String {
+  String capitalizeFirstLetter() {
+    if (isEmpty) return this;
+    return this[0].toUpperCase() + substring(1);
+  }
+}
 
 class HomePage extends StatefulWidget {
   final User userPassed;
@@ -49,14 +55,26 @@ class _HomePageState extends State<HomePage> {
   late List<dynamic> _jawaraMudaData = [];
   late List<dynamic> _reversedJawaraMudaData = [];
   void _getToStudentData() {
-    _topStudentsDBStream =
-        _database.child('users').orderByChild('score').onValue.listen((event) {
+    _topStudentsDBStream = _database.child('users').orderByChild('score').onValue.listen((event) {
       if (event.snapshot.value != null) {
         _satriaMudaData = [];
         _jawaraMudaData = [];
-        final data = new Map<String, dynamic>.from(event.snapshot.value);
+        final data = new Map<String, dynamic>.from(event.snapshot.value as Map);
+
+        List allStudents = data.values.toList(); // Extract all students
+
+        allStudents.sort((a, b) {
+          // Null-aware comparison for scores
+          var scoreA = a['score'] as num?;
+          var scoreB = b['score'] as num?;
+          if (scoreA == null || scoreB == null) {
+            return 0; // Return 0 if either score is null
+          }
+          return scoreB.compareTo(scoreA); // Compare scores in descending order
+        });
+
         setState(() {
-          data.forEach((key, value) {
+          allStudents.forEach((value) {
             if (value["isApproved"] == true &&
                 value['score'] != null &&
                 value['score'] != 0 &&
@@ -72,10 +90,17 @@ class _HomePageState extends State<HomePage> {
           });
           _reversedSatriaMudaData = _satriaMudaData.reversed.toList();
           _reversedJawaraMudaData = _jawaraMudaData.reversed.toList();
+
+          // Reverse the list again to put highest score at index 0
+          _reversedSatriaMudaData = _reversedSatriaMudaData.reversed.toList();
+          _reversedJawaraMudaData = _reversedJawaraMudaData.reversed.toList();
         });
       }
     });
   }
+
+
+
 
   void _getUserData() {
     _userDBStream = _database
@@ -86,7 +111,7 @@ class _HomePageState extends State<HomePage> {
         .onValue
         .listen((event) {
       if (event.snapshot.value != null) {
-        final data = new Map<String?, dynamic>.from(event.snapshot.value);
+        final data = new Map<String?, dynamic>.from(event.snapshot.value as Map);
         setState(() {
           data.forEach((key, value) {
             _firstName = value['firstname'];
@@ -118,12 +143,10 @@ class _HomePageState extends State<HomePage> {
         .onValue
         .listen((event) {
       if (event.snapshot.value != null) {
-        final data = new Map<String?, dynamic>.from(event.snapshot.value);
+        final data = new Map<String?, dynamic>.from(event.snapshot.value as Map);
 
         setState(() {
           data.forEach((key, value) {
-
-
             _eventName = value['name'];
             _eventLocation = value['location'];
             //_eventUrl = value['url'];
@@ -140,8 +163,14 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  String formatCurriculum(curriculum) {
-    return titleCase(curriculum.toString().replaceAll('_', ' '));
+  String formatCurriculum(dynamic curriculum) {
+    return convertToTitleCase(curriculum.toString().replaceAll('_', ' '));
+  }
+
+  String convertToTitleCase(String input) {
+    return input.replaceAllMapped(RegExp(r'\b\w'), (match) {
+      return match.group(0)!.toUpperCase();
+    });
   }
 
   Color _containerColor = Colors.yellow;
@@ -173,99 +202,101 @@ class _HomePageState extends State<HomePage> {
       builder: (BuildContext context) {
         // return object of type Dialog
         return AlertDialog(
-          title: Column(children: [
-            SizedBox(height: 10),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text("${capitalize(obj['firstname'])}'s Stats",
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 30)),
-                if (obj['location'] != "")
-                  Text("Location: ${capitalize(obj['location'])}",
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15,
-                          color: Colors.teal)),
-              ],
-            ),
-            Divider(),
-            ListTile(
-              leading: Icon(Icons.follow_the_signs, size: 40.0),
-              title: Text(
-                "Tournaments",
-                style: TextStyle(fontWeight: FontWeight.bold),
+          title: SingleChildScrollView(
+            child: Column(children: [
+              SizedBox(height: 10),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text("${obj['firstname'].toUpperCase()}'s Stats",
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 30)),
+                  if (obj['location'] != "")
+                    Text("Location: ${obj['location'].toUpperCase()}",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                            color: Colors.teal)),
+                ],
               ),
-              subtitle:
-                  Text("Number of tournaments that you have competed in."),
-              trailing: Text(
-                  obj['tournaments'] != null
-                      ? obj['tournaments'].toString()
-                      : "",
-                  style: TextStyle(
-                      fontSize: _numberSize, fontWeight: FontWeight.bold)),
-            ),
-            ListTile(
-              leading: Icon(Icons.filter_1, size: 40.0),
-              title: Text(
-                "1st Place",
-                style: TextStyle(fontWeight: FontWeight.bold),
+              Divider(),
+              ListTile(
+                leading: Icon(Icons.follow_the_signs, size: 40.0),
+                title: Text(
+                  "Tournaments",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                subtitle:
+                    Text("Number of tournaments that you have competed in."),
+                trailing: Text(
+                    obj['tournaments'] != null
+                        ? obj['tournaments'].toString()
+                        : "",
+                    style: TextStyle(
+                        fontSize: _numberSize, fontWeight: FontWeight.bold)),
               ),
-              subtitle: Text("Number of first place wins."),
-              trailing: Text(
-                  obj['1stplace'] != null ? obj['1stplace'].toString() : "",
-                  style: TextStyle(
-                      fontSize: _numberSize, fontWeight: FontWeight.bold)),
-            ),
-            ListTile(
-              leading: Icon(Icons.filter_2, size: 40.0),
-              title: Text(
-                "2nd Place",
-                style: TextStyle(fontWeight: FontWeight.bold),
+              ListTile(
+                leading: Icon(Icons.filter_1, size: 40.0),
+                title: Text(
+                  "1st Place",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                subtitle: Text("Number of first place wins."),
+                trailing: Text(
+                    obj['1stplace'] != null ? obj['1stplace'].toString() : "",
+                    style: TextStyle(
+                        fontSize: _numberSize, fontWeight: FontWeight.bold)),
               ),
-              subtitle: Text("Number of 2nd place wins."),
-              trailing: Text(
-                  obj['2ndplace'] != null ? obj['2ndplace'].toString() : "",
-                  style: TextStyle(
-                      fontSize: _numberSize, fontWeight: FontWeight.bold)),
-            ),
-            ListTile(
-              leading: Icon(Icons.store, size: 40.0),
-              title: Text(
-                "Class Merits",
-                style: TextStyle(fontWeight: FontWeight.bold),
+              ListTile(
+                leading: Icon(Icons.filter_2, size: 40.0),
+                title: Text(
+                  "2nd Place",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                subtitle: Text("Number of 2nd place wins."),
+                trailing: Text(
+                    obj['2ndplace'] != null ? obj['2ndplace'].toString() : "",
+                    style: TextStyle(
+                        fontSize: _numberSize, fontWeight: FontWeight.bold)),
               ),
-              subtitle: Text(
-                  "Winning a class event, being an outstanding student in class."),
-              trailing: Text(
-                  obj['classMerits'] != null
-                      ? obj['classMerits'].toString()
-                      : "",
-                  style: TextStyle(
-                      fontSize: _numberSize, fontWeight: FontWeight.bold)),
-            ),
-            SizedBox(height: 10),
-            ListTile(
-              leading: Icon(Icons.verified, size: 40.0),
-              title: Text(
-                "Good Deeds",
-                style: TextStyle(fontWeight: FontWeight.bold),
+              ListTile(
+                leading: Icon(Icons.store, size: 40.0),
+                title: Text(
+                  "Class Merits",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                subtitle: Text(
+                    "Winning a class event, being an outstanding student in class."),
+                trailing: Text(
+                    obj['classMerits'] != null
+                        ? obj['classMerits'].toString()
+                        : "",
+                    style: TextStyle(
+                        fontSize: _numberSize, fontWeight: FontWeight.bold)),
               ),
-              subtitle: Text(
-                  "Significant good deeds, helping the poor, volunteering, etc."),
-              trailing: Text(
-                  obj['deeds'] != null ? obj['deeds'].toString() : "",
+              SizedBox(height: 10),
+              ListTile(
+                leading: Icon(Icons.verified, size: 40.0),
+                title: Text(
+                  "Good Deeds",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                subtitle: Text(
+                    "Significant good deeds, helping the poor, volunteering, etc."),
+                trailing: Text(
+                    obj['deeds'] != null ? obj['deeds'].toString() : "",
+                    style: TextStyle(
+                        fontSize: _numberSize, fontWeight: FontWeight.bold)),
+              ),
+              SizedBox(height: 10),
+              Divider(),
+              Text("Total Score: ${(obj['score'] ?? "").toString()}",
                   style: TextStyle(
-                      fontSize: _numberSize, fontWeight: FontWeight.bold)),
-            ),
-            SizedBox(height: 10),
-            Divider(),
-            Text("Total Score: ${(obj['score'] ?? "").toString()}",
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 30,
-                    color: Colors.deepPurple)),
-          ]),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 30,
+                      color: Colors.deepPurple)),
+            ]),
+          ),
           actions: <Widget>[
             // usually buttons at the bottom of the dialog
             TextButton(
@@ -324,7 +355,7 @@ class _HomePageState extends State<HomePage> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Text(
-                                      '${titleCase(_firstName)} ${titleCase(_lastName)}',
+                                      '${_firstName.capitalizeFirstLetter()} ${_lastName.capitalizeFirstLetter()}',
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 26,
@@ -332,15 +363,16 @@ class _HomePageState extends State<HomePage> {
                                   SizedBox(height: 10),
                                   Text(
                                       _belt != ""
-                                          ? titleCase('$_belt Belt')
+                                          ? '$_belt Belt'
+                                              .capitalizeFirstLetter()
                                           : "",
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 16,
                                           color: Colors.white)),
                                   Text(
-                                      titleCase(
-                                              formatCurriculum(_curriculum)) ??
+                                      formatCurriculum(_curriculum)
+                                              .capitalizeFirstLetter() ??
                                           "",
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
@@ -350,7 +382,7 @@ class _HomePageState extends State<HomePage> {
                                     children: [
                                       Text(
                                           _age != 0
-                                              ? 'Age: ${titleCase(_age.toString())}'
+                                              ? 'Age: ${_age.toString().capitalizeFirstLetter()}'
                                               : "",
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold,
@@ -497,6 +529,7 @@ class _HomePageState extends State<HomePage> {
                   color: Colors.red,
                   child: ListView.builder(
                     itemCount: _reversedJawaraMudaData.length,
+                    reverse: false,
                     itemBuilder: (context, index) {
                       return Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 4.0),
@@ -506,6 +539,9 @@ class _HomePageState extends State<HomePage> {
                               style: ElevatedButton.styleFrom(
                                   padding: EdgeInsets.fromLTRB(10, 1, 6, 0),
                                   primary: Colors.white,
+                                  shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.all(Radius.circular(5)),
+                                  ),
                                   onPrimary: Colors.grey),
                               onPressed: () {
                                 popupStats(_reversedJawaraMudaData[index]);
@@ -516,7 +552,7 @@ class _HomePageState extends State<HomePage> {
                                   children: [
                                     Flexible(
                                       child: Text(
-                                        '${titleCase(_reversedJawaraMudaData[index]['firstname'])} ${titleCase(_reversedJawaraMudaData[index]['lastname'])}',
+                                        '${_reversedJawaraMudaData[index]['firstname']} ${_reversedJawaraMudaData[index]['lastname']}',
                                         overflow: TextOverflow.fade,
                                         style: TextStyle(
                                             fontSize: 15, color: Colors.blue),
@@ -546,6 +582,7 @@ class _HomePageState extends State<HomePage> {
                   color: Colors.blue,
                   child: ListView.builder(
                     itemCount: _reversedSatriaMudaData.length,
+                    //reverse: true,
                     itemBuilder: (context, index) {
                       return Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 4.0),
@@ -555,17 +592,20 @@ class _HomePageState extends State<HomePage> {
                               style: ElevatedButton.styleFrom(
                                   padding: EdgeInsets.fromLTRB(10, 1, 6, 0),
                                   primary: Colors.white,
+                                  shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.all(Radius.circular(5)),
+                                  ),
                                   onPrimary: Colors.grey),
                               onPressed: () {
                                 popupStats(_reversedSatriaMudaData[index]);
                               },
                               child: Row(
                                   mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Flexible(
                                       child: Text(
-                                        '${titleCase(_reversedSatriaMudaData[index]['firstname'])} ${titleCase(_reversedSatriaMudaData[index]['lastname'])}',
+                                        '${_reversedSatriaMudaData[index]['firstname']} ${_reversedSatriaMudaData[index]['lastname']}',
                                         overflow: TextOverflow.fade,
                                         style: TextStyle(
                                             fontSize: 15, color: Colors.blue),
@@ -573,8 +613,8 @@ class _HomePageState extends State<HomePage> {
                                     ),
                                     Text(
                                       (_reversedSatriaMudaData[index]
-                                      ['score'] ??
-                                          "0")
+                                                  ['score'] ??
+                                              "0")
                                           .toString(),
                                       style: TextStyle(
                                           fontSize: 15,

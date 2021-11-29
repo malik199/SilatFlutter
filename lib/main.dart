@@ -1,4 +1,3 @@
-// @dart=2.9
 import 'package:flutter/material.dart';
 
 import 'login/login_page.dart';
@@ -18,6 +17,9 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(5)),
+            ),
             textStyle: TextStyle(
               fontSize: 24.0,
             ),

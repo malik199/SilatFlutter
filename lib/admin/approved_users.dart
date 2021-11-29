@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import '../models/pull_color_model.dart';
-import 'package:quartet/quartet.dart';
 import '../models/edit_user.dart';
 
 class ApprovedUsers extends StatefulWidget {
@@ -23,8 +22,14 @@ class _ApprovedUsersState extends State<ApprovedUsers> {
     super.initState();
   }
 
-  String formatCurriculum(curriculum) {
-    return titleCase(curriculum.toString().replaceAll('_', ' '));
+  String formatCurriculum(dynamic curriculum) {
+    return convertToTitleCase(curriculum.toString().replaceAll('_', ' '));
+  }
+
+  String convertToTitleCase(String input) {
+    return input.replaceAllMapped(RegExp(r'\b\w'), (match) {
+      return match.group(0)!.toUpperCase();
+    });
   }
 
   Widget _buildUsers({Map? dbItem, myIndex, dbkey}) {
@@ -43,7 +48,7 @@ class _ApprovedUsersState extends State<ApprovedUsers> {
                   size: 50.0,
                   color: PullColor().getColor(dbItem?['belt']))),
               title: Text(
-                titleCase(dbItem?['firstname'] + " " + dbItem?['lastname']),
+                dbItem?['firstname'] + " " + dbItem?['lastname'],
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               subtitle: Text(formatCurriculum(dbItem?['curriculum'])),
@@ -70,10 +75,10 @@ class _ApprovedUsersState extends State<ApprovedUsers> {
               .child('users')
               .orderByChild('isApproved')
               .equalTo(true),
-          itemBuilder: (BuildContext context, DataSnapshot snapshot,
+          itemBuilder: (BuildContext context, DataSnapshot? snapshot,
               Animation<double> animation, int index) {
-            Map dbItemValue = snapshot.value;
-            dbItemValue['key'] = snapshot.key;
+            final dbItemValue = snapshot?.value as Map;
+            dbItemValue['key'] = snapshot!.key;
             return (dbItemValue['curriculum'] != "guest" ? _buildUsers(dbItem: dbItemValue, myIndex: index, dbkey: snapshot.key) : SizedBox.shrink());
           },
         ),
