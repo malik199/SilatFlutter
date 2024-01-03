@@ -123,8 +123,39 @@ class _HomePageState extends State<HomePage> {
             _location = value['location'];
           });
         });
+      } else {
+        _showMyDialog();
+
       }
     });
+  }
+
+
+  Future<void> _showMyDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('No Silat User Found'),
+          content: const SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('There is a problem setting up your account. We are attempting to fix the problem now. Please contact the instructor to fix it.'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   String _eventName = "";
@@ -372,8 +403,7 @@ class _HomePageState extends State<HomePage> {
                                           color: Colors.white)),
                                   Text(
                                       formatCurriculum(_curriculum)
-                                              .capitalizeFirstLetter() ??
-                                          '',
+                                              .capitalizeFirstLetter(),
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 16,

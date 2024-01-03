@@ -52,28 +52,33 @@ class _ProfileState extends State<Profile> {
         .orderByChild('email')
         .equalTo((_currentUser?.email)?.toLowerCase())
         .once()
-        .then((snapshot) {
-      final data = new Map<String, dynamic>.from(snapshot.snapshot.value as Map);
-      data.forEach((key, value) {
-        myData = value;
-        _dbkey = key;
-      });
+        .then((rtdb_data) {
+      if (rtdb_data.snapshot.exists) {
+        final data =
+            new Map<String, dynamic>.from(rtdb_data.snapshot.value as Map);
 
-      setState(() {
-        _firstName = myData['firstname'];
-        _lastName = myData['lastname'];
-        _email = myData['email'];
-        _1stplace = myData['1stplace'];
-        _2ndplace = myData['2ndplace'];
-        _classMerits = myData['classMerits'];
-        _deeds = myData['deeds'];
-        _score = myData['score'];
-        _tournaments = myData['tournaments'];
-        _stripe = myData['stripe'];
-        firstNameController = TextEditingController(text: _firstName);
-        lastNameController = TextEditingController(text: _lastName);
-        _age = myData['age'];
-      });
+        data.forEach((key, value) {
+          myData = value;
+          _dbkey = key;
+        });
+        setState(() {
+          _firstName = myData['firstname'];
+          _lastName = myData['lastname'];
+          _email = myData['email'];
+          _1stplace = myData['1stplace'];
+          _2ndplace = myData['2ndplace'];
+          _classMerits = myData['classMerits'];
+          _deeds = myData['deeds'];
+          _score = myData['score'];
+          _tournaments = myData['tournaments'];
+          _stripe = myData['stripe'];
+          firstNameController = TextEditingController(text: _firstName);
+          lastNameController = TextEditingController(text: _lastName);
+          _age = myData['age'];
+        });
+      } else {
+        print("No data");
+      }
     });
   }
 
@@ -112,7 +117,7 @@ class _ProfileState extends State<Profile> {
         padding: EdgeInsets.symmetric(horizontal: 32),
         physics: BouncingScrollPhysics(),
         children: [
-            Form(
+          Form(
             key: formKey, //key for form
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -125,8 +130,10 @@ class _ProfileState extends State<Profile> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(Icons.email, color: Colors.teal),
-                      SizedBox(width:10),
-                      Text('$_email', style: TextStyle(color: Colors.teal, fontWeight: FontWeight.bold)),
+                      SizedBox(width: 10),
+                      Text('$_email',
+                          style: TextStyle(
+                              color: Colors.teal, fontWeight: FontWeight.bold)),
                     ],
                   ),
                 ),
@@ -220,38 +227,68 @@ class _ProfileState extends State<Profile> {
                       style: ElevatedButton.styleFrom(
                           shape: new RoundedRectangleBorder(
                             borderRadius: new BorderRadius.circular(12.0),
-                          ), backgroundColor: Colors.purple,
+                          ),
+                          backgroundColor: Colors.purple,
                           foregroundColor: Colors.white,
                           padding: EdgeInsets.symmetric(
                               horizontal: 50, vertical: 20),
                           textStyle: TextStyle(
                               fontSize: 20, fontWeight: FontWeight.bold)),
                       icon: Icon(Icons.save),
-                      label: Text("Update Profile", style: TextStyle(color: Colors.white)),
-                      onPressed: () {
+                      label: Text("Update Profile",
+                          style: TextStyle(color: Colors.white)),
+                      onPressed: () async {
+
                         final isValid = formKey.currentState?.validate();
                         // FocusScope.of(context).unfocus();
 
-                        print(_dbkey);
+                        //print(_currentEmail);
+                        //print(_dbkey);
 
                         if (isValid!) {
-                          _database
-                              .child('/users')
-                              .child(_dbkey.toString())
-                              .update({
-                                'firstname': _firstName,
-                                'lastname': _lastName,
-                                'age': _age,
-                                'stripe': _stripe,
-                              })
-                              .then((value) => {
-                                    ScaffoldMessenger.of(context)
-                                        .showSnackBar(snackBarGreen)
-                                  })
-                              .catchError((error) => {
-                                    ScaffoldMessenger.of(context)
-                                        .showSnackBar(snackBarRed)
-                                  });
+                          if(_dbkey == ""){
+                            await _database.child('/users').push().set({
+                              'uid': _currentUser?.uid,
+                              'belt': 'white',
+                              'comments':
+                              'Welcome to Silat martial arts.',
+                              'curriculum': _age > 11 ? "jawara_muda" : "satria_muda",
+                              'email': _currentUser?.email,
+                              'firstname': _firstName,
+                              'lastname': _lastName,
+                              'isApproved': false,
+                              'stripe':_stripe,
+                              'age': _age,
+                              'location': 'VA'
+
+                            }).then((value) => {
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(snackBarGreen)
+                            })
+                                .catchError((error) => {
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(snackBarRed)
+                            });
+                          } else {
+                            _database
+                                .child('/users')
+                                .child(_dbkey.toString())
+                                .update({
+                              'firstname': _firstName,
+                              'lastname': _lastName,
+                              'age': _age,
+                              'stripe': _stripe,
+                            })
+                                .then((value) => {
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(snackBarGreen)
+                            })
+                                .catchError((error) => {
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(snackBarRed)
+                            });
+                          }
+
                         }
                       }),
                 ])
@@ -285,7 +322,8 @@ class _ProfileState extends State<Profile> {
                 ),
                 subtitle:
                     Text("Number of tournaments that you have competed in."),
-                trailing: Text(_tournaments != null ? _tournaments.toString() : "",
+                trailing: Text(
+                    _tournaments != null ? _tournaments.toString() : "",
                     style: TextStyle(
                         fontSize: _numberSize, fontWeight: FontWeight.bold)),
               ),
@@ -319,7 +357,8 @@ class _ProfileState extends State<Profile> {
                 ),
                 subtitle: Text(
                     "Winning a class event, being an outstanding student in class."),
-                trailing: Text(_classMerits != null ? _classMerits.toString() : "",
+                trailing: Text(
+                    _classMerits != null ? _classMerits.toString() : "",
                     style: TextStyle(
                         fontSize: _numberSize, fontWeight: FontWeight.bold)),
               ),
