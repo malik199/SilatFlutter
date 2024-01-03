@@ -9,7 +9,7 @@ class AddEventsPage extends StatefulWidget {
 
 class _AddEventsPageState extends State<AddEventsPage> {
   final _registerFormKey = GlobalKey<FormState>();
-  final _database = FirebaseDatabase.instance.reference();
+  final _database = FirebaseDatabase.instance.ref();
 
   final _eventNameTextController = TextEditingController();
   final _locationTextController = TextEditingController();
@@ -187,8 +187,7 @@ class _AddEventsPageState extends State<AddEventsPage> {
                           style: ElevatedButton.styleFrom(
                             shape: new RoundedRectangleBorder(
                               borderRadius: new BorderRadius.circular(12.0),
-                            ),
-                            primary: Colors.deepPurple,
+                            ), backgroundColor: Colors.deepPurple, foregroundColor: Colors.white
                           ),
                           onPressed: () {
                             _selectEventDate(context);
@@ -196,7 +195,7 @@ class _AddEventsPageState extends State<AddEventsPage> {
                           label: Text(
                             "DATE OF EVENT",
                             style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 12),
+                                fontWeight: FontWeight.bold, fontSize: 12, color: Colors.white),
                           ),
                         ),
                         SizedBox(width: 15),
@@ -223,8 +222,7 @@ class _AddEventsPageState extends State<AddEventsPage> {
                           style: ElevatedButton.styleFrom(
                             shape: new RoundedRectangleBorder(
                               borderRadius: new BorderRadius.circular(12.0),
-                            ),
-                            primary: Colors.purple,
+                            ), backgroundColor: Colors.purple, foregroundColor: Colors.white
                           ),
                           onPressed: () {
                             _selectDeadline(context);
@@ -232,7 +230,7 @@ class _AddEventsPageState extends State<AddEventsPage> {
                           label: Text(
                             "REG. DEADLINE",
                             style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 12),
+                                fontWeight: FontWeight.bold, fontSize: 12, color: Colors.white),
                           ),
                         ),
                         SizedBox(width: 15),

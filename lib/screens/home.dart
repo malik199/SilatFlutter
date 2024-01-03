@@ -26,7 +26,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late User _currentUser;
-  final _database = FirebaseDatabase.instance.reference();
+  final _database = FirebaseDatabase.instance.ref();
   late StreamSubscription _userDBStream;
   late StreamSubscription _topStudentsDBStream;
   late StreamSubscription _eventsDBStream;
@@ -373,7 +373,7 @@ class _HomePageState extends State<HomePage> {
                                   Text(
                                       formatCurriculum(_curriculum)
                                               .capitalizeFirstLetter() ??
-                                          "",
+                                          '',
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 16,
@@ -466,16 +466,15 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ],
                   ),
-                  trailing: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
+                  trailing: FittedBox(
+                    child: Column( children: [
                       Text('DAYS LEFT',
                           style: TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 8)),
                       Text((_difference + 1).toString(),
                           style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 35)),
-                    ],
+                              fontWeight: FontWeight.bold, fontSize: 40)),
+                    ]),
                   ),
                 ),
               ),
@@ -537,12 +536,10 @@ class _HomePageState extends State<HomePage> {
                           children: [
                             ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                  padding: EdgeInsets.fromLTRB(10, 1, 6, 0),
-                                  primary: Colors.white,
+                                  foregroundColor: Colors.grey, backgroundColor: Colors.white, padding: EdgeInsets.fromLTRB(10, 1, 6, 0),
                                   shape: const RoundedRectangleBorder(
                                     borderRadius: BorderRadius.all(Radius.circular(5)),
-                                  ),
-                                  onPrimary: Colors.grey),
+                                  )),
                               onPressed: () {
                                 popupStats(_reversedJawaraMudaData[index]);
                               },
@@ -590,12 +587,10 @@ class _HomePageState extends State<HomePage> {
                           children: [
                             ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                  padding: EdgeInsets.fromLTRB(10, 1, 6, 0),
-                                  primary: Colors.white,
+                                  foregroundColor: Colors.grey, backgroundColor: Colors.white, padding: EdgeInsets.fromLTRB(10, 1, 6, 0),
                                   shape: const RoundedRectangleBorder(
                                     borderRadius: BorderRadius.all(Radius.circular(5)),
-                                  ),
-                                  onPrimary: Colors.grey),
+                                  )),
                               onPressed: () {
                                 popupStats(_reversedSatriaMudaData[index]);
                               },

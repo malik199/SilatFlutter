@@ -12,7 +12,7 @@ class Header extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(headerText),
+        Text(headerText, style: TextStyle(color: Colors.white)),
         Image.asset('assets/images/silatlogo.png', scale: 10),
       ],
     );

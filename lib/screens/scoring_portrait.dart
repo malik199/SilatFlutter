@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'dart:async';
 
 class ScoringPortrait extends StatefulWidget {
@@ -205,14 +203,15 @@ class _ScoringPageState extends State<ScoringPortrait> {
     const double _padding = 10.0;
     const double _spacing = 10.0;
     //const double _middleSpacing = 15.0;
-    const double _bottomFont = 80;
     const double _borderRadius = 8;
+    const double _bottomFont = 60;
 
+    const TextStyle whiteTextColor = TextStyle(color: Colors.white);
     final ButtonStyle redStyle = ButtonStyle(
         backgroundColor: MaterialStateProperty.all(Colors.red),
         shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius:BorderRadius.circular(2) )),
         textStyle: MaterialStateProperty.all(
-            TextStyle(fontSize: _largeFont, fontWeight: FontWeight.bold)));
+            TextStyle(fontSize: _largeFont, fontWeight: FontWeight.bold, color: Colors.white)));
     final ButtonStyle blueStyle = ButtonStyle(
         shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius:BorderRadius.circular(2) )),
         backgroundColor: MaterialStateProperty.all(Colors.blue),
@@ -283,7 +282,7 @@ class _ScoringPageState extends State<ScoringPortrait> {
                                   child: ElevatedButton(
                                     style: redSmallerStyle,
                                     onPressed: () => redButtonClicked(-1),
-                                    child: const Text('-1'),
+                                    child: const Text('-1', style: whiteTextColor),
                                   ),
                                 ),
                                 SizedBox(width: _spacing),
@@ -291,7 +290,7 @@ class _ScoringPageState extends State<ScoringPortrait> {
                                   child: ElevatedButton(
                                     style: redSmallerStyle,
                                     onPressed: () => redButtonClicked(-2),
-                                    child: const Text('-2'),
+                                    child: const Text('-2', style: whiteTextColor),
                                   ),
                                 ),
                               ]),
@@ -310,7 +309,7 @@ class _ScoringPageState extends State<ScoringPortrait> {
                                   child: ElevatedButton(
                                     style: redSmallerStyle,
                                     onPressed: () => redButtonClicked(-5),
-                                    child: const Text('-5'),
+                                    child: const Text('-5', style: whiteTextColor),
                                   ),
                                 ),
                                 SizedBox(width: _spacing),
@@ -318,7 +317,7 @@ class _ScoringPageState extends State<ScoringPortrait> {
                                   child: ElevatedButton(
                                     style: redSmallerStyle,
                                     onPressed: () => redButtonClicked(-10),
-                                    child: const Text('-10'),
+                                    child: const Text('-10', style: whiteTextColor),
                                   ),
                                 ),
                               ]),
@@ -338,7 +337,7 @@ class _ScoringPageState extends State<ScoringPortrait> {
                                     style: redStyle,
                                     onPressed: () => redButtonClicked(1),
                                     child: FittedBox(
-                                      child: const Text('1'),
+                                      child: const Text('1', style: whiteTextColor),
                                     ),
                                   ),
                                 ),
@@ -348,7 +347,7 @@ class _ScoringPageState extends State<ScoringPortrait> {
                                     style: redStyle,
                                     onPressed: () => redButtonClicked(2),
                                     child: FittedBox(
-                                      child: const Text('2'),
+                                      child: const Text('2', style: whiteTextColor),
                                     ),
                                   ),
                                 ),
@@ -368,7 +367,7 @@ class _ScoringPageState extends State<ScoringPortrait> {
                                             onPressed: () =>
                                                 redButtonClicked(3),
                                             child: FittedBox(
-                                              child: const Text('3'),
+                                              child: const Text('3', style: whiteTextColor),
                                             ),
                                           ),
                                         ),
@@ -379,7 +378,7 @@ class _ScoringPageState extends State<ScoringPortrait> {
                                             onPressed: () =>
                                                 redButtonClicked(4),
                                             child: FittedBox(
-                                              child: const Text('1+3'),
+                                              child: const Text('1+3', style: whiteTextColor),
                                             ),
                                           ),
                                         ),
@@ -438,7 +437,7 @@ class _ScoringPageState extends State<ScoringPortrait> {
                                 child: ElevatedButton(
                                   style: blueSmallerStyle,
                                   onPressed: () => blueButtonClicked(-1),
-                                  child: const Text('-1'),
+                                  child: const Text('-1', style: whiteTextColor),
                                 ),
                               ),
                               SizedBox(width: _spacing),
@@ -446,7 +445,7 @@ class _ScoringPageState extends State<ScoringPortrait> {
                                 child: ElevatedButton(
                                   style: blueSmallerStyle,
                                   onPressed: () => blueButtonClicked(-2),
-                                  child: const Text('-2'),
+                                  child: const Text('-2', style: whiteTextColor),
                                 ),
                               ),
                             ]),
@@ -465,7 +464,7 @@ class _ScoringPageState extends State<ScoringPortrait> {
                                 child: ElevatedButton(
                                   style: blueSmallerStyle,
                                   onPressed: () => blueButtonClicked(-5),
-                                  child: const Text('-5'),
+                                  child: const Text('-5', style: whiteTextColor),
                                 ),
                               ),
                               SizedBox(width: _spacing),
@@ -473,7 +472,7 @@ class _ScoringPageState extends State<ScoringPortrait> {
                                 child: ElevatedButton(
                                   style: blueSmallerStyle,
                                   onPressed: () => blueButtonClicked(-10),
-                                  child: const Text('-10'),
+                                  child: const Text('-10', style: whiteTextColor),
                                 ),
                               ),
                             ]),
@@ -493,7 +492,7 @@ class _ScoringPageState extends State<ScoringPortrait> {
                                   style: blueStyle,
                                   onPressed: () => blueButtonClicked(1),
                                   child: FittedBox(
-                                    child: const Text('1'),
+                                    child: const Text('1', style: whiteTextColor),
                                   ),
                                 ),
                               ),
@@ -503,7 +502,7 @@ class _ScoringPageState extends State<ScoringPortrait> {
                                   style: blueStyle,
                                   onPressed: () => blueButtonClicked(2),
                                   child: FittedBox(
-                                    child: const Text('2'),
+                                    child: const Text('2', style: whiteTextColor),
                                   ),
                                 ),
                               ),
@@ -522,7 +521,7 @@ class _ScoringPageState extends State<ScoringPortrait> {
                                           style: blueStyle,
                                           onPressed: () => blueButtonClicked(3),
                                           child:
-                                              const FittedBox(child: Text('3')),
+                                              const FittedBox(child: Text('3', style: whiteTextColor)),
                                         ),
                                       ),
                                       SizedBox(width: _spacing),
@@ -531,7 +530,7 @@ class _ScoringPageState extends State<ScoringPortrait> {
                                           style: blueStyle,
                                           onPressed: () => blueButtonClicked(4),
                                           child: FittedBox(
-                                              child: const Text('1+3')),
+                                              child: const Text('1+3', style: whiteTextColor)),
                                         ),
                                       ),
                                     ]),
@@ -565,12 +564,14 @@ class _ScoringPageState extends State<ScoringPortrait> {
                         Radius.circular(_borderRadius),
                       ),
                     ),
-                    child: Text(
-                      '$_redFinalScore',
-                      style: TextStyle(
+                    child: FittedBox(
+                      fit: BoxFit.contain,
+                      child: Text(
+                        '$_redFinalScore', style: TextStyle(
                           fontSize: _bottomFont,
                           fontWeight: FontWeight.bold,
                           color: Colors.white),
+                      ),
                     ),
                   ),
                 ),
@@ -578,7 +579,7 @@ class _ScoringPageState extends State<ScoringPortrait> {
                   width: _spacing,
                 ),
                 ElevatedButton(
-                  child: const Icon(Icons.autorenew, size: 40),
+                  child: const Icon(Icons.autorenew, size: 40, color: Colors.white,),
                   onPressed: () => showDialog<String>(
                     context: context,
                     builder: (BuildContext context) => AlertDialog(
@@ -599,7 +600,7 @@ class _ScoringPageState extends State<ScoringPortrait> {
                     ),
                   ),
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.purple,
+                    backgroundColor: Colors.purple,
                     shape: CircleBorder(),
                   ),
                 ),
@@ -619,13 +620,15 @@ class _ScoringPageState extends State<ScoringPortrait> {
                         Radius.circular(_borderRadius),
                       ),
                     ),
+                    child: FittedBox(
+                    fit: BoxFit.contain,
                     child: Text(
-                      '$_blueFinalScore',
-                      style: TextStyle(
-                          fontSize: _bottomFont,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white),
+                      '$_blueFinalScore', style: TextStyle(
+                        fontSize: _bottomFont,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white),
                     ),
+                  ),
                   ),
                 ),
               ],

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:silat_flutter/models/belts_complex.dart';
-import 'package:silat_flutter/screens/Header.dart';
 
 class Advancement extends StatelessWidget {
   @override
@@ -11,7 +10,7 @@ class Advancement extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Header(headerText: "Belt Advancement"),
+        title: const Text('Belt Advancement', style: TextStyle(color: Colors.black),),
       ),
       body: SingleChildScrollView(
         child: Container(

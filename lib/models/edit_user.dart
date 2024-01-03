@@ -15,7 +15,7 @@ class EditUserWidget extends StatefulWidget {
 }
 
 class _EditUserWidgetState extends State<EditUserWidget> {
-  DatabaseReference _database = FirebaseDatabase.instance.reference();
+  DatabaseReference _database = FirebaseDatabase.instance.ref();
 
   double spacingWidth = 10;
   double spacingHeight = 10;
@@ -90,7 +90,7 @@ class _EditUserWidgetState extends State<EditUserWidget> {
             TextButton(
               onPressed: () {
                 FirebaseDatabase.instance
-                    .reference()
+                    .ref()
                     .child('users')
                     .child(dbKey)
                     .remove()
@@ -98,7 +98,7 @@ class _EditUserWidgetState extends State<EditUserWidget> {
                   print("User Deleted!");
                   Navigator.pop(context, true);
                 }).catchError((error) {
-                  print("Problem Deleting Item: ${error}");
+                  print("Problem Deleting Item: $error");
                 });
               },
               child: const Text('Delete'),
@@ -441,14 +441,13 @@ class _EditUserWidgetState extends State<EditUserWidget> {
                     style: ElevatedButton.styleFrom(
                         shape: new RoundedRectangleBorder(
                           borderRadius: new BorderRadius.circular(12.0),
-                        ),
-                        primary: Colors.purple,
+                        ), backgroundColor: Colors.purple, foregroundColor: Colors.white,
                         padding:
                             EdgeInsets.symmetric(horizontal: 50, vertical: 20),
                         textStyle: TextStyle(
                             fontSize: 20, fontWeight: FontWeight.bold)),
                     icon: Icon(Icons.save),
-                    label: Text("Update Profile"),
+                    label: Text("Update Profile", style: TextStyle(color: Colors.white)),
                     onPressed: () {
                       _database
                           .child('/users')

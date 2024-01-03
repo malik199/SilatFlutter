@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:silat_flutter/screens/header.dart';
-import 'package:silat_flutter/screens/landing_page.dart';
-import 'package:silat_flutter/utils/fire_auth.dart';
 import 'package:silat_flutter/utils/validator.dart';
 
 class ResetPassword extends StatefulWidget {
@@ -17,7 +14,6 @@ class _ResetPasswordState extends State<ResetPassword> {
   final _emailTextController = TextEditingController();
   FirebaseAuth auth = FirebaseAuth.instance;
   final _focusEmail = FocusNode();
-  String _emailSent = "";
   double _spacing = 10.0;
   bool _isProcessing = false;
 
@@ -99,7 +95,6 @@ class _ResetPasswordState extends State<ResetPassword> {
                                     child: Text(
                                       'Reset Password',
                                       style: TextStyle(
-                                          color: Colors.white,
                                           fontWeight: FontWeight.bold),
                                     ),
                                   ),

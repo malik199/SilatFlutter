@@ -11,7 +11,7 @@ class Profile extends StatefulWidget {
 class _ProfileState extends State<Profile> {
   final formKey = GlobalKey<FormState>(); //key for form
   User? _currentUser = FirebaseAuth.instance.currentUser;
-  final _database = FirebaseDatabase.instance.reference();
+  final _database = FirebaseDatabase.instance.ref();
   //late StreamSubscription _userDBStream;
   var myUser;
 
@@ -220,14 +220,14 @@ class _ProfileState extends State<Profile> {
                       style: ElevatedButton.styleFrom(
                           shape: new RoundedRectangleBorder(
                             borderRadius: new BorderRadius.circular(12.0),
-                          ),
-                          primary: Colors.purple,
+                          ), backgroundColor: Colors.purple,
+                          foregroundColor: Colors.white,
                           padding: EdgeInsets.symmetric(
                               horizontal: 50, vertical: 20),
                           textStyle: TextStyle(
                               fontSize: 20, fontWeight: FontWeight.bold)),
                       icon: Icon(Icons.save),
-                      label: Text("Update Profile"),
+                      label: Text("Update Profile", style: TextStyle(color: Colors.white)),
                       onPressed: () {
                         final isValid = formKey.currentState?.validate();
                         // FocusScope.of(context).unfocus();

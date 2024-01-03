@@ -47,7 +47,7 @@ class _EventsState extends State<Events> {
             TextButton(
               onPressed: () {
                 FirebaseDatabase.instance
-                    .reference()
+                    .ref()
                     .child('events')
                     .child(dbKey)
                     .remove()
@@ -69,12 +69,9 @@ class _EventsState extends State<Events> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Upcoming Events'),
-      ),
       body: SafeArea(
         child: FirebaseAnimatedList(
-          query: FirebaseDatabase.instance.reference().child('events').orderByChild('date')
+          query: FirebaseDatabase.instance.ref().child('events').orderByChild('date')
               .startAt(DateTime.now().toString()),
           itemBuilder: (BuildContext context, DataSnapshot snapshot,
               Animation<double> animation, int index) {
@@ -146,17 +143,15 @@ class _EventsState extends State<Events> {
                             Text(dbItemValue['desc'])
                           ],
                         ),
-                        trailing: Column(
-                          children: [
+                        trailing: FittedBox(
+                          child: Column( children: [
                             Text('DAYS LEFT',
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold, fontSize: 8)),
                             Text((difference + 1).toString(),
                                 style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 38,
-                                    color: Colors.black45)),
-                          ],
+                                    fontWeight: FontWeight.bold, fontSize: 40)),
+                          ]),
                         ),
                       ),
                     ),

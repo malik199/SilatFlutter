@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:silat_flutter/admin/guests.dart';
-import 'package:silat_flutter/login/login_page.dart';
 import 'package:silat_flutter/screens/add_events.dart';
 import 'package:silat_flutter/screens/advancement.dart';
 import 'package:silat_flutter/screens/events.dart';
 import 'package:silat_flutter/screens/header.dart';
 import 'package:silat_flutter/screens/scoring_portrait.dart';
-import 'package:silat_flutter/screens/rules_creed.dart';
+import 'package:silat_flutter/screens/creed.dart';
+import 'package:silat_flutter/screens/rules.dart';
 import 'package:silat_flutter/screens/techniques_home.dart';
 import 'package:silat_flutter/screens/home.dart';
 import 'package:silat_flutter/admin/profile.dart';
@@ -15,6 +15,7 @@ import 'package:silat_flutter/admin/approved_users.dart';
 import 'package:silat_flutter/admin/unapproved_users.dart';
 import 'package:silat_flutter/models/isAdmin.dart';
 import 'package:silat_flutter/utils/fire_auth.dart';
+import 'package:silat_flutter/login/log_out.dart';
 
 class LandingPage extends StatefulWidget {
   final User user;
@@ -44,47 +45,12 @@ class _LandingPageState extends State<LandingPage> {
     });
   }
 
-  void _signMeOut() async {
-    await FirebaseAuth.instance.signOut();
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
-        builder: (context) => LoginPage(),
-      ),
-    );
-  }
 
   _LandingPageState(this._currentUser);
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
-      if (index == 5) {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            // return object of type Dialog
-            return AlertDialog(
-              title: new Text("You are about to log out"),
-              content: new Text("Are you sure you want to log out?"),
-              actions: <Widget>[
-                // usually buttons at the bottom of the dialog
-                TextButton(
-                  onPressed: () => Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(
-                      builder: (context) => LoginPage(),
-                    ),
-                  ),
-                  child: const Text('Cancel'),
-                ),
-                TextButton(
-                  onPressed: () => {_signMeOut()},
-                  child: const Text('OK'),
-                ),
-              ],
-            );
-          },
-        );
-      }
     });
   }
 
@@ -116,8 +82,7 @@ class _LandingPageState extends State<LandingPage> {
           children: [
             ElevatedButton(
   style:  ElevatedButton.styleFrom(
-    onPrimary: Colors.black87,
-    primary: Colors.grey[300],
+    foregroundColor: Colors.black87, backgroundColor: Colors.grey[300],
     minimumSize: Size(88, 36),
     padding: EdgeInsets.symmetric(horizontal: 16),
     shape: const RoundedRectangleBorder(
@@ -173,10 +138,8 @@ class _LandingPageState extends State<LandingPage> {
     List<Widget> _pages = <Widget>[
       HomePage(userPassed: _currentUser),
       TechniquesHome(),
-      RulesCreed(),
       ScoringPortrait(),
       Events(),
-      Text("logging out..."),
     ];
     return Scaffold(
       drawer: Drawer(
@@ -266,6 +229,39 @@ class _LandingPageState extends State<LandingPage> {
                   ),
                 ],
               ),
+            ListTile(
+              leading: Icon(Icons.record_voice_over),
+              title: const Text('The Creed'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => Creed()),
+                );
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.article),
+              title: const Text('Rules of the Class'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => Rules()),
+                );
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.logout),
+              title: const Text('Log Out'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => LogOut()),
+                );
+              },
+            ),
           ],
         ) : null,
       ),
@@ -295,20 +291,12 @@ class _LandingPageState extends State<LandingPage> {
             label: 'Techniques',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.description),
-            label: 'Rules & Creed',
-          ),
-          BottomNavigationBarItem(
             icon: Icon(Icons.table_view),
             label: 'Scoring',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.event),
             label: 'Events',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.logout),
-            label: 'Log Out',
           ),
         ],
         currentIndex: _selectedIndex,
