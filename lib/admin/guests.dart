@@ -47,7 +47,7 @@ class _GuestsState extends State<Guests> {
                   size: 50.0,
                   color: PullColor().getColor(dbItem?['belt']))),
               title: Text(
-                dbItem?['firstname'].capitalizeFirstLetter() + " " + dbItem?['lastname'].capitalizeFirstLetter(),
+                dbItem?['firstname'] + " " + dbItem?['lastname'],
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               subtitle: Text(formatCurriculum(dbItem?['curriculum'])),

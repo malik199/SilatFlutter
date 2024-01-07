@@ -12,7 +12,7 @@ class ApprovedUsers extends StatefulWidget {
 }
 
 class _ApprovedUsersState extends State<ApprovedUsers> {
-  final _database = FirebaseDatabase.instance.reference();
+  final _database = FirebaseDatabase.instance.ref();
   double spacingWidth = 10;
   double spacingHeight = 10;
 
@@ -40,8 +40,6 @@ class _ApprovedUsersState extends State<ApprovedUsers> {
       });
     });
   }
-
-
 
   String formatCurriculum(dynamic curriculum) {
     return convertToTitleCase(curriculum.toString().replaceAll('_', ' '));

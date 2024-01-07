@@ -21,18 +21,23 @@ class MyApp extends StatelessWidget {
               borderRadius: BorderRadius.all(Radius.circular(5)),
             ),
             textStyle: TextStyle(
-              fontSize: 24.0,
+              fontSize: 20.0,
+              height: 1,
             ),
             padding: EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
           ),
         ),
         textTheme: TextTheme(
-          headline1: TextStyle(
-            fontSize: 46.0,
+          displayLarge: TextStyle(
+            height: 1,
+            fontSize: 42.0,
             color: Colors.blue.shade700,
             fontWeight: FontWeight.w500,
           ),
-          bodyText1: TextStyle(fontSize: 18.0),
+          bodyLarge: TextStyle(
+              fontSize: 18.0,
+              height: 1,
+          ),
         ),
       ),
       home: LoginPage(),

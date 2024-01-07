@@ -39,7 +39,8 @@ class _HomePageState extends State<HomePage> {
   int _stripe = 0;
   int _age = 0;
   String _location = "";
-  double _numberSize = 35;
+  double _numberSize = 30;
+  double _lineHeight = 1.2;
 
   @override
   void initState() {
@@ -241,7 +242,11 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   Text("${obj['firstname'].toUpperCase()}'s Stats",
                       style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 30)),
+                          TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 30,
+                              height: 1,
+                          )),
                   if (obj['location'] != "")
                     Text("Location: ${obj['location'].toUpperCase()}",
                         style: TextStyle(
@@ -258,7 +263,7 @@ class _HomePageState extends State<HomePage> {
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 subtitle:
-                    Text("Number of tournaments that you have competed in."),
+                    Text("Total count of tournaments participated in.", style: TextStyle(height:_lineHeight)),
                 trailing: Text(
                     obj['tournaments'] != null
                         ? obj['tournaments'].toString()
@@ -272,7 +277,7 @@ class _HomePageState extends State<HomePage> {
                   "1st Place",
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
-                subtitle: Text("Number of first place wins."),
+                subtitle: Text("Number of first place wins.", style: TextStyle(height:_lineHeight)),
                 trailing: Text(
                     obj['1stplace'] != null ? obj['1stplace'].toString() : "",
                     style: TextStyle(
@@ -284,7 +289,7 @@ class _HomePageState extends State<HomePage> {
                   "2nd Place",
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
-                subtitle: Text("Number of 2nd place wins."),
+                subtitle: Text("Number of 2nd place wins.", style: TextStyle(height:_lineHeight)),
                 trailing: Text(
                     obj['2ndplace'] != null ? obj['2ndplace'].toString() : "",
                     style: TextStyle(
@@ -297,7 +302,7 @@ class _HomePageState extends State<HomePage> {
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 subtitle: Text(
-                    "Winning a class event, being an outstanding student in class."),
+                    "Winning a class event, being an outstanding student in class.", style: TextStyle(height:_lineHeight)),
                 trailing: Text(
                     obj['classMerits'] != null
                         ? obj['classMerits'].toString()
@@ -313,7 +318,7 @@ class _HomePageState extends State<HomePage> {
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 subtitle: Text(
-                    "Significant good deeds, helping the poor, volunteering, etc."),
+                    "Significant good deeds, helping the poor, volunteering, etc.", style: TextStyle(height:_lineHeight)),
                 trailing: Text(
                     obj['deeds'] != null ? obj['deeds'].toString() : "",
                     style: TextStyle(
@@ -390,6 +395,7 @@ class _HomePageState extends State<HomePage> {
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 26,
+                                          height: 1,
                                           color: Colors.white)),
                                   SizedBox(height: 10),
                                   Text(
@@ -400,6 +406,7 @@ class _HomePageState extends State<HomePage> {
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 16,
+                                          height: 1,
                                           color: Colors.white)),
                                   Text(
                                       formatCurriculum(_curriculum)
@@ -407,6 +414,7 @@ class _HomePageState extends State<HomePage> {
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 16,
+                                          height: 1,
                                           color: Colors.white)),
                                   Row(
                                     children: [
@@ -417,6 +425,7 @@ class _HomePageState extends State<HomePage> {
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               fontSize: 17,
+                                              height: 1,
                                               color: Colors.white)),
                                       SizedBox(width: 17),
                                       Text("Location: ",
