@@ -52,10 +52,10 @@ class _ProfileState extends State<Profile> {
         .orderByChild('email')
         .equalTo((_currentUser?.email)?.toLowerCase())
         .once()
-        .then((rtdb_data) {
-      if (rtdb_data.snapshot.exists) {
+        .then((rtdbData) {
+      if (rtdbData.snapshot.exists) {
         final data =
-            new Map<String, dynamic>.from(rtdb_data.snapshot.value as Map);
+            new Map<String, dynamic>.from(rtdbData.snapshot.value as Map);
 
         data.forEach((key, value) {
           myData = value;

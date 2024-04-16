@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
@@ -55,7 +54,7 @@ class _EventsState extends State<Events> {
                   print("Event Deleted!");
                   Navigator.pop(context, true);
                 }).catchError((error) {
-                  print("Problem Deleting Item: ${error}");
+                  print("Problem Deleting Item: $error");
                 });
               },
               child: const Text('Delete'),

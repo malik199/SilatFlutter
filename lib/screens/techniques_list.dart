@@ -66,7 +66,7 @@ class _TechniquesListState extends State<TechniquesList> {
     //print('STRIPE $stripe');
 
     Widget showHeader() {
-      if (stripe != 0 && stripe is int) {
+      if (stripe != 0) {
         return Padding(
           padding: const EdgeInsets.all(8.0),
           child: Container(
