@@ -56,7 +56,8 @@ class _HomePageState extends State<HomePage> {
   late List<dynamic> _jawaraMudaData = [];
   late List<dynamic> _reversedJawaraMudaData = [];
   void _getToStudentData() {
-    _topStudentsDBStream = _database.child('users').orderByChild('score').onValue.listen((event) {
+    _topStudentsDBStream =
+        _database.child('users').orderByChild('score').onValue.listen((event) {
       if (event.snapshot.value != null) {
         _satriaMudaData = [];
         _jawaraMudaData = [];
@@ -100,9 +101,6 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-
-
-
   void _getUserData() {
     _userDBStream = _database
         .child('users')
@@ -112,7 +110,8 @@ class _HomePageState extends State<HomePage> {
         .onValue
         .listen((event) {
       if (event.snapshot.value != null) {
-        final data = new Map<String?, dynamic>.from(event.snapshot.value as Map);
+        final data =
+            new Map<String?, dynamic>.from(event.snapshot.value as Map);
         setState(() {
           data.forEach((key, value) {
             _firstName = value['firstname'];
@@ -126,11 +125,9 @@ class _HomePageState extends State<HomePage> {
         });
       } else {
         _showMyDialog();
-
       }
     });
   }
-
 
   Future<void> _showMyDialog() async {
     return showDialog<void>(
@@ -142,7 +139,8 @@ class _HomePageState extends State<HomePage> {
           content: const SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                Text('There is a problem setting up your account. We are attempting to fix the problem now. Please contact the instructor to fix it.'),
+                Text(
+                    'There is a problem setting up your account. We are attempting to fix the problem now. Please contact the instructor to fix it.'),
               ],
             ),
           ),
@@ -159,41 +157,55 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  String _eventName = "";
-  String _eventLocation = "";
-  //String _eventUrl = "";
-  //String _eventDescription = "";
-  String _eventDate = "2019-08-09T06:55:01.8968264+00:00";
-  //String _eventDeadline = "";
-  int _difference = 0;
+  String _eventName1 = "No Upcoming Events";
+  String _eventLocation1 = "N/A";
+  String _eventDate1 = "2019-08-09T06:55:01.8968264+00:00";
+  int _difference1 = 0;
+
+  String _eventName2 = "No Upcoming Events";
+  String _eventLocation2 = "N/A";
+  String _eventDate2 = "2019-08-09T06:55:01.8968264+00:00";
+  int _difference2 = 0;
+
   void _getEventsData() {
     _eventsDBStream = _database
         .child('events')
         .orderByChild('date')
         .startAt(DateTime.now().toString())
-        .limitToFirst(1)
+        .limitToFirst(2)  // Change this number to 2 to fetch the latest two events
         .onValue
         .listen((event) {
       if (event.snapshot.value != null) {
-        final data = new Map<String?, dynamic>.from(event.snapshot.value as Map);
+        final data =
+        new Map<String?, dynamic>.from(event.snapshot.value as Map);
 
-        setState(() {
-          data.forEach((key, value) {
-            _eventName = value['name'];
-            _eventLocation = value['location'];
-            //_eventUrl = value['url'];
-            //_eventDescription = value['curriculum'];
-            _eventDate = value['date'];
-            //_eventDeadline = value['stripe'];
+        List events = data.values.toList();
+        if (events.isNotEmpty) {
+          setState(() {
+            if (events.length > 0) {
+              _eventName1 = events[0]['name'];
+              _eventLocation1 = events[0]['location'];
+              _eventDate1 = events[0]['date'];
 
-            final eventDate = DateTime.parse(value['date']);
-            final date2 = DateTime.now();
-            _difference = -(date2.difference(eventDate).inDays);
+              final eventDate1 = DateTime.parse(events[0]['date']);
+              final dateNow = DateTime.now();
+              _difference1 = -(dateNow.difference(eventDate1).inDays);
+            }
+            if (events.length > 1) {
+              _eventName2 = events[1]['name'];
+              _eventLocation2 = events[1]['location'];
+              _eventDate2 = events[1]['date'];
+
+              final eventDate2 = DateTime.parse(events[1]['date']);
+              final dateNow = DateTime.now();
+              _difference2 = -(dateNow.difference(eventDate2).inDays);
+            }
           });
-        });
+        }
       }
     });
   }
+
 
   String formatCurriculum(dynamic curriculum) {
     return convertToTitleCase(curriculum.toString().replaceAll('_', ' '));
@@ -241,12 +253,11 @@ class _HomePageState extends State<HomePage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text("${obj['firstname'].toUpperCase()}'s Stats",
-                      style:
-                          TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 30,
-                              height: 1,
-                          )),
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 30,
+                        height: 1,
+                      )),
                   if (obj['location'] != "")
                     Text("Location: ${obj['location'].toUpperCase()}",
                         style: TextStyle(
@@ -262,8 +273,8 @@ class _HomePageState extends State<HomePage> {
                   "Tournaments",
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
-                subtitle:
-                    Text("Total count of tournaments participated in.", style: TextStyle(height:_lineHeight)),
+                subtitle: Text("Total count of tournaments participated in.",
+                    style: TextStyle(height: _lineHeight)),
                 trailing: Text(
                     obj['tournaments'] != null
                         ? obj['tournaments'].toString()
@@ -277,7 +288,8 @@ class _HomePageState extends State<HomePage> {
                   "1st Place",
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
-                subtitle: Text("Number of first place wins.", style: TextStyle(height:_lineHeight)),
+                subtitle: Text("Number of first place wins.",
+                    style: TextStyle(height: _lineHeight)),
                 trailing: Text(
                     obj['1stplace'] != null ? obj['1stplace'].toString() : "",
                     style: TextStyle(
@@ -289,7 +301,8 @@ class _HomePageState extends State<HomePage> {
                   "2nd Place",
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
-                subtitle: Text("Number of 2nd place wins.", style: TextStyle(height:_lineHeight)),
+                subtitle: Text("Number of 2nd place wins.",
+                    style: TextStyle(height: _lineHeight)),
                 trailing: Text(
                     obj['2ndplace'] != null ? obj['2ndplace'].toString() : "",
                     style: TextStyle(
@@ -302,7 +315,8 @@ class _HomePageState extends State<HomePage> {
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 subtitle: Text(
-                    "Winning a class event, being an outstanding student in class.", style: TextStyle(height:_lineHeight)),
+                    "Winning a class event, being an outstanding student in class.",
+                    style: TextStyle(height: _lineHeight)),
                 trailing: Text(
                     obj['classMerits'] != null
                         ? obj['classMerits'].toString()
@@ -318,7 +332,8 @@ class _HomePageState extends State<HomePage> {
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 subtitle: Text(
-                    "Significant good deeds, helping the poor, volunteering, etc.", style: TextStyle(height:_lineHeight)),
+                    "Significant good deeds, helping the poor, volunteering, etc.",
+                    style: TextStyle(height: _lineHeight)),
                 trailing: Text(
                     obj['deeds'] != null ? obj['deeds'].toString() : "",
                     style: TextStyle(
@@ -364,178 +379,167 @@ class _HomePageState extends State<HomePage> {
     ]);
 
     return Container(
-      color: Colors.grey[300],
+      color: Colors.grey[900],
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          InternetConnection(),
+          // InternetConnection(), TODO: ADD Connectivity
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(7.0),
             child: Column(
               children: [
-                Container(
-                    decoration: BoxDecoration(
-                        color: Colors.blue[900],
-                        borderRadius: BorderRadius.all(Radius.circular(15))),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Flexible(
-                            flex: 2,
-                            child: Container(
-                              padding: EdgeInsets.symmetric(horizontal: 18.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                      '${_firstName.capitalizeFirstLetter()} ${_lastName.capitalizeFirstLetter()}',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 26,
-                                          height: 1,
-                                          color: Colors.white)),
-                                  SizedBox(height: 10),
-                                  Text(
-                                      _belt != ""
-                                          ? '$_belt Belt'
-                                              .capitalizeFirstLetter()
-                                          : "",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16,
-                                          height: 1,
-                                          color: Colors.white)),
-                                  Text(
-                                      formatCurriculum(_curriculum)
-                                              .capitalizeFirstLetter(),
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16,
-                                          height: 1,
-                                          color: Colors.white)),
-                                  Row(
-                                    children: [
-                                      Text(
-                                          _age != 0
-                                              ? 'Age: ${_age.toString().capitalizeFirstLetter()}'
-                                              : "",
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 17,
-                                              height: 1,
-                                              color: Colors.white)),
-                                      SizedBox(width: 17),
-                                      Text("Location: ",
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 17,
-                                              color: Colors.white)),
-                                      Text(_location,
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 17,
-                                              color: Colors.white)),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          Flexible(
-                            flex: 1,
-                            child: TextButton(
-                              onPressed: () => Navigator.push(
-                                  context,
-                                  new MaterialPageRoute(
-                                      builder: (context) => Avatar())),
-                              child: FluttermojiCircleAvatar(
-                                radius: 70,
-                              ),
-                            ),
-                          )
-                        ],
+                Row(
+                  children: [
+                    Flexible(
+                      flex: 2,
+                      child: TextButton(
+                        onPressed: () => Navigator.push(
+                            context,
+                            new MaterialPageRoute(
+                                builder: (context) => Avatar())),
+                        child: FluttermojiCircleAvatar(
+                          radius: 70,
+                        ),
                       ),
-                    )),
+                    ),
+                    Expanded(
+                      flex: 2,
+                      child: Container(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            /*Text(
+                                '${_firstName.capitalizeFirstLetter()} ${_lastName.capitalizeFirstLetter()}',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 26,
+                                    height: 1,
+                                    color: Colors.white)),*/
+                            Text(
+                                _belt != ""
+                                    ? '$_belt Belt'.capitalizeFirstLetter()
+                                    : "",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                    height: 1,
+                                    color: Colors.white)),
+                            Text(
+                                formatCurriculum(_curriculum)
+                                    .capitalizeFirstLetter(),
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                    height: 1,
+                                    color: Colors.white)),
+                            Text(
+                                _age != 0
+                                    ? 'Age: ${_age.toString().capitalizeFirstLetter()}'
+                                    : "",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 17,
+                                    height: 1,
+                                    color: Colors.white)),
+                            SizedBox(width: 17),
+                            Text("Location: ",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 17,
+                                    color: Colors.white)),
+                            Text(_location,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 17,
+                                    color: Colors.white)),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
                 SizedBox(height: 5),
                 BeltsComplex(
                     curriculum: _curriculum,
                     color: _belt,
                     stripes: getStripes(_stripe),
                     hasYellowStripe: _belt == "black" ? true : false),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
-            child: Card(
-              color: Colors.limeAccent,
-              child: Padding(
-                padding: const EdgeInsets.all(6.0),
-                child: ListTile(
-                  leading: Icon(Icons.event, size: 40),
-                  title: Text(_eventName,
-                      style: TextStyle(fontWeight: FontWeight.bold)),
-                  subtitle: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(height: 1),
-                      Row(
-                        children: [
-                          Text('Event Date: ',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 12)),
-                          Text(
-                              (DateFormat('MMM dd, yyyy')
-                                      .format(DateTime.parse(_eventDate)))
-                                  .toString(),
-                              style: TextStyle(fontSize: 12)),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Text('Location: ',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 12)),
-                          Text(_eventLocation, style: TextStyle(fontSize: 12)),
-                        ],
-                      ),
-                    ],
-                  ),
-                  trailing: FittedBox(
-                    child: Column( children: [
-                      Text('DAYS LEFT',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 8)),
-                      Text((_difference + 1).toString(),
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 40)),
-                    ]),
+                SizedBox(height: 5),
+                Text(
+                  "Upcoming Events",
+                  style: TextStyle(
+                    color: Colors.yellow, // Set the text color to yellow
+                    fontWeight: FontWeight.bold, // Make the text bold
+                    fontSize: 15, // Optional: Set font size
                   ),
                 ),
-              ),
-            ),
-          ),
-          Container(
-            color: Colors.black87,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.control_camera, size: 20, color: Colors.grey),
-                SizedBox(width: 10),
-                Text("TOP STUDENTS",
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 27,
-                        color: Colors.white)),
-                SizedBox(width: 10),
-                Icon(Icons.control_camera, size: 20, color: Colors.grey),
+                SizedBox(height: 5),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment
+                      .center, // Align children to the center horizontally
+                  children: <Widget>[
+                    Expanded(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.black54,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            children: [
+                              Text(_eventName1,
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold, fontSize: 14)),
+                              SizedBox(height: 1),
+                              Text(
+                                  (DateFormat('MMM dd, yyyy')
+                                          .format(DateTime.parse(_eventDate1)))
+                                      .toString()),
+                              Text(_eventLocation1),
+                              Text('Days Left: ${(_difference1 + 1).toString()}',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold, color: Colors.pink),),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 5),
+                    Expanded(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.black54,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            children: [
+                              Text(_eventName2,
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold, fontSize: 14)),
+                              SizedBox(height: 1),
+                              Text(
+                                  (DateFormat('MMM dd, yyyy')
+                                      .format(DateTime.parse(_eventDate2)))
+                                      .toString()),
+                              Text(_eventLocation2),
+                              Text('Days Left: ${(_difference2 + 1).toString()}',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, color: Colors.pink),),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
+
           Row(children: [
             Expanded(
                 child: Container(
@@ -575,9 +579,12 @@ class _HomePageState extends State<HomePage> {
                           children: [
                             ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                  foregroundColor: Colors.grey, backgroundColor: Colors.white, padding: EdgeInsets.fromLTRB(10, 1, 6, 0),
+                                  foregroundColor: Colors.grey,
+                                  backgroundColor: Colors.white,
+                                  padding: EdgeInsets.fromLTRB(10, 1, 6, 0),
                                   shape: const RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.all(Radius.circular(5)),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(5)),
                                   )),
                               onPressed: () {
                                 popupStats(_reversedJawaraMudaData[index]);
@@ -626,9 +633,12 @@ class _HomePageState extends State<HomePage> {
                           children: [
                             ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                  foregroundColor: Colors.grey, backgroundColor: Colors.white, padding: EdgeInsets.fromLTRB(10, 1, 6, 0),
+                                  foregroundColor: Colors.grey,
+                                  backgroundColor: Colors.white,
+                                  padding: EdgeInsets.fromLTRB(10, 1, 6, 0),
                                   shape: const RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.all(Radius.circular(5)),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(5)),
                                   )),
                               onPressed: () {
                                 popupStats(_reversedSatriaMudaData[index]);

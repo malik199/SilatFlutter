@@ -40,6 +40,27 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
+      darkTheme: ThemeData(
+        brightness: Brightness.dark,
+        primarySwatch: Colors.green,
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            textStyle: TextStyle(
+              fontSize: 24.0,
+            ),
+            padding: EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
+          ),
+        ),
+        textTheme: TextTheme(
+          displayLarge: TextStyle(
+            fontSize: 46.0,
+            color: Colors.blue.shade200,
+            fontWeight: FontWeight.w500,
+          ),
+          bodyLarge: TextStyle(fontSize: 18.0, color: Colors.white),
+        ),
+      ),
+      themeMode: ThemeMode.dark,
       home: LoginPage(),
     );
   }

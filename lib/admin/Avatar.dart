@@ -25,7 +25,7 @@ class Avatar extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 30),
             child: FluttermojiCustomizer(
               //scaffoldHeight: 400,
-              showSaveWidget: true,
+              //showSaveWidget: true,
               scaffoldWidth: 600,
             ),
           ),

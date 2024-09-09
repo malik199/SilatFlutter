@@ -1,11 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/material.dart';
 import 'package:silat_flutter/login/reset_password.dart';
 import 'package:silat_flutter/screens/landing_page.dart';
 import 'package:silat_flutter/login/register_page.dart';
 import 'package:silat_flutter/utils/fire_auth.dart';
 import 'package:silat_flutter/utils/validator.dart';
+
 
 class LoginPage extends StatefulWidget {
   @override
@@ -22,6 +24,10 @@ class _LoginPageState extends State<LoginPage> {
   final _focusPassword = FocusNode();
 
   bool _isProcessing = false;
+  bool _isPasswordVisible = false; // Added to toggle password visibility
+
+  static final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  static final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   Future<FirebaseApp> _initializeFirebase() async {
     FirebaseApp firebaseApp = await Firebase.initializeApp();
@@ -40,6 +46,24 @@ class _LoginPageState extends State<LoginPage> {
     }
 
     return firebaseApp;
+  }
+
+  static Future<User?> signInWithGoogle() async {
+    try {
+      final GoogleSignInAccount? googleAccount = await _googleSignIn.signIn();
+      if (googleAccount != null) {
+        final GoogleSignInAuthentication googleAuth = await googleAccount.authentication;
+        final AuthCredential credential = GoogleAuthProvider.credential(
+          accessToken: googleAuth.accessToken,
+          idToken: googleAuth.idToken,
+        );
+        final UserCredential userCredential = await _firebaseAuth.signInWithCredential(credential);
+        return userCredential.user;
+      }
+    } catch (e) {
+      print("Error signing in with Google: $e");
+    }
+    return null;
   }
 
   showAlertDialog(BuildContext context) {
@@ -67,6 +91,21 @@ class _LoginPageState extends State<LoginPage> {
         return alert;
       },
     );
+  }
+
+  String handleFirebaseAuthException(FirebaseAuthException e) {
+    switch (e.code) {
+      case "invalid-email":
+        return "The email address is invalid.";
+      case "user-disabled":
+        return "The user account has been disabled.";
+      case "user-not-found":
+        return "The email address does not match an existing account.";
+      case "wrong-password":
+        return "The password is incorrect.";
+      default:
+        return "An error occurred during login.";
+    }
   }
 
   @override
@@ -117,7 +156,7 @@ class _LoginPageState extends State<LoginPage> {
                           TextFormField(
                             controller: _passwordTextController,
                             focusNode: _focusPassword,
-                            obscureText: true,
+                            obscureText: !_isPasswordVisible, // Modified
                             validator: (value) => Validator.validatePassword(
                               password: value,
                             ),
@@ -128,6 +167,19 @@ class _LoginPageState extends State<LoginPage> {
                                 borderSide: BorderSide(
                                   color: Colors.red,
                                 ),
+                              ),
+                              suffixIcon: IconButton(
+                                // Added IconButton for toggling password visibility
+                                icon: Icon(
+                                  _isPasswordVisible
+                                      ? Icons.visibility
+                                      : Icons.visibility_off,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    _isPasswordVisible = !_isPasswordVisible;
+                                  });
+                                },
                               ),
                             ),
                           ),
@@ -185,39 +237,65 @@ class _LoginPageState extends State<LoginPage> {
                                         ),
                                       ),
                                     ),
-                                    SizedBox(width: 20),
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                RegisterPage(),
-                                          ),
-                                        );
-                                      },
-                                      child: Text(
-                                        'Register',
-                                        style:
-                                            TextStyle(color: Colors.blue),
-                                      ),
-                                    ),
                                   ],
                                 ),
-                          SizedBox(height: 10),
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      ResetPassword(),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) => ResetPassword(),
+                                    ),
+                                  );
+                                },
+                                child: Text(
+                                  'Forgot Password',
+                                  style: TextStyle(color: Colors.blue),
                                 ),
-                              );
-                            },
-                            child: Text(
-                              'Forgot Password',
-                              style:
-                              TextStyle(color: Colors.blue),
+                              ),
+                              SizedBox(width: 20),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) => RegisterPage(),
+                                    ),
+                                  );
+                                },
+                                child: Text(
+                                  'Register',
+                                  style: TextStyle(color: Colors.blue),
+                                ),
+                              ),
+                            ],
+                          ),
+                          OutlinedButton.icon(
+                            style: OutlinedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              side: BorderSide(color: Colors.grey),
                             ),
+                            icon: Icon(Icons.login, color: Colors.red),
+                            label: Text("Sign in with Google"),
+                            onPressed: () async {
+                              setState(() {
+                                _isProcessing = true;
+                              });
+                              User? user = await signInWithGoogle();
+                              setState(() {
+                                _isProcessing = false;
+                              });
+                              if (user != null) {
+                                Navigator.of(context).pushReplacement(
+                                  MaterialPageRoute(
+                                    builder: (context) => LandingPage(user: user),
+                                  ),
+                                );
+                              }
+                            },
                           ),
                         ],
                       ),

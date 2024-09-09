@@ -266,8 +266,7 @@ class _LandingPageState extends State<LandingPage> {
         ) : null,
       ),
       appBar: AppBar(
-        backgroundColor: Colors.teal,
-        title: Header(headerText: "Silat Institute App"),
+        title: Header(headerText: _currentUser.displayName.toString()),
       ),
       body: Center(
         child: _currentUser.emailVerified ?

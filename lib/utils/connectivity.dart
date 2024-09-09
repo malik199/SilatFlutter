@@ -23,7 +23,7 @@ class _InternetConnectionState extends State<InternetConnection> {
     initConnectivity();
 
     _connectivitySubscription =
-        _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
+        _connectivity.onConnectivityChanged.listen(_updateConnectionStatus as void Function(List<ConnectivityResult> event)?) as StreamSubscription<ConnectivityResult>;
   }
 
   @override
@@ -37,7 +37,7 @@ class _InternetConnectionState extends State<InternetConnection> {
     late ConnectivityResult result;
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
-      result = await _connectivity.checkConnectivity();
+      result = (await _connectivity.checkConnectivity()) as ConnectivityResult;
     } on PlatformException catch (e) {
       print(e.toString());
       return;
