@@ -41,6 +41,18 @@ class _HomePageState extends State<HomePage>
   int _stripe = 0;
   int _age = 0;
   String _location = "";
+
+  int _tournaments = 0;
+  int _1stPlace = 0;
+  int _2ndPlace = 0;
+  int _goodDeeds = 0;
+  int _classMerits = 0;
+  int _pushUps = 0;
+  int _sitUps = 0;
+  String? _deadHang = '0:00';
+  int _pullUps = 0;
+  int _flexibility = 0;
+
   double _numberSize = 30;
   double _lineHeight = 1.2;
   double _statsFontSize = 11;
@@ -130,6 +142,7 @@ class _HomePageState extends State<HomePage>
             _age = value['age'];
             _stripe = value['stripe'];
             _location = value['location'];
+            _tournaments = value['tournaments'];
           });
         });
       } else {
@@ -388,7 +401,7 @@ class _HomePageState extends State<HomePage>
     ]);
 
     return Container(
-      color: Colors.grey[900],
+      color: Colors.grey[800],
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
@@ -433,23 +446,25 @@ class _HomePageState extends State<HomePage>
                                         color: Colors.greenAccent,
                                         fontSize: 12)),
                                 SizedBox(height: 5),
-                                Text("Tournaments (10)",
+                                Text(
+                                    "Tournaments: (${_tournaments.toString()})",
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontSize: _statsFontSize)),
-                                Text("1st Place (3)",
+                                Text("1st Place: (${_1stPlace.toString()})",
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontSize: _statsFontSize)),
-                                Text("2nd Place (5)",
+                                Text("2nd Place: (${_2ndPlace.toString()})",
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontSize: _statsFontSize)),
-                                Text("Good Deeds (0)",
+                                Text("Good Deeds: (${_goodDeeds.toString()})",
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontSize: _statsFontSize)),
-                                Text("Class Merits (5)",
+                                Text(
+                                    "Class Merits: (${_classMerits.toString()})",
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontSize: _statsFontSize)),
@@ -466,23 +481,24 @@ class _HomePageState extends State<HomePage>
                                             color: Colors.purpleAccent,
                                             fontSize: 12))),
                                 SizedBox(height: 5),
-                                Text("Pushups (40)",
+                                Text("Pushups (${_pushUps.toString()})",
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontSize: _statsFontSize)),
-                                Text("Situps (43)",
+                                Text("Situps (${_sitUps.toString()})",
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontSize: _statsFontSize)),
-                                Text("Deadhang (0:34)",
+                                Text("Deadhang (${_deadHang})",
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontSize: _statsFontSize)),
-                                Text("Pullups (1)",
+                                Text("Pullups (${_pullUps.toString()})",
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontSize: _statsFontSize)),
-                                Text("Flexibility (1)",
+                                Text(
+                                    "Flexibility (${_flexibility.toString()} / 10)",
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontSize: _statsFontSize)),
@@ -492,62 +508,6 @@ class _HomePageState extends State<HomePage>
                         ),
                       ),
                     )
-
-                    /*Expanded(
-                      flex: 2,
-                      child: Container(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            */ /*Text(
-                                '${_firstName.capitalizeFirstLetter()} ${_lastName.capitalizeFirstLetter()}',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 26,
-                                    height: 1,
-                                    color: Colors.white)),*/ /*
-                            Text(
-                                _belt != ""
-                                    ? '$_belt Belt'.capitalizeFirstLetter()
-                                    : "",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
-                                    height: 1,
-                                    color: Colors.white)),
-                            Text(
-                                formatCurriculum(_curriculum)
-                                    .capitalizeFirstLetter(),
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
-                                    height: 1,
-                                    color: Colors.white)),
-                            Text(
-                                _age != 0
-                                    ? 'Age: ${_age.toString().capitalizeFirstLetter()}'
-                                    : "",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 17,
-                                    height: 1,
-                                    color: Colors.white)),
-                            SizedBox(width: 17),
-                            Text("Location: ",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 17,
-                                    color: Colors.white)),
-                            Text(_location,
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 17,
-                                    color: Colors.white)),
-                          ],
-                        ),
-                      ),
-                    ),*/
                   ],
                 ),
                 SizedBox(height: 5),
@@ -633,6 +593,27 @@ class _HomePageState extends State<HomePage>
                     ),
                   ],
                 ),
+                SizedBox(height: 5),
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.black54,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.format_quote,
+                        color: Colors.green,
+                        size: 54.0, // You can adjust the size as needed
+                      ),
+                      Expanded(child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text("Speak good or keep silent. Speak good or keep silent. "),
+                      )),
+                    ],
+                  ),
+                ),
+
               ],
             ),
           ),
@@ -644,7 +625,6 @@ class _HomePageState extends State<HomePage>
               fontSize: 15, // Optional: Set font size
             ),
           ),
-          SizedBox(height: 5),
           Expanded(
             child: DefaultTabController(
               length: 4,
@@ -655,16 +635,16 @@ class _HomePageState extends State<HomePage>
                     unselectedLabelColor: Colors.grey,
                     tabs: [
                       Tab(
-                          child: Text("All Students",
+                          child: Text("All",
                               softWrap: true, textAlign: TextAlign.center)),
                       Tab(
-                          child: Text("Jawara Muda Long Title",
+                          child: Text("Jawara",
                               softWrap: true, textAlign: TextAlign.center)),
                       Tab(
-                          child: Text("Satria Muda Extra Long Title Example",
+                          child: Text("Satria",
                               softWrap: true, textAlign: TextAlign.center)),
                       Tab(
-                          child: Text("New Students",
+                          child: Text("News",
                               softWrap: true, textAlign: TextAlign.center)),
                     ],
                   ),
@@ -709,7 +689,7 @@ class _HomePageState extends State<HomePage>
                                                     25, // Diameter of the circle
                                                 decoration: BoxDecoration(
                                                   color: Colors
-                                                      .purple, // Background color of the circle
+                                                      .tealAccent, // Background color of the circle
                                                   shape: BoxShape
                                                       .circle, // Makes the container circular
                                                 ),
@@ -719,7 +699,7 @@ class _HomePageState extends State<HomePage>
                                                   (index + 1)
                                                       .toString(), // Displaying the index, starting from 1
                                                   style: TextStyle(
-                                                      color: Colors.white,
+                                                      color: Colors.black,
                                                       fontWeight:
                                                           FontWeight.bold,
                                                       fontSize: 14),
@@ -737,7 +717,7 @@ class _HomePageState extends State<HomePage>
                                                   '${_reversedAllStudentsData[index]['firstname']} ${_reversedAllStudentsData[index]['lastname']}',
                                                   style: TextStyle(
                                                       fontSize: 15,
-                                                      color: Colors.purple,
+                                                      color: Colors.tealAccent,
                                                       fontWeight:
                                                           FontWeight.bold),
                                                   softWrap: false,
@@ -752,7 +732,7 @@ class _HomePageState extends State<HomePage>
                                                     .toString(),
                                                 style: TextStyle(
                                                     fontSize: 20,
-                                                    color: Colors.purple,
+                                                    color: Colors.tealAccent,
                                                     fontWeight:
                                                         FontWeight.bold),
                                               ),
