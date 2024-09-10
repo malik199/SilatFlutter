@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:silat_flutter/models/belts.dart';
+import 'package:silat_flutter/screens/belts.dart';
 import 'package:silat_flutter/utils/connectivity.dart';
 
 class TechniquesHome extends StatefulWidget {
@@ -130,38 +130,25 @@ class _TechniquesHomeState extends State<TechniquesHome> {
     }
 
     Widget allTechniqueWidget = SingleChildScrollView(
-        child: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                  colors: [
-                    Colors.black38,
-                    const Color(0xfffffff),
-                  ],
-                  begin: const FractionalOffset(0.0, 0.0),
-                  end: const FractionalOffset(0.0, 1.0),
-                  stops: [0.0, 1.0],
-                  tileMode: TileMode.clamp),
+        child: Column(children: [
+          //InternetConnection(),
+          Padding(
+            padding: const EdgeInsets.all(_spacing),
+            child: Text(
+              _firstName != ""
+                  ? ("techniques").toUpperCase()
+                  : "",
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 25,
+                  color: Colors.white),
             ),
-            width: double.infinity,
-            //color: Color(0xff02252c),
-            child: Column(children: [
-              InternetConnection(),
-              Padding(
-                padding: const EdgeInsets.all(_spacing),
-                child: Text(
-                  _firstName != ""
-                      ? ("$_firstName's techniques").toUpperCase()
-                      : "",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 25,
-                      color: Colors.white),
-                ),
-              ),
-              produceBelts(allYourBelts()),
-              SizedBox(height: _spacing),
-              showSwitchCurriculumButton(),
-            ])));
+          ),
+          Text("Click on the belt for your techniques"),
+          produceBelts(allYourBelts()),
+          SizedBox(height: _spacing),
+          showSwitchCurriculumButton(),
+        ]));
 
     return _verified
         ? allTechniqueWidget

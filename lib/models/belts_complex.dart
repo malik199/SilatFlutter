@@ -27,7 +27,7 @@ class BeltsComplex extends StatelessWidget {
         curriculum == "instructor" ||
         curriculum == 'guest') {
       return Padding(
-        padding: const EdgeInsets.all(5.0),
+        padding: const EdgeInsets.all(0.0),
         child: Stack(children: [
           Container(
               height: _beltHeight,
@@ -74,7 +74,7 @@ class BeltsComplex extends StatelessWidget {
       );
     } else {
       return Padding(
-        padding: const EdgeInsets.all(5.0),
+        padding: const EdgeInsets.all(0.0),
         child: Stack(children: [
           Container(
             height: _beltHeight,

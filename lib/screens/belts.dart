@@ -32,14 +32,14 @@ class Belt extends StatelessWidget {
         child: Container(
           height: _beltHeight,
           decoration: BoxDecoration(
-            boxShadow: [
+/*            boxShadow: [
               BoxShadow(
                 color: Colors.grey.withOpacity(0.4),
                 spreadRadius: 2,
                 blurRadius: 4,
                 offset: Offset(0, 2), // changes position of shadow
               ),
-            ],
+            ],*/
             color: PullColor().getColor(color),
             border: Border.all(
               color: Colors.black26,

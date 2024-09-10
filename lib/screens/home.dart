@@ -24,7 +24,9 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
   late User _currentUser;
   final _database = FirebaseDatabase.instance.ref();
   late StreamSubscription _userDBStream;
@@ -41,6 +43,7 @@ class _HomePageState extends State<HomePage> {
   String _location = "";
   double _numberSize = 30;
   double _lineHeight = 1.2;
+  double _statsFontSize = 11;
 
   @override
   void initState() {
@@ -49,53 +52,59 @@ class _HomePageState extends State<HomePage> {
     _getUserData();
     _getToStudentData();
     _getEventsData();
+    _tabController = TabController(length: 4, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 
   late List<dynamic> _satriaMudaData = [];
   late List<dynamic> _reversedSatriaMudaData = [];
   late List<dynamic> _jawaraMudaData = [];
   late List<dynamic> _reversedJawaraMudaData = [];
+  late List<dynamic> _allStudentsData = [];
+  late List<dynamic> _reversedAllStudentsData = [];
   void _getToStudentData() {
     _topStudentsDBStream =
         _database.child('users').orderByChild('score').onValue.listen((event) {
       if (event.snapshot.value != null) {
-        _satriaMudaData = [];
-        _jawaraMudaData = [];
-        final data = new Map<String, dynamic>.from(event.snapshot.value as Map);
+        final data = Map<String, dynamic>.from(event.snapshot.value as Map);
+        List<dynamic> allStudents = data.values.toList();
 
-        List allStudents = data.values.toList(); // Extract all students
+        // Clear previous data
+        _satriaMudaData.clear();
+        _jawaraMudaData.clear();
+        _allStudentsData.clear();
 
-        allStudents.sort((a, b) {
-          // Null-aware comparison for scores
-          var scoreA = a['score'] as num?;
-          var scoreB = b['score'] as num?;
-          if (scoreA == null || scoreB == null) {
-            return 0; // Return 0 if either score is null
+        // Filter and categorize data
+        for (var student in allStudents) {
+          if (student["isApproved"] == true &&
+              student['score'] != null &&
+              student['score'] != 0) {
+            _allStudentsData.add(student);
+
+            if (student['curriculum'] == 'satria_muda') {
+              _satriaMudaData.add(student);
+            } else if (student['curriculum'] == 'jawara_muda') {
+              _jawaraMudaData.add(student);
+            }
           }
-          return scoreB.compareTo(scoreA); // Compare scores in descending order
-        });
+        }
 
+        // Sort lists by score in descending order
+        var sorter = (a, b) => (b['score'] as num).compareTo(a['score'] as num);
+        _satriaMudaData.sort(sorter);
+        _jawaraMudaData.sort(sorter);
+        _allStudentsData.sort(sorter);
+
+        // No need to reverse twice, just set the state once
         setState(() {
-          allStudents.forEach((value) {
-            if (value["isApproved"] == true &&
-                value['score'] != null &&
-                value['score'] != 0 &&
-                value['curriculum'] == 'satria_muda') {
-              _satriaMudaData.add(value);
-            }
-            if (value["isApproved"] == true &&
-                value['score'] != null &&
-                value['score'] != 0 &&
-                value['curriculum'] == 'jawara_muda') {
-              _jawaraMudaData.add(value);
-            }
-          });
-          _reversedSatriaMudaData = _satriaMudaData.reversed.toList();
-          _reversedJawaraMudaData = _jawaraMudaData.reversed.toList();
-
-          // Reverse the list again to put highest score at index 0
-          _reversedSatriaMudaData = _reversedSatriaMudaData.reversed.toList();
-          _reversedJawaraMudaData = _reversedJawaraMudaData.reversed.toList();
+          _reversedSatriaMudaData = List.from(_satriaMudaData);
+          _reversedJawaraMudaData = List.from(_jawaraMudaData);
+          _reversedAllStudentsData = List.from(_allStudentsData);
         });
       }
     });
@@ -172,12 +181,13 @@ class _HomePageState extends State<HomePage> {
         .child('events')
         .orderByChild('date')
         .startAt(DateTime.now().toString())
-        .limitToFirst(2)  // Change this number to 2 to fetch the latest two events
+        .limitToFirst(
+            2) // Change this number to 2 to fetch the latest two events
         .onValue
         .listen((event) {
       if (event.snapshot.value != null) {
         final data =
-        new Map<String?, dynamic>.from(event.snapshot.value as Map);
+            new Map<String?, dynamic>.from(event.snapshot.value as Map);
 
         List events = data.values.toList();
         if (events.isNotEmpty) {
@@ -205,7 +215,6 @@ class _HomePageState extends State<HomePage> {
       }
     });
   }
-
 
   String formatCurriculum(dynamic curriculum) {
     return convertToTitleCase(curriculum.toString().replaceAll('_', ' '));
@@ -391,31 +400,113 @@ class _HomePageState extends State<HomePage> {
                 Row(
                   children: [
                     Flexible(
-                      flex: 2,
+                      flex: 1,
                       child: TextButton(
                         onPressed: () => Navigator.push(
                             context,
                             new MaterialPageRoute(
                                 builder: (context) => Avatar())),
                         child: FluttermojiCircleAvatar(
-                          radius: 70,
+                          radius: 60,
                         ),
                       ),
                     ),
-                    Expanded(
+                    Flexible(
+                      flex: 2,
+                      child: Container(
+                        padding: EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.black54,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment
+                              .spaceBetween, // Adjusted to space between
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text("Class Stats",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.greenAccent,
+                                        fontSize: 12)),
+                                SizedBox(height: 5),
+                                Text("Tournaments (10)",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: _statsFontSize)),
+                                Text("1st Place (3)",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: _statsFontSize)),
+                                Text("2nd Place (5)",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: _statsFontSize)),
+                                Text("Good Deeds (0)",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: _statsFontSize)),
+                                Text("Class Merits (5)",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: _statsFontSize)),
+                              ],
+                            ),
+                            SizedBox(width: 10),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                    child: Text("Fitness Stats",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.purpleAccent,
+                                            fontSize: 12))),
+                                SizedBox(height: 5),
+                                Text("Pushups (40)",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: _statsFontSize)),
+                                Text("Situps (43)",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: _statsFontSize)),
+                                Text("Deadhang (0:34)",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: _statsFontSize)),
+                                Text("Pullups (1)",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: _statsFontSize)),
+                                Text("Flexibility (1)",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: _statsFontSize)),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+
+                    /*Expanded(
                       flex: 2,
                       child: Container(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            /*Text(
+                            */ /*Text(
                                 '${_firstName.capitalizeFirstLetter()} ${_lastName.capitalizeFirstLetter()}',
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 26,
                                     height: 1,
-                                    color: Colors.white)),*/
+                                    color: Colors.white)),*/ /*
                             Text(
                                 _belt != ""
                                     ? '$_belt Belt'.capitalizeFirstLetter()
@@ -456,7 +547,7 @@ class _HomePageState extends State<HomePage> {
                           ],
                         ),
                       ),
-                    ),
+                    ),*/
                   ],
                 ),
                 SizedBox(height: 5),
@@ -491,16 +582,19 @@ class _HomePageState extends State<HomePage> {
                             children: [
                               Text(_eventName1,
                                   style: TextStyle(
-                                      fontWeight: FontWeight.bold, fontSize: 14)),
-                              SizedBox(height: 1),
-                              Text(
-                                  (DateFormat('MMM dd, yyyy')
-                                          .format(DateTime.parse(_eventDate1)))
-                                      .toString()),
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14)),
+                              Divider(height: 5),
+                              Text((DateFormat('MMM dd, yyyy')
+                                      .format(DateTime.parse(_eventDate1)))
+                                  .toString()),
                               Text(_eventLocation1),
-                              Text('Days Left: ${(_difference1 + 1).toString()}',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold, color: Colors.pink),),
+                              Text(
+                                'Days Left: ${(_difference1 + 1).toString()}',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.pink),
+                              ),
                             ],
                           ),
                         ),
@@ -519,16 +613,19 @@ class _HomePageState extends State<HomePage> {
                             children: [
                               Text(_eventName2,
                                   style: TextStyle(
-                                      fontWeight: FontWeight.bold, fontSize: 14)),
-                              SizedBox(height: 1),
-                              Text(
-                                  (DateFormat('MMM dd, yyyy')
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14)),
+                              Divider(height: 5),
+                              Text((DateFormat('MMM dd, yyyy')
                                       .format(DateTime.parse(_eventDate2)))
-                                      .toString()),
+                                  .toString()),
                               Text(_eventLocation2),
-                              Text('Days Left: ${(_difference2 + 1).toString()}',
+                              Text(
+                                'Days Left: ${(_difference2 + 1).toString()}',
                                 style: TextStyle(
-                                    fontWeight: FontWeight.bold, color: Colors.pink),),
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.pink),
+                              ),
                             ],
                           ),
                         ),
@@ -539,143 +636,425 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
           ),
-
-          Row(children: [
-            Expanded(
-                child: Container(
-              padding: EdgeInsets.all(6),
-              color: Colors.red,
-              child: Text("Jawara Muda",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      fontSize: 17)),
-            )),
-            Expanded(
-                child: Container(
-              padding: EdgeInsets.all(6),
-              color: Colors.blue,
-              child: Text("Satria Muda",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      fontSize: 17)),
-            )),
-          ]),
+          Text(
+            "Student Ranking",
+            style: TextStyle(
+              color: Colors.yellow, // Set the text color to yellow
+              fontWeight: FontWeight.bold, // Make the text bold
+              fontSize: 15, // Optional: Set font size
+            ),
+          ),
+          SizedBox(height: 5),
           Expanded(
-            child: Row(children: [
-              Expanded(
-                child: Container(
-                  color: Colors.red,
-                  child: ListView.builder(
-                    itemCount: _reversedJawaraMudaData.length,
-                    reverse: false,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                        child: Column(
-                          children: [
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                  foregroundColor: Colors.grey,
-                                  backgroundColor: Colors.white,
-                                  padding: EdgeInsets.fromLTRB(10, 1, 6, 0),
-                                  shape: const RoundedRectangleBorder(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(5)),
-                                  )),
-                              onPressed: () {
-                                popupStats(_reversedJawaraMudaData[index]);
-                              },
-                              child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Flexible(
-                                      child: Text(
-                                        '${_reversedJawaraMudaData[index]['firstname']} ${_reversedJawaraMudaData[index]['lastname']}',
-                                        overflow: TextOverflow.fade,
-                                        style: TextStyle(
-                                            fontSize: 15, color: Colors.blue),
-                                      ),
-                                    ),
-                                    Text(
-                                      (_reversedJawaraMudaData[index]
-                                                  ['score'] ??
-                                              "0")
-                                          .toString(),
-                                      style: TextStyle(
-                                          fontSize: 15,
-                                          color: Colors.blue,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ]),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
+            child: DefaultTabController(
+              length: 4,
+              child: Column(
+                children: <Widget>[
+                  TabBar(
+                    labelColor: Colors.blue,
+                    unselectedLabelColor: Colors.grey,
+                    tabs: [
+                      Tab(
+                          child: Text("All Students",
+                              softWrap: true, textAlign: TextAlign.center)),
+                      Tab(
+                          child: Text("Jawara Muda Long Title",
+                              softWrap: true, textAlign: TextAlign.center)),
+                      Tab(
+                          child: Text("Satria Muda Extra Long Title Example",
+                              softWrap: true, textAlign: TextAlign.center)),
+                      Tab(
+                          child: Text("New Students",
+                              softWrap: true, textAlign: TextAlign.center)),
+                    ],
                   ),
-                ),
-              ),
-              Expanded(
-                child: Container(
-                  color: Colors.blue,
-                  child: ListView.builder(
-                    itemCount: _reversedSatriaMudaData.length,
-                    //reverse: true,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                        child: Column(
-                          children: [
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                  foregroundColor: Colors.grey,
-                                  backgroundColor: Colors.white,
-                                  padding: EdgeInsets.fromLTRB(10, 1, 6, 0),
-                                  shape: const RoundedRectangleBorder(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(5)),
-                                  )),
-                              onPressed: () {
-                                popupStats(_reversedSatriaMudaData[index]);
-                              },
-                              child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Flexible(
-                                      child: Text(
-                                        '${_reversedSatriaMudaData[index]['firstname']} ${_reversedSatriaMudaData[index]['lastname']}',
-                                        overflow: TextOverflow.fade,
-                                        style: TextStyle(
-                                            fontSize: 15, color: Colors.blue),
-                                      ),
+                  Expanded(
+                    child: TabBarView(
+                      children: [
+                        Center(
+                          child: Container(
+                              color: Colors.black54,
+                              child: ListView.builder(
+                                itemCount: _reversedAllStudentsData.length,
+                                itemBuilder: (context, index) {
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 4.0),
+                                    child: Column(
+                                      children: [
+                                        ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                              foregroundColor: Colors.grey,
+                                              backgroundColor: Colors.white10,
+                                              padding: EdgeInsets.fromLTRB(
+                                                  10, 1, 6, 0),
+                                              shape:
+                                                  const RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(5)),
+                                              )),
+                                          onPressed: () {
+                                            popupStats(_reversedAllStudentsData[
+                                                index]);
+                                          },
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              // Index number circle
+                                              Container(
+                                                width:
+                                                    25, // Diameter of the circle
+                                                height:
+                                                    25, // Diameter of the circle
+                                                decoration: BoxDecoration(
+                                                  color: Colors
+                                                      .purple, // Background color of the circle
+                                                  shape: BoxShape
+                                                      .circle, // Makes the container circular
+                                                ),
+                                                alignment: Alignment
+                                                    .center, // Centers the index text in the circle
+                                                child: Text(
+                                                  (index + 1)
+                                                      .toString(), // Displaying the index, starting from 1
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 14),
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                  width:
+                                                      10), // Space between the index and the name
+
+                                              // Flexible to adjust text size automatically
+                                              Flexible(
+                                                fit: FlexFit
+                                                    .tight, // Forces the child to fill the available space
+                                                child: Text(
+                                                  '${_reversedAllStudentsData[index]['firstname']} ${_reversedAllStudentsData[index]['lastname']}',
+                                                  style: TextStyle(
+                                                      fontSize: 15,
+                                                      color: Colors.purple,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                  softWrap: false,
+                                                ),
+                                              ),
+
+                                              // Score text aligned to the right
+                                              Text(
+                                                (_reversedAllStudentsData[index]
+                                                            ['score'] ??
+                                                        "0")
+                                                    .toString(),
+                                                style: TextStyle(
+                                                    fontSize: 20,
+                                                    color: Colors.purple,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                    Text(
-                                      (_reversedSatriaMudaData[index]
-                                                  ['score'] ??
-                                              "0")
-                                          .toString(),
-                                      style: TextStyle(
-                                          fontSize: 15,
-                                          color: Colors.blue,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ]),
-                            ),
-                          ],
+                                  );
+                                },
+                              )),
                         ),
-                      );
-                    },
+                        Center(
+                          child: Container(
+                              color: Colors.blue,
+                              child: ListView.builder(
+                                itemCount: _reversedJawaraMudaData.length,
+                                itemBuilder: (context, index) {
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 4.0),
+                                    child: Column(
+                                      children: [
+                                        ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                              foregroundColor: Colors.grey,
+                                              backgroundColor: Colors.white,
+                                              padding: EdgeInsets.fromLTRB(
+                                                  10, 1, 6, 0),
+                                              shape:
+                                                  const RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(5)),
+                                              )),
+                                          onPressed: () {
+                                            popupStats(
+                                                _reversedJawaraMudaData[index]);
+                                          },
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              // Index number circle
+                                              Container(
+                                                width:
+                                                    25, // Diameter of the circle
+                                                height:
+                                                    25, // Diameter of the circle
+                                                decoration: BoxDecoration(
+                                                  color: Colors
+                                                      .blue, // Background color of the circle
+                                                  shape: BoxShape
+                                                      .circle, // Makes the container circular
+                                                ),
+                                                alignment: Alignment
+                                                    .center, // Centers the index text in the circle
+                                                child: Text(
+                                                  (index + 1)
+                                                      .toString(), // Displaying the index, starting from 1
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 16),
+                                                  softWrap: false,
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                  width:
+                                                      10), // Space between the index and the name
+
+                                              // Flexible to adjust text size automatically
+                                              Flexible(
+                                                fit: FlexFit
+                                                    .tight, // Forces the child to fill the available space
+                                                child: Text(
+                                                  '${_reversedJawaraMudaData[index]['firstname']} ${_reversedJawaraMudaData[index]['lastname']}',
+                                                  style: TextStyle(
+                                                      fontSize: 15,
+                                                      color: Colors.blue,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                              ),
+
+                                              // Score text aligned to the right
+                                              Text(
+                                                (_reversedJawaraMudaData[index]
+                                                            ['score'] ??
+                                                        "0")
+                                                    .toString(),
+                                                style: TextStyle(
+                                                    fontSize: 20,
+                                                    color: Colors.blue,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              )),
+                        ),
+                        Center(
+                          child: Container(
+                              color: Colors.green,
+                              child: ListView.builder(
+                                itemCount: _reversedSatriaMudaData.length,
+                                itemBuilder: (context, index) {
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 4.0),
+                                    child: Column(
+                                      children: [
+                                        ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                              foregroundColor: Colors.grey,
+                                              backgroundColor: Colors.white,
+                                              padding: EdgeInsets.fromLTRB(
+                                                  10, 1, 6, 0),
+                                              shape:
+                                                  const RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(5)),
+                                              )),
+                                          onPressed: () {
+                                            popupStats(
+                                                _reversedSatriaMudaData[index]);
+                                          },
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              // Index number circle
+                                              Container(
+                                                width:
+                                                    25, // Diameter of the circle
+                                                height:
+                                                    25, // Diameter of the circle
+                                                decoration: BoxDecoration(
+                                                  color: Colors
+                                                      .green, // Background color of the circle
+                                                  shape: BoxShape
+                                                      .circle, // Makes the container circular
+                                                ),
+                                                alignment: Alignment
+                                                    .center, // Centers the index text in the circle
+                                                child: Text(
+                                                  (index + 1)
+                                                      .toString(), // Displaying the index, starting from 1
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 16),
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                  width:
+                                                      10), // Space between the index and the name
+
+                                              // Flexible to adjust text size automatically
+                                              Flexible(
+                                                fit: FlexFit
+                                                    .tight, // Forces the child to fill the available space
+                                                child: Text(
+                                                  '${_reversedSatriaMudaData[index]['firstname']} ${_reversedSatriaMudaData[index]['lastname']}',
+                                                  style: TextStyle(
+                                                      fontSize: 15,
+                                                      color: Colors.green,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                  overflow: TextOverflow.clip,
+                                                  softWrap: false,
+                                                ),
+                                              ),
+
+                                              // Score text aligned to the right
+                                              Text(
+                                                (_reversedSatriaMudaData[index]
+                                                            ['score'] ??
+                                                        "0")
+                                                    .toString(),
+                                                style: TextStyle(
+                                                    fontSize: 20,
+                                                    color: Colors.green,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              )),
+                        ),
+                        Center(
+                          child: Container(
+                              color: Colors.deepOrange,
+                              child: ListView.builder(
+                                itemCount: _reversedSatriaMudaData.length,
+                                itemBuilder: (context, index) {
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 4.0),
+                                    child: Column(
+                                      children: [
+                                        ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                              foregroundColor: Colors.grey,
+                                              backgroundColor: Colors.white,
+                                              padding: EdgeInsets.fromLTRB(
+                                                  10, 1, 6, 0),
+                                              shape:
+                                                  const RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(5)),
+                                              )),
+                                          onPressed: () {
+                                            popupStats(
+                                                _reversedSatriaMudaData[index]);
+                                          },
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              // Index number circle
+                                              Container(
+                                                width:
+                                                    25, // Diameter of the circle
+                                                height:
+                                                    25, // Diameter of the circle
+                                                decoration: BoxDecoration(
+                                                  color: Colors
+                                                      .deepOrange, // Background color of the circle
+                                                  shape: BoxShape
+                                                      .circle, // Makes the container circular
+                                                ),
+                                                alignment: Alignment
+                                                    .center, // Centers the index text in the circle
+                                                child: Text(
+                                                  (index + 1)
+                                                      .toString(), // Displaying the index, starting from 1
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 16),
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                  width:
+                                                      10), // Space between the index and the name
+
+                                              // Flexible to adjust text size automatically
+                                              Flexible(
+                                                fit: FlexFit
+                                                    .tight, // Forces the child to fill the available space
+                                                child: Text(
+                                                  '${_reversedSatriaMudaData[index]['firstname']} ${_reversedSatriaMudaData[index]['lastname']}',
+                                                  style: TextStyle(
+                                                      fontSize: 15,
+                                                      color: Colors.deepOrange,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                  softWrap: false,
+                                                ),
+                                              ),
+
+                                              // Score text aligned to the right
+                                              Text(
+                                                (_reversedSatriaMudaData[index]
+                                                            ['score'] ??
+                                                        "0")
+                                                    .toString(),
+                                                style: TextStyle(
+                                                    fontSize: 22,
+                                                    color: Colors.deepOrange,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              )),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
+                ],
               ),
-            ]),
-          )
+            ),
+          ),
         ],
       ),
     );

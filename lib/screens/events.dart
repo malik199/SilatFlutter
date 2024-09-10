@@ -84,7 +84,7 @@ class _EventsState extends State<Events> {
 
             return (difference >= 0
                 ? Card(
-                    color: Colors.yellow,
+                    color: Colors.purple,
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(3, 8, 8, 9),
                       child: ListTile(
@@ -99,7 +99,7 @@ class _EventsState extends State<Events> {
                                 icon: Icon(
                                   Icons.delete,
                                   size: 40,
-                                  color: Colors.red,
+                                  color: Colors.amber,
                                 ))
                             : Icon(Icons.event, size: 50),
                         title: Text(dbItemValue['name'],
