@@ -48,7 +48,7 @@ class _LoginPageState extends State<LoginPage> {
     return firebaseApp;
   }
 
-  static Future<User?> signInWithGoogle() async {
+  static Future<User?> signInWithGoogle(BuildContext context) async {
     try {
       final GoogleSignInAccount? googleAccount = await _googleSignIn.signIn();
       if (googleAccount != null) {
@@ -58,7 +58,16 @@ class _LoginPageState extends State<LoginPage> {
           idToken: googleAuth.idToken,
         );
         final UserCredential userCredential = await _firebaseAuth.signInWithCredential(credential);
-        return userCredential.user;
+
+        // Check that a non-null user is obtained before navigating
+        if (userCredential.user != null) {
+          Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => LandingPage(user: userCredential.user!))
+          );
+        } else {
+          // Handle the case when user is null, e.g., show an error message
+          print("Authentication failed, no user returned.");
+        }
       }
     } catch (e) {
       print("Error signing in with Google: $e");
@@ -284,7 +293,7 @@ class _LoginPageState extends State<LoginPage> {
                               setState(() {
                                 _isProcessing = true;
                               });
-                              User? user = await signInWithGoogle();
+                              User? user = await signInWithGoogle(context);
                               setState(() {
                                 _isProcessing = false;
                               });

@@ -29,6 +29,67 @@ class _RegisterPageState extends State<RegisterPage> {
   final _focusPassword = FocusNode();
   final _focusConfirmPassword = FocusNode();
 
+
+  void registerUser() async {
+      setState(() {
+        _isProcessing = true;
+      });
+
+      if (_registerFormKey.currentState!
+          .validate()) {
+        User? user = await FireAuth
+            .registerUsingEmailPassword(
+          name:
+          '${_firstnameTextController.text} ${_lastnameTextController.text}',
+          email: _emailTextController.text,
+          password:
+          _passwordTextController.text,
+        );
+
+        if (user != null) {
+          await _database.child('/users').push().set({
+            'uid': user.uid,
+            'belt': 'white',
+            'comments':
+            'Welcome to Silat martial arts.',
+            'curriculum': _age > 11 ? "jawara_muda" : "satria_muda",
+            'email':
+            _emailTextController.text,
+            'firstname':
+            _firstnameTextController
+                .text,
+            'lastname':
+            _lastnameTextController
+                .text,
+            'isApproved': false,
+            'stripe': 0,
+            'age': _age,
+            'location': _location,
+            'startDate': DateTime.now()
+
+          }).catchError((error) => print(
+              'You got an error! $error'));
+          Navigator.of(context)
+              .pushAndRemoveUntil(
+            MaterialPageRoute(
+              builder: (context) =>
+                  LandingPage(user: user),
+            ),
+            ModalRoute.withName('/'),
+          );
+        }
+
+        setState(() {
+          _isProcessing = false;
+        });
+      } else {
+        setState(() {
+          _isProcessing = false;
+        });
+      }
+  }
+
+
   double _spacing = 10.0;
   bool _isProcessing = false;
   int _age = 6;
@@ -211,63 +272,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                 children: [
                                   Expanded(
                                       child: ElevatedButton(
-                                          onPressed: () async {
-                                            setState(() {
-                                              _isProcessing = true;
-                                            });
-
-                                            if (_registerFormKey.currentState!
-                                                .validate()) {
-                                              User? user = await FireAuth
-                                                  .registerUsingEmailPassword(
-                                                name:
-                                                    '${_firstnameTextController.text} ${_lastnameTextController.text}',
-                                                email: _emailTextController.text,
-                                                password:
-                                                    _passwordTextController.text,
-                                              );
-
-                                              if (user != null) {
-                                                await _database.child('/users').push().set({
-                                                  'uid': user.uid,
-                                                  'belt': 'white',
-                                                  'comments':
-                                                      'Welcome to Silat martial arts.',
-                                                  'curriculum': _age > 11 ? "jawara_muda" : "satria_muda",
-                                                  'email':
-                                                      _emailTextController.text,
-                                                  'firstname':
-                                                      _firstnameTextController
-                                                          .text,
-                                                  'lastname':
-                                                      _lastnameTextController
-                                                          .text,
-                                                  'isApproved': false,
-                                                  'stripe': 0,
-                                                  'age': _age,
-                                                  'location': _location
-
-                                                }).catchError((error) => print(
-                                                    'You got an error! $error'));
-                                                Navigator.of(context)
-                                                    .pushAndRemoveUntil(
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        LandingPage(user: user),
-                                                  ),
-                                                  ModalRoute.withName('/'),
-                                                );
-                                              }
-
-                                              setState(() {
-                                                _isProcessing = false;
-                                              });
-                                            } else {
-                                              setState(() {
-                                                _isProcessing = false;
-                                              });
-                                            }
-                                          },
+                                          onPressed: registerUser,
                                           child: Text(
                                             'SIGN UP',
                                             style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),

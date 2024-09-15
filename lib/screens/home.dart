@@ -52,6 +52,7 @@ class _HomePageState extends State<HomePage>
   String? _deadHang = '0:00';
   int _pullUps = 0;
   int _flexibility = 0;
+  int _score = 0;
 
   double _numberSize = 25;
   double _lineHeight = 1;
@@ -147,6 +148,9 @@ class _HomePageState extends State<HomePage>
             _stripe = value['stripe'];
             _location = value['location'];
             _tournaments = value['tournaments'];
+            _1stPlace = value['1stplace'];
+            _2ndPlace = value['2ndplace'];
+            _score = value['score'];
           });
         });
       } else {
@@ -297,25 +301,31 @@ class _HomePageState extends State<HomePage>
                 leading: Icon(Icons.follow_the_signs, size: 40.0),
                 title: Text(
                   "Tournaments",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: _statsPopUpHeaderFontSize),
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: _statsPopUpHeaderFontSize),
                 ),
                 subtitle: Text("Total count of tournaments participated in.",
-                    style: TextStyle(height: _lineHeight, fontSize: _statsSubtitleFontSize)),
+                    style: TextStyle(
+                        height: _lineHeight, fontSize: _statsSubtitleFontSize)),
                 trailing: Text(
                     obj['tournaments'] != null
                         ? obj['tournaments'].toString()
                         : "",
                     style: TextStyle(
-                        fontSize: _numberSize, fontWeight: FontWeight.bold )),
+                        fontSize: _numberSize, fontWeight: FontWeight.bold)),
               ),
               ListTile(
                 leading: Icon(Icons.filter_1, size: 40.0),
                 title: Text(
                   "1st Place",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: _statsPopUpHeaderFontSize),
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: _statsPopUpHeaderFontSize),
                 ),
                 subtitle: Text("Number of first place wins.",
-                    style: TextStyle(height: _lineHeight, fontSize: _statsSubtitleFontSize)),
+                    style: TextStyle(
+                        height: _lineHeight, fontSize: _statsSubtitleFontSize)),
                 trailing: Text(
                     obj['1stplace'] != null ? obj['1stplace'].toString() : "",
                     style: TextStyle(
@@ -325,10 +335,13 @@ class _HomePageState extends State<HomePage>
                 leading: Icon(Icons.filter_2, size: 40.0),
                 title: Text(
                   "2nd Place",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: _statsPopUpHeaderFontSize),
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: _statsPopUpHeaderFontSize),
                 ),
                 subtitle: Text("Number of 2nd place wins.",
-                    style: TextStyle(height: _lineHeight, fontSize: _statsSubtitleFontSize)),
+                    style: TextStyle(
+                        height: _lineHeight, fontSize: _statsSubtitleFontSize)),
                 trailing: Text(
                     obj['2ndplace'] != null ? obj['2ndplace'].toString() : "",
                     style: TextStyle(
@@ -342,7 +355,8 @@ class _HomePageState extends State<HomePage>
                 ),
                 subtitle: Text(
                     "Winning a class event, being an outstanding student in class.",
-                    style: TextStyle(height: _lineHeight, fontSize: _statsSubtitleFontSize)),
+                    style: TextStyle(
+                        height: _lineHeight, fontSize: _statsSubtitleFontSize)),
                 trailing: Text(
                     obj['classMerits'] != null
                         ? obj['classMerits'].toString()
@@ -355,11 +369,14 @@ class _HomePageState extends State<HomePage>
                 leading: Icon(Icons.verified, size: 40.0),
                 title: Text(
                   "Good Deeds",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: _statsPopUpHeaderFontSize),
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: _statsPopUpHeaderFontSize),
                 ),
                 subtitle: Text(
                     "Significant good deeds, helping the poor, volunteering, etc.",
-                    style: TextStyle(height: _lineHeight, fontSize: _statsSubtitleFontSize)),
+                    style: TextStyle(
+                        height: _lineHeight, fontSize: _statsSubtitleFontSize)),
                 trailing: Text(
                     obj['deeds'] != null ? obj['deeds'].toString() : "",
                     style: TextStyle(
@@ -404,6 +421,12 @@ class _HomePageState extends State<HomePage>
       DeviceOrientation.portraitUp,
     ]);
 
+    // ======================================================================
+    // ======================================================================
+    // ======================================================================
+    // ======================================================================
+    // ======================================================================
+
     return Container(
       color: Colors.grey[800],
       child: Column(
@@ -411,110 +434,188 @@ class _HomePageState extends State<HomePage>
         children: [
           // InternetConnection(), TODO: ADD Connectivity
           Padding(
-            padding: const EdgeInsets.all(7.0),
+            padding: const EdgeInsets.all(10.0),
             child: Column(
               children: [
                 Row(
                   children: [
-                    Flexible(
-                      flex: 2,
+                    Expanded(
                       child: Container(
                         decoration: BoxDecoration(
                           color: Colors.black54,
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment
-                              .spaceBetween, // Adjusted to space between
+                        child: Stack(
                           children: [
-                            Flexible(
-                              flex: 1,
-                              child: TextButton(
+                            /*Positioned(
+                              right: 10,  // Distance from left
+                              bottom: 10,   // Distance from top
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  // Action to perform on button press
+                                  print('Button Pressed!');
+                                },
+                                child: Text('Click Me!'),
+                                  style: ButtonStyle(
+                                    backgroundColor: WidgetStateProperty.all<Color>(Colors.white),
+                                    foregroundColor: WidgetStateProperty.all<Color>(Colors.white),
+                                    overlayColor: WidgetStateProperty.all<Color>(Colors.white),
+                                    shadowColor: WidgetStateProperty.all<Color>(Colors.white),
+                                    elevation: WidgetStateProperty.all<double>(0.1),
+                                  ),
+                              ),
+                            ),*/
+                            Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment
+                                .start, // Adjusted to space between
+                            children: [
+                              TextButton(
                                 onPressed: () => Navigator.push(
                                     context,
                                     new MaterialPageRoute(
                                         builder: (context) => Avatar())),
                                 child: FluttermojiCircleAvatar(
-                                  radius:65,
+                                    radius: 65,
+                                    backgroundColor: Colors.white60,
+                                ),
+
+
+                              ),
+                              SizedBox(width: _betweenWidgetPadding),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  SizedBox(height: _betweenWidgetPadding),
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.black54,
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Row(children: [
+                                        Icon(
+                                          Icons.bar_chart,
+                                          color: Colors.green,
+                                          size: 24.0, // You can adjust the size as needed
+                                        ),
+                                        Text("TOTAL SCORE: ${_score}", style: TextStyle(
+                                            color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold))
+                                      ]),
+                                    ),
+                                  ),
+                                  SizedBox(height: _betweenWidgetPadding),
+                                  Row(children: [
+                                    Icon(
+                                      Icons.follow_the_signs,
+                                      color: Colors.white60,
+                                      size: 23.0, // You can adjust the size as needed
+                                    ),
+                                    SizedBox(width: 5),
+                                    Text("Tournaments: ${_tournaments}", style: TextStyle(
+                                        color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold))
+                                  ]),
+                                  SizedBox(height: 5),
+                                  Row(children: [
+                                    Icon(
+                                      Icons.filter_1,
+                                      color: Colors.white60,
+                                      size: 18.0, // You can adjust the size as needed
+                                    ),
+                                    SizedBox(width: 5),
+                                    Text("1st Place: ${_1stPlace}", style: TextStyle(
+                                        color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold))
+                                  ]),
+                                  SizedBox(height: 5),
+                                  Row(children: [
+                                    Icon(
+                                      Icons.filter_2,
+                                      color: Colors.white60,
+                                      size: 18.0, // You can adjust the size as needed
+                                    ),
+                                    SizedBox(width: 5),
+                                    Text("2nd Place: ${_2ndPlace}", style: TextStyle(
+                                        color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold))
+                                  ]),
+                                ],
+                              ),
+                              /*Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text("Class Stats",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.greenAccent,
+                                            fontSize: 12)),
+                                    SizedBox(height: 5),
+                                    Text(
+                                        "Tournaments: (${_tournaments.toString()})",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: _statsFontSize)),
+                                    Text("1st Place: (${_1stPlace.toString()})",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: _statsFontSize)),
+                                    Text("2nd Place: (${_2ndPlace.toString()})",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: _statsFontSize)),
+                                    Text("Good Deeds: (${_goodDeeds.toString()})",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: _statsFontSize)),
+                                    Text(
+                                        "Class Merits: (${_classMerits.toString()})",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: _statsFontSize)),
+                                  ],
                                 ),
                               ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text("Class Stats",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.greenAccent,
-                                          fontSize: 12)),
-                                  SizedBox(height: 5),
-                                  Text(
-                                      "Tournaments: (${_tournaments.toString()})",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: _statsFontSize)),
-                                  Text("1st Place: (${_1stPlace.toString()})",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: _statsFontSize)),
-                                  Text("2nd Place: (${_2ndPlace.toString()})",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: _statsFontSize)),
-                                  Text("Good Deeds: (${_goodDeeds.toString()})",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: _statsFontSize)),
-                                  Text(
-                                      "Class Merits: (${_classMerits.toString()})",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: _statsFontSize)),
-                                ],
-                              ),
-                            ),
-                            SizedBox(width: 10),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(
-                                      child: Text("Fitness Stats",
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.purpleAccent,
-                                              fontSize: 12))),
-                                  SizedBox(height: 5),
-                                  Text("Pushups (${_pushUps.toString()})",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: _statsFontSize)),
-                                  Text("Situps (${_sitUps.toString()})",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: _statsFontSize)),
-                                  Text("Deadhang (${_deadHang})",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: _statsFontSize)),
-                                  Text("Pullups (${_pullUps.toString()})",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: _statsFontSize)),
-                                  Text(
-                                      "Flexibility (${_flexibility.toString()} / 10)",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: _statsFontSize)),
-                                ],
-                              ),
-                            ),
-                            SizedBox(width: 10),
-                          ],
+                              SizedBox(width: 10),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                        child: Text("Fitness Stats",
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.purpleAccent,
+                                                fontSize: 12))),
+                                    SizedBox(height: 5),
+                                    Text("Pushups (${_pushUps.toString()})",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: _statsFontSize)),
+                                    Text("Situps (${_sitUps.toString()})",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: _statsFontSize)),
+                                    Text("Deadhang (${_deadHang})",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: _statsFontSize)),
+                                    Text("Pullups (${_pullUps.toString()})",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: _statsFontSize)),
+                                    Text(
+                                        "Flexibility (${_flexibility.toString()} / 10)",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: _statsFontSize)),
+                                  ],
+                                ),
+                              ),*/
+                              SizedBox(width: 10),
+                            ],
+                          ) ],
                         ),
                       ),
                     )
@@ -539,9 +640,11 @@ class _HomePageState extends State<HomePage>
                         color: Colors.green,
                         size: 54.0, // You can adjust the size as needed
                       ),
-                      Expanded(child: Padding(
+                      Expanded(
+                          child: Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Text("Speak good or keep silent. Speak good or keep silent. "),
+                        child: Text(
+                            "Speak good or keep silent. Speak good or keep silent. "),
                       )),
                     ],
                   ),
@@ -552,53 +655,65 @@ class _HomePageState extends State<HomePage>
                       .center, // Align children to the center horizontally
                   children: <Widget>[
                     Expanded(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.black54,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Column(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(2.0),
-                              child: Text(_eventName1,
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 13)),
-                            ),
-                            Divider(height: 1),
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(0, 5, 5, 8),
-                              child: Row(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.all(7.0),
-                                    child: Icon(
-                                      Icons.calendar_month,
-                                      color: Colors.deepOrangeAccent,
-                                      size: 40.0, // You can adjust the size as needed
+                      child: ClipRRect(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.black54,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(2.0),
+                                child: Text(_eventName1,
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 13)),
+                              ),
+                              Divider(height: 1),
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(0, 5, 5, 8),
+                                child: Row(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.all(7.0),
+                                      child: Icon(
+                                        Icons.calendar_month,
+                                        color: Colors.deepOrangeAccent,
+                                        size:
+                                            35.0, // You can adjust the size as needed
+                                      ),
                                     ),
-                                  ),
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text((DateFormat('MMM dd, yyyy')
-                                              .format(DateTime.parse(_eventDate1)))
-                                          .toString(), style: TextStyle(fontSize: _statsFontSize)),
-                                      Text(_eventLocation1, style: TextStyle(fontSize: _statsFontSize),),
-                                      Text(
-                                        'Days Left: ${(_difference1 + 1).toString()}',
-                                        style: TextStyle(
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                            (DateFormat('MMM dd, yyyy').format(
+                                                    DateTime.parse(
+                                                        _eventDate1)))
+                                                .toString(),
+                                            style: TextStyle(
+                                                fontSize: _statsFontSize)),
+                                        Text(
+                                          _eventLocation1,
+                                          style: TextStyle(
+                                              fontSize: _statsFontSize),
+                                        ),
+                                        Text(
+                                          '${(_difference1 + 1).toString()} Days Left',
+                                          style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             color: Colors.pink,
+                                          ),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                                      ],
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -628,18 +743,27 @@ class _HomePageState extends State<HomePage>
                                     child: Icon(
                                       Icons.calendar_month,
                                       color: Colors.orange,
-                                      size: 40.0, // You can adjust the size as needed
+                                      size:
+                                          35.0, // You can adjust the size as needed
                                     ),
                                   ),
                                   Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      Text((DateFormat('MMM dd, yyyy')
-                                          .format(DateTime.parse(_eventDate2)))
-                                          .toString(), style: TextStyle(fontSize: _statsFontSize)),
-                                      Text(_eventLocation2, style: TextStyle(fontSize: _statsFontSize),),
                                       Text(
-                                        'Days Left: ${(_difference2 + 1).toString()}',
+                                          (DateFormat('MMM dd, yyyy').format(
+                                                  DateTime.parse(_eventDate2)))
+                                              .toString(),
+                                          style: TextStyle(
+                                              fontSize: _statsFontSize)),
+                                      Text(
+                                        _eventLocation2,
+                                        style:
+                                            TextStyle(fontSize: _statsFontSize),
+                                      ),
+                                      Text(
+                                        '${(_difference2 + 1).toString()} Days Left',
                                         style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           color: Colors.pink,
@@ -666,7 +790,8 @@ class _HomePageState extends State<HomePage>
               borderRadius: BorderRadius.circular(10),
             ),
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 3.0, horizontal: 10.0),
+              padding:
+                  const EdgeInsets.symmetric(vertical: 3.0, horizontal: 10.0),
               child: Text(
                 "STUDENT RANKING",
                 style: TextStyle(
