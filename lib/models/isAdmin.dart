@@ -3,7 +3,7 @@ import 'package:firebase_database/firebase_database.dart';
 
 class IsAdmin {
   User? _user = FirebaseAuth.instance.currentUser;
-  final _database = FirebaseDatabase.instance.reference();
+  final _database = FirebaseDatabase.instance;
 
   // Future<bool> trueOrFalse() {
   //   var _myList;
@@ -34,7 +34,7 @@ class IsAdmin {
 
     try {
       var snapshot = await _database
-          .child('users')
+          .ref('users')
           .orderByChild('email')
           .equalTo((_user?.email)?.toLowerCase())
           .limitToFirst(1)

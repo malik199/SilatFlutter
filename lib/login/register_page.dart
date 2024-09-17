@@ -15,7 +15,7 @@ class RegisterPage extends StatefulWidget {
 
 class _RegisterPageState extends State<RegisterPage> {
   final _registerFormKey = GlobalKey<FormState>();
-  final _database = FirebaseDatabase.instance.reference();
+  final _database = FirebaseDatabase.instance;
 
   final _firstnameTextController = TextEditingController();
   final _lastnameTextController = TextEditingController();
@@ -47,7 +47,7 @@ class _RegisterPageState extends State<RegisterPage> {
         );
 
         if (user != null) {
-          await _database.child('/users').push().set({
+          await _database.ref('/users').push().set({
             'uid': user.uid,
             'belt': 'white',
             'comments':

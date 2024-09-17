@@ -6,7 +6,7 @@ import 'dart:async';
 import 'dart:convert';
 import '../models/pull_color_model.dart';
 import '../models/striped_belts.dart';
-import 'video_player.dart';
+import 'audio_video_page.dart';
 
 class TechniquesList extends StatefulWidget {
   final String color;
@@ -21,7 +21,7 @@ class TechniquesList extends StatefulWidget {
 
 class _TechniquesListState extends State<TechniquesList> {
   DatabaseReference reference =
-      FirebaseDatabase.instance.reference().child('techniques');
+      FirebaseDatabase.instance.ref('techniques');
   @override
   void initState() {
     // TODO: implement initState
@@ -57,10 +57,10 @@ class _TechniquesListState extends State<TechniquesList> {
     int stripe;
 
     if (widget.curriculum == 'jawara_muda') {
-      stripe = dbItem?["jm_showstripe"] == "" ? 0 : dbItem?["jm_showstripe"];
+      stripe = dbItem?["jm_showstripe"] == "" || dbItem?["jm_showstripe"] == null ? 0 : dbItem?["jm_showstripe"];
       _stripeBorderWhite = 0;
     } else {
-      stripe = dbItem?["sm_showstripe"] == "" ? 0 : dbItem?["sm_showstripe"];
+      stripe = dbItem?["sm_showstripe"] == "" || dbItem?["sm_showstripe"] == null? 0 : dbItem?["sm_showstripe"];
       _stripeBorderWhite = 10;
     }
     //print('STRIPE $stripe');
@@ -127,7 +127,7 @@ class _TechniquesListState extends State<TechniquesList> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => VideoPlayer(dbItem: dbItem),
+                  builder: (context) => AudioVideoPage(dbItem: dbItem),
                 ),
               )
             },
@@ -146,8 +146,7 @@ class _TechniquesListState extends State<TechniquesList> {
       body: SafeArea(
         child: FirebaseAnimatedList(
           query: FirebaseDatabase.instance
-              .reference()
-              .child('techniques')
+              .ref('techniques')
               .orderByChild(widget.curriculum)
               .equalTo(widget.color),
           itemBuilder: (BuildContext context, DataSnapshot snapshot,

@@ -36,9 +36,8 @@ class _GuestsState extends State<Guests> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Card(
-          color: Colors.lightGreenAccent,
+          color: Colors.brown,
           child: ExpansionTile(
-            backgroundColor: Colors.grey[100],
             title: ListTile(
               leading: (dbItem?['curriculum'] == 'jawara_muda'
                   ? Icon(Icons.person,

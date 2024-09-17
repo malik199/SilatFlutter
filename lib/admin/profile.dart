@@ -35,7 +35,9 @@ class _ProfileState extends State<Profile> {
 
   int _age = 6;
   List _listOfAges = [for (var i = 6; i <= 50; i++) i];
-  double _numberSize = 35;
+  double _numberSize = 30;
+  double _iconSize = 30;
+  double _subtitleSize = 10;
 
   @override
   void initState() {
@@ -122,8 +124,8 @@ class _ProfileState extends State<Profile> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 8),
-                InternetConnection(),
+                //SizedBox(height: 8),
+                //InternetConnection(),
                 SizedBox(height: 8),
                 Center(
                   child: Row(
@@ -296,135 +298,8 @@ class _ProfileState extends State<Profile> {
             ),
           ),
           SizedBox(height: paddingBetween),
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.3),
-                  spreadRadius: 5,
-                  blurRadius: 7,
-                  offset: Offset(0, 3), // changes position of shadow
-                ),
-              ],
-              color: Colors.white,
-            ),
-            child: Column(children: [
-              SizedBox(height: 10),
-              Text("STATS",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
-              Divider(),
-              ListTile(
-                leading: Icon(Icons.follow_the_signs, size: 40.0),
-                title: Text(
-                  "Tournaments",
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                subtitle:
-                    Text("Number of tournaments that you have competed in."),
-                trailing: Text(
-                    _tournaments != null ? _tournaments.toString() : "",
-                    style: TextStyle(
-                        fontSize: _numberSize, fontWeight: FontWeight.bold)),
-              ),
-              ListTile(
-                leading: Icon(Icons.filter_1, size: 40.0),
-                title: Text(
-                  "1st Place",
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                subtitle: Text("Number of first place wins."),
-                trailing: Text(_1stplace != null ? _1stplace.toString() : "",
-                    style: TextStyle(
-                        fontSize: _numberSize, fontWeight: FontWeight.bold)),
-              ),
-              ListTile(
-                leading: Icon(Icons.filter_2, size: 40.0),
-                title: Text(
-                  "2nd Place",
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                subtitle: Text("Number of 2nd place wins."),
-                trailing: Text(_2ndplace != null ? _2ndplace.toString() : "",
-                    style: TextStyle(
-                        fontSize: _numberSize, fontWeight: FontWeight.bold)),
-              ),
-              ListTile(
-                leading: Icon(Icons.store, size: 40.0),
-                title: Text(
-                  "Class Merits",
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                subtitle: Text(
-                    "Winning a class event, being an outstanding student in class."),
-                trailing: Text(
-                    _classMerits != null ? _classMerits.toString() : "",
-                    style: TextStyle(
-                        fontSize: _numberSize, fontWeight: FontWeight.bold)),
-              ),
-              SizedBox(height: 10),
-              ListTile(
-                leading: Icon(Icons.verified, size: 40.0),
-                title: Text(
-                  "Good Deeds",
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                subtitle: Text(
-                    "Significant good deeds, helping the poor, volunteering, etc."),
-                trailing: Text(_deeds != null ? _deeds.toString() : "",
-                    style: TextStyle(
-                        fontSize: _numberSize, fontWeight: FontWeight.bold)),
-              ),
-              SizedBox(height: 10),
-              Divider(),
-              Text("Total Score: ${(_score ?? "").toString()}",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 30,
-                      color: Colors.deepPurple)),
-              SizedBox(height: 10),
-            ]),
-          ),
-          SizedBox(height: paddingBetween),
-          /*Center(
-              child: Text("Change Avatar",
-                  style: TextStyle(fontWeight: FontWeight.bold))),
-          OutlinedButton(
-            style: ButtonStyle(
-              shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12.0))),
-            ),
-            onPressed: () => Navigator.push(
-                context, new MaterialPageRoute(builder: (context) => Avatar())),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: FluttermojiCircleAvatar(
-                backgroundColor: Colors.grey[200],
-                radius: 100,
-              ),
-            ),
-          ),*/
         ],
       ),
     );
   }
 }
-
-/*
-
-
-if (event.snapshot.value != null) {
-          final data = new Map<String?, dynamic>.from(event.snapshot.value);
-
-          print(event.snapshot.key);
-          data.forEach((key, value) {
-            setState(() {
-              print(value['firstname']);
-              _dbkey = key;
-              _firstName = value['firstname'];
-              _lastName = value['lastname'];
-              _age = value['age'] ?? 0;
-            });
-          });
-        }
- */

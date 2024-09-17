@@ -66,8 +66,7 @@ class _UnapprovedUsersState extends State<UnapprovedUsers> {
       body: SafeArea(
         child: FirebaseAnimatedList(
           query: FirebaseDatabase.instance
-              .reference()
-              .child('users')
+              .ref('users')
               .orderByChild('isApproved')
               .equalTo(false),
           itemBuilder: (BuildContext context, DataSnapshot snapshot,

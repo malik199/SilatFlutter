@@ -70,8 +70,7 @@ class _ApprovedUsersState extends State<ApprovedUsers> {
       body: SafeArea(
         child: FirebaseAnimatedList(
           query: FirebaseDatabase.instance
-              .reference()
-              .child('users')
+              .ref('users')
               .orderByChild('isApproved')
               .equalTo(true),
           itemBuilder: (BuildContext context, DataSnapshot? snapshot,

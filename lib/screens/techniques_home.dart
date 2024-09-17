@@ -14,7 +14,7 @@ class TechniquesHome extends StatefulWidget {
 
 class _TechniquesHomeState extends State<TechniquesHome> {
   final textcontroller = TextEditingController();
-  final _database = FirebaseDatabase.instance.reference();
+  final _database = FirebaseDatabase.instance;
   //final Future<FirebaseApp> _future = Firebase.initializeApp();
   User? _user = FirebaseAuth.instance.currentUser;
   late StreamSubscription _beltsDBStream;
@@ -35,7 +35,7 @@ class _TechniquesHomeState extends State<TechniquesHome> {
 
   void getYourTechniques() {
     _beltsDBStream = _database
-        .child('users')
+        .ref('users')
         .orderByChild('email')
         .equalTo((_user?.email)?.toLowerCase())
         .limitToFirst(1)
