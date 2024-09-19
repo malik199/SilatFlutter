@@ -55,7 +55,7 @@ class _ApprovedUsersState extends State<ApprovedUsers> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Approved Users'),
+        title: Text('Current Students'),
       ),
       body: SingleChildScrollView(
         child: ExpansionPanelList.radio(

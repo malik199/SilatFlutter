@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:silat_flutter/admin/benchmarks.dart';
 import 'package:silat_flutter/admin/guests.dart';
 import 'package:silat_flutter/screens/add_events.dart';
+import 'package:silat_flutter/screens/add_quote.dart';
 import 'package:silat_flutter/screens/advancement.dart';
 import 'package:silat_flutter/screens/events.dart';
 import 'package:silat_flutter/screens/header.dart';
@@ -212,54 +213,6 @@ class _LandingPageState extends State<LandingPage> {
                       );
                     },
                   ),
-                  if (_isAdmin) // admin only area
-                    Column(
-                      children: [
-                        ListTile(
-                          leading: Icon(Icons.thumb_up),
-                          title: const Text('Approved Users'),
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => ApprovedUsers()),
-                            );
-                          },
-                        ),
-                        ListTile(
-                          leading: Icon(Icons.event),
-                          title: const Text('Add Event'),
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => AddEventsPage()),
-                            );
-                          },
-                        ),
-                        ListTile(
-                          leading: Icon(Icons.event),
-                          title: const Text('Guests'),
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => Guests()),
-                            );
-                          },
-                        ),
-                        ListTile(
-                          leading: Icon(Icons.help_outline),
-                          title: const Text('Unapproved Users'),
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => UnapprovedUsers()),
-                            );
-                          },
-                        ),
-                      ],
-                    ),
                   ListTile(
                     leading: Icon(Icons.article),
                     title: const Text('Rules of the Class'),
@@ -270,6 +223,66 @@ class _LandingPageState extends State<LandingPage> {
                       );
                     },
                   ),
+                  if (_isAdmin) // admin only area
+                    Column(
+                      children: [
+                        ListTile(
+                          leading: Icon(Icons.thumb_up, color: Colors.green),
+                          title: const Text('Current Students', style: TextStyle(color: Colors.green),),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ApprovedUsers()),
+                            );
+                          },
+                        ),
+                        ListTile(
+                          leading: Icon(Icons.format_quote, color: Colors.green),
+                          title: const Text('Add Quote', style: TextStyle(color: Colors.green),),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => AddQuotePage()),
+                            );
+                          },
+                        ),
+                        ListTile(
+                          leading: Icon(Icons.event, color: Colors.red),
+                          title: const Text('Add Event', style: TextStyle(color: Colors.red),),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => AddEventsPage()),
+                            );
+                          },
+                        ),
+                        ListTile(
+                          leading: Icon(Icons.event, color: Colors.red),
+                          title: const Text('Guests', style: TextStyle(color: Colors.red),),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => Guests()),
+                            );
+                          },
+                        ),
+                        ListTile(
+                          leading: Icon(Icons.help_outline, color: Colors.red),
+                          title: const Text('Unapproved Users', style: TextStyle(color: Colors.red),),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => UnapprovedUsers()),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+
                   ListTile(
                     leading: Icon(Icons.logout),
                     title: const Text('Log Out'),

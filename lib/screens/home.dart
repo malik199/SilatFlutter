@@ -9,13 +9,6 @@ import 'package:silat_flutter/admin/avatar.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/services.dart';
 
-extension StringExtension on String {
-  String capitalizeFirstLetter() {
-    if (isEmpty) return this;
-    return this[0].toUpperCase() + substring(1);
-  }
-}
-
 class HomePage extends StatefulWidget {
   final User userPassed;
   const HomePage({required this.userPassed});
@@ -42,6 +35,8 @@ class _HomePageState extends State<HomePage>
   int _age = 0;
   String _location = "";
 
+  String _quoteOfTheWeek = "";
+
   int _tournaments = 0;
   int _1stPlace = 0;
   int _2ndPlace = 0;
@@ -67,8 +62,8 @@ class _HomePageState extends State<HomePage>
     super.initState();
     _currentUser = widget.userPassed;
     _getUserData();
-    _getToStudentData();
     _getEventsData();
+    _getQuote();
     _tabController = TabController(length: 4, vsync: this);
   }
 
@@ -84,48 +79,8 @@ class _HomePageState extends State<HomePage>
   late List<dynamic> _reversedJawaraMudaData = [];
   late List<dynamic> _allStudentsData = [];
   late List<dynamic> _reversedAllStudentsData = [];
-  void _getToStudentData() {
-    _topStudentsDBStream =
-        _database.child('users').orderByChild('score').onValue.listen((event) {
-      if (event.snapshot.value != null) {
-        final data = Map<String, dynamic>.from(event.snapshot.value as Map);
-        List<dynamic> allStudents = data.values.toList();
-
-        // Clear previous data
-        _satriaMudaData.clear();
-        _jawaraMudaData.clear();
-        _allStudentsData.clear();
-
-        // Filter and categorize data
-        for (var student in allStudents) {
-          if (student["isApproved"] == true &&
-              student['score'] != null &&
-              student['score'] != 0) {
-            _allStudentsData.add(student);
-
-            if (student['curriculum'] == 'satria_muda') {
-              _satriaMudaData.add(student);
-            } else if (student['curriculum'] == 'jawara_muda') {
-              _jawaraMudaData.add(student);
-            }
-          }
-        }
-
-        // Sort lists by score in descending order
-        var sorter = (a, b) => (b['score'] as num).compareTo(a['score'] as num);
-        _satriaMudaData.sort(sorter);
-        _jawaraMudaData.sort(sorter);
-        _allStudentsData.sort(sorter);
-
-        // No need to reverse twice, just set the state once
-        setState(() {
-          _reversedSatriaMudaData = List.from(_satriaMudaData);
-          _reversedJawaraMudaData = List.from(_jawaraMudaData);
-          _reversedAllStudentsData = List.from(_allStudentsData);
-        });
-      }
-    });
-  }
+  late List<dynamic> _myBeltData = [];
+  late List<dynamic> _reversedMyBeltData = [];
 
   void _getUserData() {
     _userDBStream = _database
@@ -138,6 +93,7 @@ class _HomePageState extends State<HomePage>
       if (event.snapshot.value != null) {
         final data =
             new Map<String?, dynamic>.from(event.snapshot.value as Map);
+
         setState(() {
           data.forEach((key, value) {
             _firstName = value['firstname'];
@@ -153,8 +109,62 @@ class _HomePageState extends State<HomePage>
             _score = value['score'];
           });
         });
+
+        _getStudentData(_belt, _curriculum);
       } else {
         _showMyDialog();
+      }
+    });
+  }
+
+  void _getStudentData(belt, curriculum) {
+    _topStudentsDBStream =
+        _database.child('users').orderByChild('score').onValue.listen((event) {
+      if (event.snapshot.value != null) {
+        final data = Map<String, dynamic>.from(event.snapshot.value as Map);
+        List<dynamic> allStudents = data.values.toList();
+
+        // Clear previous data
+        _satriaMudaData.clear();
+        _jawaraMudaData.clear();
+        _allStudentsData.clear();
+        _myBeltData.clear();
+        // Filter and categorize data
+        for (var student in allStudents) {
+          if (student["isApproved"] == true &&
+              student['score'] != null &&
+              student['score'] != 0) {
+            _allStudentsData.add(student);
+
+            if (student['curriculum'] == 'satria_muda') {
+              _satriaMudaData.add(student);
+            } else if (student['curriculum'] == 'jawara_muda') {
+              _jawaraMudaData.add(student);
+            }
+
+            debugPrint(belt);
+            debugPrint(curriculum);
+            if (student['belt'] == belt &&
+                student['curriculum'] == curriculum) {
+              _myBeltData.add(student);
+            }
+          }
+        }
+
+        // Sort lists by score in descending order
+        var sorter = (a, b) => (b['score'] as num).compareTo(a['score'] as num);
+        _satriaMudaData.sort(sorter);
+        _jawaraMudaData.sort(sorter);
+        _allStudentsData.sort(sorter);
+        _myBeltData.sort(sorter);
+
+        // No need to reverse twice, just set the state once
+        setState(() {
+          _reversedSatriaMudaData = List.from(_satriaMudaData);
+          _reversedJawaraMudaData = List.from(_jawaraMudaData);
+          _reversedAllStudentsData = List.from(_allStudentsData);
+          _reversedMyBeltData = List.from(_myBeltData);
+        });
       }
     });
   }
@@ -237,6 +247,28 @@ class _HomePageState extends State<HomePage>
     });
   }
 
+  void _getQuote() {
+    _eventsDBStream = _database
+        .child('quotes')
+        .orderByChild('date')
+        .limitToLast(1)
+        .onValue
+        .listen((event) {
+      if (event.snapshot.exists && event.snapshot.value != null) {
+        final data =
+        new Map<String?, dynamic>.from(event.snapshot.value as Map);
+        Map<dynamic, dynamic> quoteData = data.values.first;
+        setState(() {
+          _quoteOfTheWeek = quoteData['quote'];
+        });
+      } else {
+        print('No quotes found.');
+      }
+    }, onError: (error) {
+      print('Error fetching latest quote: $error');
+    });
+  }
+
   String formatCurriculum(dynamic curriculum) {
     return convertToTitleCase(curriculum.toString().replaceAll('_', ' '));
   }
@@ -268,6 +300,22 @@ class _HomePageState extends State<HomePage>
     }
 
     return _realNumbOfStripes;
+  }
+
+  Map<String, Color> colorMap = {
+    'white': Colors.white,
+    'yellow': Colors.yellow,
+    'green': Colors.green,
+    'blue': Colors.blue,
+    'purple': Colors.purple,
+    'brown': Colors.brown,
+    'black': Colors.black,
+    'red': Colors.red,
+  };
+
+  String capitalizeFirstLetter(String text) {
+    if (text.isEmpty) return text;
+    return text[0].toUpperCase() + text.substring(1);
   }
 
   void popupStats(obj) {
@@ -386,6 +434,7 @@ class _HomePageState extends State<HomePage>
               Divider(),
               Text("Total Score: ${(obj['score'] ?? "").toString()}",
                   style: TextStyle(
+                      fontFamily: 'PTSansNarrow',
                       fontWeight: FontWeight.bold,
                       fontSize: 20,
                       color: Colors.deepPurple)),
@@ -447,100 +496,98 @@ class _HomePageState extends State<HomePage>
                         ),
                         child: Stack(
                           children: [
-                            /*Positioned(
-                              right: 10,  // Distance from left
-                              bottom: 10,   // Distance from top
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  // Action to perform on button press
-                                  print('Button Pressed!');
-                                },
-                                child: Text('Click Me!'),
-                                  style: ButtonStyle(
-                                    backgroundColor: WidgetStateProperty.all<Color>(Colors.white),
-                                    foregroundColor: WidgetStateProperty.all<Color>(Colors.white),
-                                    overlayColor: WidgetStateProperty.all<Color>(Colors.white),
-                                    shadowColor: WidgetStateProperty.all<Color>(Colors.white),
-                                    elevation: WidgetStateProperty.all<double>(0.1),
-                                  ),
-                              ),
-                            ),*/
                             Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment
-                                .start, // Adjusted to space between
-                            children: [
-                              TextButton(
-                                onPressed: () => Navigator.push(
-                                    context,
-                                    new MaterialPageRoute(
-                                        builder: (context) => Avatar())),
-                                child: FluttermojiCircleAvatar(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment
+                                  .spaceAround, // Adjusted to space between
+                              children: [
+                                TextButton(
+                                  onPressed: () => Navigator.push(
+                                      context,
+                                      new MaterialPageRoute(
+                                          builder: (context) => Avatar())),
+                                  child: FluttermojiCircleAvatar(
                                     radius: 65,
                                     backgroundColor: Colors.white60,
-                                ),
-
-
-                              ),
-                              SizedBox(width: _betweenWidgetPadding),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  SizedBox(height: _betweenWidgetPadding),
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      color: Colors.black54,
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Row(children: [
-                                        Icon(
-                                          Icons.bar_chart,
-                                          color: Colors.green,
-                                          size: 24.0, // You can adjust the size as needed
-                                        ),
-                                        Text("TOTAL SCORE: ${_score}", style: TextStyle(
-                                            color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold))
-                                      ]),
-                                    ),
                                   ),
-                                  SizedBox(height: _betweenWidgetPadding),
-                                  Row(children: [
-                                    Icon(
-                                      Icons.follow_the_signs,
-                                      color: Colors.white60,
-                                      size: 23.0, // You can adjust the size as needed
+                                ),
+                                SizedBox(width: _betweenWidgetPadding),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    SizedBox(height: _betweenWidgetPadding),
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.deepPurple,
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Row(children: [
+                                          Icon(
+                                            Icons.bar_chart,
+                                            color: Colors.green,
+                                            size:
+                                                24.0, // You can adjust the size as needed
+                                          ),
+                                          Text("SCORE: ${_score}",
+                                              style: TextStyle(
+                                                  fontFamily: 'PTSansNarrow',
+                                                  color: Colors.white,
+                                                  fontSize: 22,
+                                                  fontWeight: FontWeight.bold))
+                                        ]),
+                                      ),
                                     ),
-                                    SizedBox(width: 5),
-                                    Text("Tournaments: ${_tournaments}", style: TextStyle(
-                                        color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold))
-                                  ]),
-                                  SizedBox(height: 5),
-                                  Row(children: [
-                                    Icon(
-                                      Icons.filter_1,
-                                      color: Colors.white60,
-                                      size: 18.0, // You can adjust the size as needed
-                                    ),
-                                    SizedBox(width: 5),
-                                    Text("1st Place: ${_1stPlace}", style: TextStyle(
-                                        color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold))
-                                  ]),
-                                  SizedBox(height: 5),
-                                  Row(children: [
-                                    Icon(
-                                      Icons.filter_2,
-                                      color: Colors.white60,
-                                      size: 18.0, // You can adjust the size as needed
-                                    ),
-                                    SizedBox(width: 5),
-                                    Text("2nd Place: ${_2ndPlace}", style: TextStyle(
-                                        color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold))
-                                  ]),
-                                ],
-                              ),
-                              /*Padding(
+                                    SizedBox(height: 5),
+                                    Row(children: [
+                                      Icon(
+                                        Icons.follow_the_signs,
+                                        color: Colors.white60,
+                                        size:
+                                            23.0, // You can adjust the size as needed
+                                      ),
+                                      SizedBox(width: 5),
+                                      Text("Tournaments: ${_tournaments}",
+                                          style: TextStyle(
+                                              fontFamily: 'PTSansNarrow',
+                                              color: Colors.white,
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold))
+                                    ]),
+                                    Row(children: [
+                                      Icon(
+                                        Icons.filter_1,
+                                        color: Colors.white60,
+                                        size:
+                                            18.0, // You can adjust the size as needed
+                                      ),
+                                      SizedBox(width: 5),
+                                      Text("1st Place: ${_1stPlace}",
+                                          style: TextStyle(
+                                              fontFamily: 'PTSansNarrow',
+                                              color: Colors.white,
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold))
+                                    ]),
+                                    Row(children: [
+                                      Icon(
+                                        Icons.filter_2,
+                                        color: Colors.white60,
+                                        size:
+                                            18.0, // You can adjust the size as needed
+                                      ),
+                                      SizedBox(width: 5),
+                                      Text("2nd Place: ${_2ndPlace}",
+                                          style: TextStyle(
+                                              fontFamily: 'PTSansNarrow',
+                                              color: Colors.white,
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold))
+                                    ]),
+                                  ],
+                                ),
+                                /*Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -613,9 +660,10 @@ class _HomePageState extends State<HomePage>
                                   ],
                                 ),
                               ),*/
-                              SizedBox(width: 10),
-                            ],
-                          ) ],
+                                SizedBox(width: 10),
+                              ],
+                            )
+                          ],
                         ),
                       ),
                     )
@@ -643,8 +691,7 @@ class _HomePageState extends State<HomePage>
                       Expanded(
                           child: Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                            "Speak good or keep silent. Speak good or keep silent. "),
+                        child: Text(_quoteOfTheWeek),
                       )),
                     ],
                   ),
@@ -654,6 +701,67 @@ class _HomePageState extends State<HomePage>
                   mainAxisAlignment: MainAxisAlignment
                       .center, // Align children to the center horizontally
                   children: <Widget>[
+                    Expanded(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.black54,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(2.0),
+                              child: Text(_eventName2,
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 13)),
+                            ),
+                            Divider(height: 1),
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(0, 5, 5, 8),
+                              child: Row(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(7.0),
+                                    child: Icon(
+                                      Icons.calendar_month,
+                                      color: Colors.orange,
+                                      size:
+                                          35.0, // You can adjust the size as needed
+                                    ),
+                                  ),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                          (DateFormat('MMM dd, yyyy').format(
+                                                  DateTime.parse(_eventDate2)))
+                                              .toString(),
+                                          style: TextStyle(
+                                              fontSize: _statsFontSize)),
+                                      Text(
+                                        _eventLocation2,
+                                        style:
+                                            TextStyle(fontSize: _statsFontSize),
+                                      ),
+                                      Text(
+                                        '${(_difference2 + 1).toString()} Days Left',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.pink,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: _betweenWidgetPadding),
                     Expanded(
                       child: ClipRRect(
                         child: Container(
@@ -717,67 +825,6 @@ class _HomePageState extends State<HomePage>
                         ),
                       ),
                     ),
-                    SizedBox(width: _betweenWidgetPadding),
-                    Expanded(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.black54,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Column(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(2.0),
-                              child: Text(_eventName2,
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 13)),
-                            ),
-                            Divider(height: 1),
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(0, 5, 5, 8),
-                              child: Row(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.all(7.0),
-                                    child: Icon(
-                                      Icons.calendar_month,
-                                      color: Colors.orange,
-                                      size:
-                                          35.0, // You can adjust the size as needed
-                                    ),
-                                  ),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                          (DateFormat('MMM dd, yyyy').format(
-                                                  DateTime.parse(_eventDate2)))
-                                              .toString(),
-                                          style: TextStyle(
-                                              fontSize: _statsFontSize)),
-                                      Text(
-                                        _eventLocation2,
-                                        style:
-                                            TextStyle(fontSize: _statsFontSize),
-                                      ),
-                                      Text(
-                                        '${(_difference2 + 1).toString()} Days Left',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.pink,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
                   ],
                 ),
               ],
@@ -821,390 +868,370 @@ class _HomePageState extends State<HomePage>
                           child: Text("Satria",
                               softWrap: true, textAlign: TextAlign.center)),
                       Tab(
-                          child: Text("New",
+                          child: Text("My Belt Level",
                               softWrap: true, textAlign: TextAlign.center)),
                     ],
                   ),
                   Expanded(
                     child: TabBarView(
                       children: [
-                        Center(
-                          child: Container(
-                              color: Colors.black54,
-                              child: ListView.builder(
-                                itemCount: _reversedAllStudentsData.length,
-                                itemBuilder: (context, index) {
-                                  return Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 4.0),
-                                    child: Column(
-                                      children: [
-                                        ElevatedButton(
-                                          style: ElevatedButton.styleFrom(
-                                              foregroundColor: Colors.grey,
-                                              backgroundColor: Colors.white10,
-                                              padding: EdgeInsets.fromLTRB(
-                                                  10, 1, 6, 0),
-                                              shape:
-                                                  const RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(5)),
-                                              )),
-                                          onPressed: () {
-                                            popupStats(_reversedAllStudentsData[
-                                                index]);
-                                          },
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              // Index number circle
-                                              Container(
-                                                width:
-                                                    25, // Diameter of the circle
-                                                height:
-                                                    25, // Diameter of the circle
-                                                decoration: BoxDecoration(
-                                                  color: Colors
-                                                      .tealAccent, // Background color of the circle
-                                                  shape: BoxShape
-                                                      .circle, // Makes the container circular
-                                                ),
-                                                alignment: Alignment
-                                                    .center, // Centers the index text in the circle
-                                                child: Text(
-                                                  (index + 1)
-                                                      .toString(), // Displaying the index, starting from 1
-                                                  style: TextStyle(
-                                                      color: Colors.black,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 14),
-                                                ),
+                        Container(
+                            color: Colors.black54,
+                            child: ListView.builder(
+                              itemCount: _reversedAllStudentsData.length,
+                              itemBuilder: (context, index) {
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 4.0),
+                                  child: Column(
+                                    children: [
+                                      ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                            foregroundColor: Colors.grey,
+                                            backgroundColor: Colors.white10,
+                                            padding: EdgeInsets.fromLTRB(
+                                                10, 1, 6, 0),
+                                            shape: const RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(5)),
+                                            )),
+                                        onPressed: () {
+                                          popupStats(
+                                              _reversedAllStudentsData[index]);
+                                        },
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            // Index number circle
+                                            Container(
+                                              width:
+                                                  25, // Diameter of the circle
+                                              height:
+                                                  25, // Diameter of the circle
+                                              decoration: BoxDecoration(
+                                                color: Colors
+                                                    .tealAccent, // Background color of the circle
+                                                shape: BoxShape
+                                                    .circle, // Makes the container circular
                                               ),
-                                              SizedBox(
-                                                  width:
-                                                      10), // Space between the index and the name
-
-                                              // Flexible to adjust text size automatically
-                                              Flexible(
-                                                fit: FlexFit
-                                                    .tight, // Forces the child to fill the available space
-                                                child: Text(
-                                                  '${_reversedAllStudentsData[index]['firstname']} ${_reversedAllStudentsData[index]['lastname']}',
-                                                  style: TextStyle(
-                                                      fontSize: 15,
-                                                      color: Colors.tealAccent,
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                  softWrap: false,
-                                                ),
-                                              ),
-
-                                              // Score text aligned to the right
-                                              Text(
-                                                (_reversedAllStudentsData[index]
-                                                            ['score'] ??
-                                                        "0")
-                                                    .toString(),
+                                              alignment: Alignment
+                                                  .center, // Centers the index text in the circle
+                                              child: Text(
+                                                (index + 1)
+                                                    .toString(), // Displaying the index, starting from 1
                                                 style: TextStyle(
-                                                    fontSize: 20,
+                                                    color: Colors.black,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 14),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                                width:
+                                                    10), // Space between the index and the name
+
+                                            // Flexible to adjust text size automatically
+                                            Flexible(
+                                              fit: FlexFit
+                                                  .tight, // Forces the child to fill the available space
+                                              child: Text(
+                                                '${_reversedAllStudentsData[index]['firstname']} ${_reversedAllStudentsData[index]['lastname']}',
+                                                style: TextStyle(
+                                                    fontSize: 15,
                                                     color: Colors.tealAccent,
                                                     fontWeight:
                                                         FontWeight.bold),
+                                                softWrap: false,
                                               ),
-                                            ],
-                                          ),
+                                            ),
+
+                                            // Score text aligned to the right
+                                            Text(
+                                              (_reversedAllStudentsData[index]
+                                                          ['score'] ??
+                                                      "0")
+                                                  .toString(),
+                                              style: TextStyle(
+                                                  fontSize: 20,
+                                                  color: Colors.tealAccent,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ],
                                         ),
-                                      ],
-                                    ),
-                                  );
-                                },
-                              )),
-                        ),
-                        Center(
-                          child: Container(
-                              color: Colors.blue,
-                              child: ListView.builder(
-                                itemCount: _reversedJawaraMudaData.length,
-                                itemBuilder: (context, index) {
-                                  return Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 4.0),
-                                    child: Column(
-                                      children: [
-                                        ElevatedButton(
-                                          style: ElevatedButton.styleFrom(
-                                              foregroundColor: Colors.grey,
-                                              backgroundColor: Colors.white,
-                                              padding: EdgeInsets.fromLTRB(
-                                                  10, 1, 6, 0),
-                                              shape:
-                                                  const RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(5)),
-                                              )),
-                                          onPressed: () {
-                                            popupStats(
-                                                _reversedJawaraMudaData[index]);
-                                          },
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              // Index number circle
-                                              Container(
-                                                width:
-                                                    25, // Diameter of the circle
-                                                height:
-                                                    25, // Diameter of the circle
-                                                decoration: BoxDecoration(
-                                                  color: Colors
-                                                      .blue, // Background color of the circle
-                                                  shape: BoxShape
-                                                      .circle, // Makes the container circular
-                                                ),
-                                                alignment: Alignment
-                                                    .center, // Centers the index text in the circle
-                                                child: Text(
-                                                  (index + 1)
-                                                      .toString(), // Displaying the index, starting from 1
-                                                  style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 16),
-                                                  softWrap: false,
-                                                ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            )),
+                        Container(
+                            color: Colors.black54,
+                            child: ListView.builder(
+                              itemCount: _reversedJawaraMudaData.length,
+                              itemBuilder: (context, index) {
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 4.0),
+                                  child: Column(
+                                    children: [
+                                      ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                            foregroundColor: Colors.grey,
+                                            backgroundColor: Colors.white10,
+                                            padding: EdgeInsets.fromLTRB(
+                                                10, 1, 6, 0),
+                                            shape: const RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(5)),
+                                            )),
+                                        onPressed: () {
+                                          popupStats(
+                                              _reversedJawaraMudaData[index]);
+                                        },
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            // Index number circle
+                                            Container(
+                                              width:
+                                                  25, // Diameter of the circle
+                                              height:
+                                                  25, // Diameter of the circle
+                                              decoration: BoxDecoration(
+                                                color: Colors
+                                                    .blue, // Background color of the circle
+                                                shape: BoxShape
+                                                    .circle, // Makes the container circular
                                               ),
-                                              SizedBox(
-                                                  width:
-                                                      10), // Space between the index and the name
-
-                                              // Flexible to adjust text size automatically
-                                              Flexible(
-                                                fit: FlexFit
-                                                    .tight, // Forces the child to fill the available space
-                                                child: Text(
-                                                  '${_reversedJawaraMudaData[index]['firstname']} ${_reversedJawaraMudaData[index]['lastname']}',
-                                                  style: TextStyle(
-                                                      fontSize: 15,
-                                                      color: Colors.blue,
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                ),
-                                              ),
-
-                                              // Score text aligned to the right
-                                              Text(
-                                                (_reversedJawaraMudaData[index]
-                                                            ['score'] ??
-                                                        "0")
-                                                    .toString(),
+                                              alignment: Alignment
+                                                  .center, // Centers the index text in the circle
+                                              child: Text(
+                                                (index + 1)
+                                                    .toString(), // Displaying the index, starting from 1
                                                 style: TextStyle(
-                                                    fontSize: 20,
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 16),
+                                                softWrap: false,
+                                              ),
+                                            ),
+                                            SizedBox(
+                                                width:
+                                                    10), // Space between the index and the name
+
+                                            // Flexible to adjust text size automatically
+                                            Flexible(
+                                              fit: FlexFit
+                                                  .tight, // Forces the child to fill the available space
+                                              child: Text(
+                                                '${_reversedJawaraMudaData[index]['firstname']} ${_reversedJawaraMudaData[index]['lastname']}',
+                                                style: TextStyle(
+                                                    fontSize: 15,
                                                     color: Colors.blue,
                                                     fontWeight:
                                                         FontWeight.bold),
                                               ),
-                                            ],
-                                          ),
+                                            ),
+
+                                            // Score text aligned to the right
+                                            Text(
+                                              (_reversedJawaraMudaData[index]
+                                                          ['score'] ??
+                                                      "0")
+                                                  .toString(),
+                                              style: TextStyle(
+                                                  fontSize: 20,
+                                                  color: Colors.blue,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ],
                                         ),
-                                      ],
-                                    ),
-                                  );
-                                },
-                              )),
-                        ),
-                        Center(
-                          child: Container(
-                              color: Colors.green,
-                              child: ListView.builder(
-                                itemCount: _reversedSatriaMudaData.length,
-                                itemBuilder: (context, index) {
-                                  return Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 4.0),
-                                    child: Column(
-                                      children: [
-                                        ElevatedButton(
-                                          style: ElevatedButton.styleFrom(
-                                              foregroundColor: Colors.grey,
-                                              backgroundColor: Colors.white,
-                                              padding: EdgeInsets.fromLTRB(
-                                                  10, 1, 6, 0),
-                                              shape:
-                                                  const RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(5)),
-                                              )),
-                                          onPressed: () {
-                                            popupStats(
-                                                _reversedSatriaMudaData[index]);
-                                          },
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              // Index number circle
-                                              Container(
-                                                width:
-                                                    25, // Diameter of the circle
-                                                height:
-                                                    25, // Diameter of the circle
-                                                decoration: BoxDecoration(
-                                                  color: Colors
-                                                      .green, // Background color of the circle
-                                                  shape: BoxShape
-                                                      .circle, // Makes the container circular
-                                                ),
-                                                alignment: Alignment
-                                                    .center, // Centers the index text in the circle
-                                                child: Text(
-                                                  (index + 1)
-                                                      .toString(), // Displaying the index, starting from 1
-                                                  style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 16),
-                                                ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            )),
+                        Container(
+                            color: Colors.black54,
+                            child: ListView.builder(
+                              itemCount: _reversedSatriaMudaData.length,
+                              itemBuilder: (context, index) {
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 4.0),
+                                  child: Column(
+                                    children: [
+                                      ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                            foregroundColor: Colors.grey,
+                                            backgroundColor: Colors.white10,
+                                            padding: EdgeInsets.fromLTRB(
+                                                10, 1, 6, 0),
+                                            shape: const RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(5)),
+                                            )),
+                                        onPressed: () {
+                                          popupStats(
+                                              _reversedSatriaMudaData[index]);
+                                        },
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            // Index number circle
+                                            Container(
+                                              width:
+                                                  25, // Diameter of the circle
+                                              height:
+                                                  25, // Diameter of the circle
+                                              decoration: BoxDecoration(
+                                                color: Colors
+                                                    .green, // Background color of the circle
+                                                shape: BoxShape
+                                                    .circle, // Makes the container circular
                                               ),
-                                              SizedBox(
-                                                  width:
-                                                      10), // Space between the index and the name
-
-                                              // Flexible to adjust text size automatically
-                                              Flexible(
-                                                fit: FlexFit
-                                                    .tight, // Forces the child to fill the available space
-                                                child: Text(
-                                                  '${_reversedSatriaMudaData[index]['firstname']} ${_reversedSatriaMudaData[index]['lastname']}',
-                                                  style: TextStyle(
-                                                      fontSize: 15,
-                                                      color: Colors.green,
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                  overflow: TextOverflow.clip,
-                                                  softWrap: false,
-                                                ),
-                                              ),
-
-                                              // Score text aligned to the right
-                                              Text(
-                                                (_reversedSatriaMudaData[index]
-                                                            ['score'] ??
-                                                        "0")
-                                                    .toString(),
+                                              alignment: Alignment
+                                                  .center, // Centers the index text in the circle
+                                              child: Text(
+                                                (index + 1)
+                                                    .toString(), // Displaying the index, starting from 1
                                                 style: TextStyle(
-                                                    fontSize: 20,
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 16),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                                width:
+                                                    10), // Space between the index and the name
+
+                                            // Flexible to adjust text size automatically
+                                            Flexible(
+                                              fit: FlexFit
+                                                  .tight, // Forces the child to fill the available space
+                                              child: Text(
+                                                '${_reversedSatriaMudaData[index]['firstname']} ${_reversedSatriaMudaData[index]['lastname']}',
+                                                style: TextStyle(
+                                                    fontSize: 15,
                                                     color: Colors.green,
                                                     fontWeight:
                                                         FontWeight.bold),
+                                                overflow: TextOverflow.clip,
+                                                softWrap: false,
                                               ),
-                                            ],
-                                          ),
+                                            ),
+
+                                            // Score text aligned to the right
+                                            Text(
+                                              (_reversedSatriaMudaData[index]
+                                                          ['score'] ??
+                                                      "0")
+                                                  .toString(),
+                                              style: TextStyle(
+                                                  fontSize: 20,
+                                                  color: Colors.green,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ],
                                         ),
-                                      ],
-                                    ),
-                                  );
-                                },
-                              )),
-                        ),
-                        Center(
-                          child: Container(
-                              color: Colors.deepOrange,
-                              child: ListView.builder(
-                                itemCount: _reversedSatriaMudaData.length,
-                                itemBuilder: (context, index) {
-                                  return Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 4.0),
-                                    child: Column(
-                                      children: [
-                                        ElevatedButton(
-                                          style: ElevatedButton.styleFrom(
-                                              foregroundColor: Colors.grey,
-                                              backgroundColor: Colors.white,
-                                              padding: EdgeInsets.fromLTRB(
-                                                  10, 1, 6, 0),
-                                              shape:
-                                                  const RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(5)),
-                                              )),
-                                          onPressed: () {
-                                            popupStats(
-                                                _reversedSatriaMudaData[index]);
-                                          },
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              // Index number circle
-                                              Container(
-                                                width:
-                                                    25, // Diameter of the circle
-                                                height:
-                                                    25, // Diameter of the circle
-                                                decoration: BoxDecoration(
-                                                  color: Colors
-                                                      .deepOrange, // Background color of the circle
-                                                  shape: BoxShape
-                                                      .circle, // Makes the container circular
-                                                ),
-                                                alignment: Alignment
-                                                    .center, // Centers the index text in the circle
-                                                child: Text(
-                                                  (index + 1)
-                                                      .toString(), // Displaying the index, starting from 1
-                                                  style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 16),
-                                                ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            )),
+                        Container(
+                            color: colorMap[_belt],
+                            child: ListView.builder(
+                              itemCount: _reversedMyBeltData.length,
+                              itemBuilder: (context, index) {
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 4.0),
+                                  child: Column(
+                                    children: [
+                                      ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                            foregroundColor: Colors.grey,
+                                            backgroundColor: Colors.white,
+                                            padding: EdgeInsets.fromLTRB(
+                                                10, 1, 6, 0),
+                                            shape: const RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(5)),
+                                            )),
+                                        onPressed: () {
+                                          popupStats(
+                                              _reversedMyBeltData[index]);
+                                        },
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            // Index number circle
+                                            Container(
+                                              width:
+                                                  25, // Diameter of the circle
+                                              height:
+                                                  25, // Diameter of the circle
+                                              decoration: BoxDecoration(
+                                                color: Colors
+                                                    .black, // Background color of the circle
+                                                shape: BoxShape
+                                                    .circle, // Makes the container circular
                                               ),
-                                              SizedBox(
-                                                  width:
-                                                      10), // Space between the index and the name
-
-                                              // Flexible to adjust text size automatically
-                                              Flexible(
-                                                fit: FlexFit
-                                                    .tight, // Forces the child to fill the available space
-                                                child: Text(
-                                                  '${_reversedSatriaMudaData[index]['firstname']} ${_reversedSatriaMudaData[index]['lastname']}',
-                                                  style: TextStyle(
-                                                      fontSize: 15,
-                                                      color: Colors.deepOrange,
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                  softWrap: false,
-                                                ),
-                                              ),
-
-                                              // Score text aligned to the right
-                                              Text(
-                                                (_reversedSatriaMudaData[index]
-                                                            ['score'] ??
-                                                        "0")
-                                                    .toString(),
+                                              alignment: Alignment
+                                                  .center, // Centers the index text in the circle
+                                              child: Text(
+                                                (index + 1)
+                                                    .toString(), // Displaying the index, starting from 1
                                                 style: TextStyle(
-                                                    fontSize: 22,
-                                                    color: Colors.deepOrange,
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 16),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                                width:
+                                                    10), // Space between the index and the name
+
+                                            // Flexible to adjust text size automatically
+                                            Flexible(
+                                              fit: FlexFit
+                                                  .tight, // Forces the child to fill the available space
+                                              child: Text(
+                                                '${_reversedMyBeltData[index]['firstname']} ${_reversedMyBeltData[index]['lastname']}',
+                                                style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 15,
                                                     fontWeight:
                                                         FontWeight.bold),
+                                                softWrap: false,
                                               ),
-                                            ],
-                                          ),
+                                            ),
+
+                                            // Score text aligned to the right
+                                            Text(
+                                              (_reversedMyBeltData[index]
+                                                          ['score'] ??
+                                                      "0")
+                                                  .toString(),
+                                              style: TextStyle(
+                                                  fontSize: 22,
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ],
                                         ),
-                                      ],
-                                    ),
-                                  );
-                                },
-                              )),
-                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            )),
                       ],
                     ),
                   ),

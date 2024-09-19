@@ -143,10 +143,8 @@ class _EditUserWidgetState extends State<EditUserWidget> {
               icon: const Icon(Icons.arrow_downward),
               iconSize: 24,
               elevation: 16,
-              style: const TextStyle(color: Colors.deepPurple),
               underline: Container(
                 height: 2,
-                color: Colors.deepPurpleAccent,
               ),
               onChanged: (String? newValue) {
                 setState(() {
@@ -177,10 +175,8 @@ class _EditUserWidgetState extends State<EditUserWidget> {
               icon: const Icon(Icons.arrow_downward),
               iconSize: 24,
               elevation: 16,
-              style: const TextStyle(color: Colors.deepPurple),
               underline: Container(
                 height: 2,
-                color: Colors.deepPurpleAccent,
               ),
               onChanged: (String? newValue) {
                 setState(() {
@@ -222,10 +218,8 @@ class _EditUserWidgetState extends State<EditUserWidget> {
                 icon: const Icon(Icons.arrow_downward),
                 iconSize: 24,
                 elevation: 16,
-                style: const TextStyle(color: Colors.deepPurple),
                 underline: Container(
                   height: 2,
-                  color: Colors.deepPurpleAccent,
                 ),
                 onChanged: (String? newValue) {
                   setState(() {
@@ -261,10 +255,8 @@ class _EditUserWidgetState extends State<EditUserWidget> {
                   icon: const Icon(Icons.arrow_downward),
                   iconSize: 24,
                   elevation: 16,
-                  style: const TextStyle(color: Colors.deepPurple),
                   underline: Container(
                     height: 2,
-                    color: Colors.deepPurpleAccent,
                   ),
                   onChanged: (int? newValue) {
                     setState(() {
@@ -296,10 +288,8 @@ class _EditUserWidgetState extends State<EditUserWidget> {
                   icon: const Icon(Icons.arrow_downward),
                   iconSize: 24,
                   elevation: 16,
-                  style: const TextStyle(color: Colors.deepPurple),
                   underline: Container(
                     height: 2,
-                    color: Colors.deepPurpleAccent,
                   ),
                   onChanged: (int? newValue) {
                     setState(() {
@@ -335,10 +325,8 @@ class _EditUserWidgetState extends State<EditUserWidget> {
                   icon: const Icon(Icons.arrow_downward),
                   iconSize: 24,
                   elevation: 16,
-                  style: const TextStyle(color: Colors.deepPurple),
                   underline: Container(
                     height: 2,
-                    color: Colors.deepPurpleAccent,
                   ),
                   onChanged: (int? newValue) {
                     setState(() {
@@ -371,10 +359,8 @@ class _EditUserWidgetState extends State<EditUserWidget> {
                   icon: const Icon(Icons.arrow_downward),
                   iconSize: 24,
                   elevation: 16,
-                  style: const TextStyle(color: Colors.deepPurple),
                   underline: Container(
                     height: 2,
-                    color: Colors.deepPurpleAccent,
                   ),
                   onChanged: (int? newValue) {
                     setState(() {
@@ -404,10 +390,8 @@ class _EditUserWidgetState extends State<EditUserWidget> {
               icon: const Icon(Icons.arrow_downward),
               iconSize: 24,
               elevation: 16,
-              style: const TextStyle(color: Colors.deepPurple),
               underline: Container(
                 height: 2,
-                color: Colors.deepPurpleAccent,
               ),
               onChanged: (int? newValue) {
                 setState(() {
@@ -427,7 +411,7 @@ class _EditUserWidgetState extends State<EditUserWidget> {
                 style: TextStyle(
                     fontSize: 40,
                     fontWeight: FontWeight.bold,
-                    color: Colors.deepPurpleAccent))
+                    color: Colors.deepOrangeAccent))
           ]),
           Divider(
             thickness: 2,

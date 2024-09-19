@@ -24,7 +24,6 @@ dependencies:
   flutter:
     sdk: flutter
 
-
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
@@ -58,6 +57,12 @@ flutter:
   assets:
     - assets/images/
     - assets/audio/Ikrar.mp3
+  fonts:
+    - family: PTSansNarrow
+      fonts:
+        - asset: assets/fonts/PTSansNarrow-Regular.ttf
+        - asset: assets/fonts/PTSansNarrow-Bold.ttf
+          weight: 700
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.

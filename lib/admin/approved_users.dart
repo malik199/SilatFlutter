@@ -38,7 +38,6 @@ class _ApprovedUsersState extends State<ApprovedUsers> {
       children: [
         Card(
           child: ExpansionTile(
-            backgroundColor: Colors.grey[100],
             title: ListTile(
               leading: (dbItem?['curriculum'] == 'jawara_muda'
                   ? Icon(Icons.person,
@@ -65,7 +64,7 @@ class _ApprovedUsersState extends State<ApprovedUsers> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Approved Users'),
+        title: Text('Current Students'),
       ),
       body: SafeArea(
         child: FirebaseAnimatedList(
