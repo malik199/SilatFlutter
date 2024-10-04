@@ -33,6 +33,7 @@ class LandingPage extends StatefulWidget {
 }
 
 class _LandingPageState extends State<LandingPage> {
+  int currentPageIndex = 0;
   int _selectedIndex = 0;
   bool _isSendingVerification = false;
   late User _currentUser;
@@ -42,7 +43,6 @@ class _LandingPageState extends State<LandingPage> {
     _currentUser = widget.user;
     super.initState();
     IsAdmin().trueOrFalse().then((res) {
-      //print(res);
       setState(() {
         _isAdmin = res;
       });
@@ -312,38 +312,34 @@ class _LandingPageState extends State<LandingPage> {
       appBar: AppBar(
         title: Header(headerText: _currentUser.displayName.toString()),
       ),
-      body: Center(
-        child: _currentUser.emailVerified
-            ? IndexedStack(
-                index: _selectedIndex,
-                children: _pages,
-              )
-            : pleaseVerifyWidget(),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        selectedItemColor: Colors.teal,
-        unselectedItemColor: Colors.grey,
-        type: BottomNavigationBarType.shifting,
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
+      body: _currentUser.emailVerified ? _pages[currentPageIndex] : [pleaseVerifyWidget()][currentPageIndex],
+      bottomNavigationBar: NavigationBar(
+        onDestinationSelected: (int index) {
+          setState(() {
+            currentPageIndex = index;
+          });
+        },
+        indicatorColor: Colors.amber,
+        selectedIndex: currentPageIndex,
+        destinations: const <Widget>[
+          NavigationDestination(
+            selectedIcon: Icon(Icons.home),
+            icon: Icon(Icons.home_outlined),
             label: 'Home',
           ),
-          BottomNavigationBarItem(
+          NavigationDestination(
             icon: Icon(Icons.sports_kabaddi),
             label: 'Techniques',
           ),
-          BottomNavigationBarItem(
+          NavigationDestination(
             icon: Icon(Icons.table_view),
             label: 'Scoring',
           ),
-          BottomNavigationBarItem(
+          NavigationDestination(
             icon: Icon(Icons.event),
             label: 'Events',
           ),
         ],
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
       ),
     );
   }

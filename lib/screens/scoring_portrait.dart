@@ -189,12 +189,11 @@ class _ScoringPageState extends State<ScoringPortrait> {
 
   @override
   void deactivate() {
-    if(_timer != null){
+    if (_timer != null) {
       _timer.cancel();
     }
     super.deactivate();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -202,530 +201,523 @@ class _ScoringPageState extends State<ScoringPortrait> {
     const double _smallFont = 22;
     const double _padding = 10.0;
     const double _spacing = 10.0;
-    //const double _middleSpacing = 15.0;
     const double _borderRadius = 8;
-    const double _bottomFont = 60;
+    const double spacing = 10.0;
+    const double bottomFont = 60;
+    const double borderRadius = 8;
 
     const TextStyle whiteTextColor = TextStyle(color: Colors.white);
     final ButtonStyle redStyle = ButtonStyle(
         backgroundColor: MaterialStateProperty.all(Colors.red),
-        shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius:BorderRadius.circular(2) )),
-        textStyle: MaterialStateProperty.all(
-            TextStyle(fontSize: _largeFont, fontWeight: FontWeight.bold, color: Colors.white)));
+        shape: MaterialStateProperty.all(
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(2))),
+        textStyle: MaterialStateProperty.all(TextStyle(
+            fontSize: _largeFont,
+            fontWeight: FontWeight.bold,
+            color: Colors.white)));
     final ButtonStyle blueStyle = ButtonStyle(
-        shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius:BorderRadius.circular(2) )),
+        shape: MaterialStateProperty.all(
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(2))),
         backgroundColor: MaterialStateProperty.all(Colors.blue),
         textStyle: MaterialStateProperty.all(
             TextStyle(fontSize: _largeFont, fontWeight: FontWeight.bold)));
     final ButtonStyle redSmallerStyle = ButtonStyle(
-        shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius:BorderRadius.circular(2) )),
+        shape: MaterialStateProperty.all(
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(2))),
         backgroundColor: MaterialStateProperty.all(Colors.red),
         textStyle: MaterialStateProperty.all(
             TextStyle(fontSize: _smallFont, fontWeight: FontWeight.bold)));
     final ButtonStyle blueSmallerStyle = ButtonStyle(
-        shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius:BorderRadius.circular(2) )),
+        shape: MaterialStateProperty.all(
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(2))),
         backgroundColor: MaterialStateProperty.all(Colors.blue),
         textStyle: MaterialStateProperty.all(
             TextStyle(fontSize: _smallFont, fontWeight: FontWeight.bold)));
     final TextStyle _scoreBoardStyle = TextStyle(
         fontSize: _smallFont, fontWeight: FontWeight.bold, color: Colors.black);
 
-    return Container(
-      color: Colors.black,
-      child: Column(
-        children: [
-          SizedBox(
-            height: _spacing,
-          ),
-          Expanded(
-            flex: 10,
-            child: Row(
-              children: [
-                Expanded(
-                  child: Container(
-                    child: Column(
-                      children: [
-                        Expanded(
-                          flex: 2,
-                          child: Container(
-                            child: Padding(
-                              padding: const EdgeInsets.all(_padding),
-                              child: Align(
-                                alignment: Alignment.topLeft,
-                                child: SingleChildScrollView(
-                                  child: Text(
-                                    _redArrayText,
-                                    style: _scoreBoardStyle,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(_borderRadius),
+    return Column(
+      children: <Widget>[
+        Expanded(
+          child: Row(
+            children: <Widget>[
+              Expanded(
+                child: Column(
+                  children: [
+                    Expanded(
+                      flex: 2,
+                      child: Container(
+                        child: Padding(
+                          padding: const EdgeInsets.all(_padding),
+                          child: Align(
+                            alignment: Alignment.topLeft,
+                            child: SingleChildScrollView(
+                              child: Text(
+                                _redArrayText,
+                                style: _scoreBoardStyle,
                               ),
                             ),
                           ),
                         ),
-                        SizedBox(
-                          height: _spacing,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(_borderRadius),
+                          ),
                         ),
-                        Expanded(
-                          flex: 1,
-                          child: Row(
-                              //ROW 2
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                Expanded(
-                                  child: ElevatedButton(
-                                    style: redSmallerStyle,
-                                    onPressed: () => redButtonClicked(-1),
-                                    child: const Text('-1', style: whiteTextColor),
-                                  ),
-                                ),
-                                SizedBox(width: _spacing),
-                                Expanded(
-                                  child: ElevatedButton(
-                                    style: redSmallerStyle,
-                                    onPressed: () => redButtonClicked(-2),
-                                    child: const Text('-2', style: whiteTextColor),
-                                  ),
-                                ),
-                              ]),
-                        ),
-                        SizedBox(
-                          height: _spacing,
-                        ),
-                        Expanded(
-                          flex: 1,
-                          child: Row(
-                              //ROW 2
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                Expanded(
-                                  child: ElevatedButton(
-                                    style: redSmallerStyle,
-                                    onPressed: () => redButtonClicked(-5),
-                                    child: const Text('-5', style: whiteTextColor),
-                                  ),
-                                ),
-                                SizedBox(width: _spacing),
-                                Expanded(
-                                  child: ElevatedButton(
-                                    style: redSmallerStyle,
-                                    onPressed: () => redButtonClicked(-10),
-                                    child: const Text('-10', style: whiteTextColor),
-                                  ),
-                                ),
-                              ]),
-                        ),
-                        SizedBox(
-                          height: _spacing,
-                        ),
-                        Expanded(
-                          flex: 5,
-                          child: Column(
-                              //ROW 2
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                Expanded(
-                                  child: ElevatedButton(
-                                    style: redStyle,
-                                    onPressed: () => redButtonClicked(1),
-                                    child: FittedBox(
-                                      child: const Text('1', style: whiteTextColor),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(height: _spacing),
-                                Expanded(
-                                  child: ElevatedButton(
-                                    style: redStyle,
-                                    onPressed: () => redButtonClicked(2),
-                                    child: FittedBox(
-                                      child: const Text('2', style: whiteTextColor),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(height: _spacing),
-                                Expanded(
-                                  flex: 1,
-                                  child: Row(
-                                      //ROW 2
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.stretch,
-                                      children: [
-                                        Expanded(
-                                          child: ElevatedButton(
-                                            style: redStyle,
-                                            onPressed: () =>
-                                                redButtonClicked(3),
-                                            child: FittedBox(
-                                              child: const Text('3', style: whiteTextColor),
-                                            ),
-                                          ),
-                                        ),
-                                        SizedBox(width: _spacing),
-                                        Expanded(
-                                          child: ElevatedButton(
-                                            style: redStyle,
-                                            onPressed: () =>
-                                                redButtonClicked(4),
-                                            child: FittedBox(
-                                              child: const Text('1+3', style: whiteTextColor),
-                                            ),
-                                          ),
-                                        ),
-                                      ]),
-                                ),
-                              ]),
-                        ),
-                        SizedBox(
-                          height: _spacing,
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
-                ),
-                SizedBox(
-                  width: _spacing,
-                ),
-                Expanded(
-                  child: Container(
+                    SizedBox(
+                      height: _spacing,
+                    ),
+                    // **************** BIG BUTTONS ************
+                    Expanded(
+                      flex: 5,
                       child: Column(
-                    children: [
-                      Expanded(
-                        flex: 2,
-                        child: Container(
-                          child: Padding(
-                            padding: const EdgeInsets.all(_padding),
-                            child: Align(
-                              alignment: Alignment.topLeft,
-                              child: SingleChildScrollView(
-                                child: Text(
-                                  _blueArrayText,
-                                  style: _scoreBoardStyle,
+                          //ROW 2
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Expanded(
+                              child: ElevatedButton(
+                                style: redStyle,
+                                onPressed: () => redButtonClicked(1),
+                                child: FittedBox(
+                                  child: const Text('1', style: whiteTextColor),
                                 ),
                               ),
                             ),
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(_borderRadius),
+                            SizedBox(height: _spacing),
+                            Expanded(
+                              child: ElevatedButton(
+                                style: redStyle,
+                                onPressed: () => redButtonClicked(2),
+                                child: FittedBox(
+                                  child: const Text('2', style: whiteTextColor),
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: _spacing),
+                            Expanded(
+                              child: Row(
+                                  //ROW 2
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: [
+                                    Expanded(
+                                      flex: 2,
+                                      child: ElevatedButton(
+                                        style: redStyle,
+                                        onPressed: () => redButtonClicked(3),
+                                        child: FittedBox(
+                                          child: const Text('3',
+                                              style: whiteTextColor),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(width: _spacing),
+                                    Expanded(
+                                      flex: 1,
+                                      child: ElevatedButton(
+                                        style: redStyle,
+                                        onPressed: () => redButtonClicked(4),
+                                        child: FittedBox(
+                                          child: const Text('4',
+                                              style: whiteTextColor),
+                                        ),
+                                      ),
+                                    ),
+                                  ]),
+                            ),
+                          ]),
+                    ),
+                    SizedBox(
+                      height: _spacing,
+                    ),
+                    // **************** LITTLE BUTTONS ************
+                    Expanded(
+                      child: Row(
+                          //ROW 2
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Expanded(
+                              child: ElevatedButton(
+                                style: redSmallerStyle,
+                                onPressed: () => redButtonClicked(-1),
+                                child: const Text('-1', style: whiteTextColor),
+                              ),
+                            ),
+                            SizedBox(width: _spacing),
+                            Expanded(
+                              child: ElevatedButton(
+                                style: redSmallerStyle,
+                                onPressed: () => redButtonClicked(-2),
+                                child: const Text('-2', style: whiteTextColor),
+                              ),
+                            ),
+                          ]),
+                    ),
+                    SizedBox(
+                      height: _spacing,
+                    ),
+                    Expanded(
+                      child: Row(
+                          //ROW 2
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Expanded(
+                              child: ElevatedButton(
+                                style: redSmallerStyle,
+                                onPressed: () => redButtonClicked(-5),
+                                child: const Text('-5', style: whiteTextColor),
+                              ),
+                            ),
+                            SizedBox(width: _spacing),
+                            Expanded(
+                              child: ElevatedButton(
+                                style: redSmallerStyle,
+                                onPressed: () => redButtonClicked(-10),
+                                child: const Text('-10', style: whiteTextColor),
+                              ),
+                            ),
+                          ]),
+                    ),
+                    SizedBox(
+                      height: _spacing,
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(
+                width: 10.0, // Assuming _spacing is 10.0
+              ),
+              Expanded(
+                child: Column(
+                  children: [
+                    Expanded(
+                      flex: 2,
+                      child: Container(
+                        child: Padding(
+                          padding: const EdgeInsets.all(_padding),
+                          child: Align(
+                            alignment: Alignment.topLeft,
+                            child: SingleChildScrollView(
+                              child: Text(
+                                _blueArrayText,
+                                style: _scoreBoardStyle,
+                              ),
                             ),
                           ),
                         ),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(_borderRadius),
+                          ),
+                        ),
                       ),
-                      SizedBox(
-                        height: _spacing,
-                      ),
-                      Expanded(
-                        flex: 1,
-                        child: Row(
-                            //ROW 2
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              Expanded(
-                                child: ElevatedButton(
-                                  style: blueSmallerStyle,
-                                  onPressed: () => blueButtonClicked(-1),
-                                  child: const Text('-1', style: whiteTextColor),
+                    ),
+                    SizedBox(
+                      height: _spacing,
+                    ),
+                    // **************** BIG BUTTONS ************
+                    Expanded(
+                      flex: 5,
+                      child: Column(
+                          //ROW 2
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Expanded(
+                              child: ElevatedButton(
+                                style: blueStyle,
+                                onPressed: () => blueButtonClicked(1),
+                                child: FittedBox(
+                                  child: const Text('1', style: whiteTextColor),
                                 ),
                               ),
-                              SizedBox(width: _spacing),
-                              Expanded(
-                                child: ElevatedButton(
-                                  style: blueSmallerStyle,
-                                  onPressed: () => blueButtonClicked(-2),
-                                  child: const Text('-2', style: whiteTextColor),
+                            ),
+                            SizedBox(height: _spacing),
+                            Expanded(
+                              child: ElevatedButton(
+                                style: blueStyle,
+                                onPressed: () => blueButtonClicked(2),
+                                child: FittedBox(
+                                  child: const Text('2', style: whiteTextColor),
                                 ),
                               ),
-                            ]),
-                      ),
-                      SizedBox(
-                        height: _spacing,
-                      ),
-                      Expanded(
-                        flex: 1,
-                        child: Row(
-                            //ROW 2
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              Expanded(
-                                child: ElevatedButton(
-                                  style: blueSmallerStyle,
-                                  onPressed: () => blueButtonClicked(-5),
-                                  child: const Text('-5', style: whiteTextColor),
-                                ),
-                              ),
-                              SizedBox(width: _spacing),
-                              Expanded(
-                                child: ElevatedButton(
-                                  style: blueSmallerStyle,
-                                  onPressed: () => blueButtonClicked(-10),
-                                  child: const Text('-10', style: whiteTextColor),
-                                ),
-                              ),
-                            ]),
-                      ),
-                      SizedBox(
-                        height: _spacing,
-                      ),
-                      Expanded(
-                        flex: 5,
-                        child: Column(
-                            //ROW 2
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              Expanded(
-                                child: ElevatedButton(
-                                  style: blueStyle,
-                                  onPressed: () => blueButtonClicked(1),
-                                  child: FittedBox(
-                                    child: const Text('1', style: whiteTextColor),
-                                  ),
-                                ),
-                              ),
-                              SizedBox(height: _spacing),
-                              Expanded(
-                                child: ElevatedButton(
-                                  style: blueStyle,
-                                  onPressed: () => blueButtonClicked(2),
-                                  child: FittedBox(
-                                    child: const Text('2', style: whiteTextColor),
-                                  ),
-                                ),
-                              ),
-                              SizedBox(height: _spacing),
-                              Expanded(
-                                flex: 1,
-                                child: Row(
-                                    //ROW 2
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.stretch,
-                                    children: [
-                                      Expanded(
-                                        child: ElevatedButton(
-                                          style: blueStyle,
-                                          onPressed: () => blueButtonClicked(3),
-                                          child:
-                                              const FittedBox(child: Text('3', style: whiteTextColor)),
-                                        ),
+                            ),
+                            SizedBox(height: _spacing),
+                            Expanded(
+                              child: Row(
+                                  //ROW 2
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: [
+                                    Expanded(
+                                      flex: 2,
+                                      child: ElevatedButton(
+                                        style: blueStyle,
+                                        onPressed: () => blueButtonClicked(3),
+                                        child: const FittedBox(
+                                            child: Text('3',
+                                                style: whiteTextColor)),
                                       ),
-                                      SizedBox(width: _spacing),
-                                      Expanded(
-                                        child: ElevatedButton(
-                                          style: blueStyle,
-                                          onPressed: () => blueButtonClicked(4),
-                                          child: FittedBox(
-                                              child: const Text('1+3', style: whiteTextColor)),
-                                        ),
+                                    ),
+                                    SizedBox(width: _spacing),
+                                    Expanded(
+                                      flex: 1,
+                                      child: ElevatedButton(
+                                        style: blueStyle,
+                                        onPressed: () => blueButtonClicked(4),
+                                        child: FittedBox(
+                                            child: const Text('4',
+                                                style: whiteTextColor)),
                                       ),
-                                    ]),
+                                    ),
+                                  ]),
+                            ),
+                          ]),
+                    ),
+                    SizedBox(
+                      height: _spacing,
+                    ),
+                    // **************** LITTLE BUTTONS ************
+                    Expanded(
+                      child: Row(
+                          //ROW 2
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Expanded(
+                              child: ElevatedButton(
+                                style: blueSmallerStyle,
+                                onPressed: () => blueButtonClicked(-1),
+                                child: const Text('-1', style: whiteTextColor),
                               ),
-                            ]),
-                      ),
-                      SizedBox(
-                        height: _spacing,
-                      ),
-                    ],
-                  )),
+                            ),
+                            SizedBox(width: _spacing),
+                            Expanded(
+                              child: ElevatedButton(
+                                style: blueSmallerStyle,
+                                onPressed: () => blueButtonClicked(-2),
+                                child: const Text('-2', style: whiteTextColor),
+                              ),
+                            ),
+                          ]),
+                    ),
+                    SizedBox(
+                      height: _spacing,
+                    ),
+                    Expanded(
+                      child: Row(
+                          //ROW 2
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Expanded(
+                              child: ElevatedButton(
+                                style: blueSmallerStyle,
+                                onPressed: () => blueButtonClicked(-5),
+                                child: const Text('-5', style: whiteTextColor),
+                              ),
+                            ),
+                            SizedBox(width: _spacing),
+                            Expanded(
+                              child: ElevatedButton(
+                                style: blueSmallerStyle,
+                                onPressed: () => blueButtonClicked(-10),
+                                child: const Text('-10', style: whiteTextColor),
+                              ),
+                            ),
+                          ]),
+                    ),
+                    SizedBox(
+                      height: _spacing,
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-          Expanded(
-            flex: 2,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Expanded(
-                  flex: 5,
-                  child: Container(
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      border: Border.all(
+        ),
+        Container(
+          width: double.infinity,
+          height:
+              160.0, // Adjust the height as needed to fit two rows of buttons// Add padding to the container
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  Expanded(
+                    flex: 3,
+                    child: Container(
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Colors.red,
+                            width: 4,
+                          ),
+                          borderRadius: const BorderRadius.all(
+                              Radius.circular(borderRadius))),
+                      child: FittedBox(
+                        child: Text('$_redFinalScore',
+                            style: const TextStyle(
+                                fontSize: bottomFont,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white)),
+                      ),
+                    ),
+                  ), // Red Score
+                  ElevatedButton(
+                    onPressed: () => showDialog<String>(
+                      context: context,
+                      builder: (BuildContext context) => AlertDialog(
+                        title: const Text('Reset Match?'),
+                        content: const Text(
+                            'Are you sure you want to reset match and erase all the scores?'),
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () => Navigator.pop(context, 'Cancel'),
+                            child: const Text('Cancel'),
+                          ),
+                          TextButton(
+                            onPressed: () =>
+                                {Navigator.pop(context, 'OK'), resetGame()},
+                            child: const Text('OK'),
+                          ),
+                        ],
+                      ),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.purple,
+                      shape: const CircleBorder(),
+                    ),
+                    child: const Icon(
+                      Icons.autorenew,
+                      size: 40,
+                      color: Colors.white,
+                    ),
+                  ), // Restart
+                  Expanded(
+                    flex: 3,
+                    child: Container(
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Colors.blue,
+                            width: 4,
+                          ),
+                          borderRadius: const BorderRadius.all(
+                              Radius.circular(borderRadius))),
+                      child: FittedBox(
+                        child: Text('$_blueFinalScore',
+                            style: const TextStyle(
+                                fontSize: bottomFont,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white)),
+                      ),
+                    ),
+                  ), // Blue Score
+                ],
+              ),
+              SizedBox(height: 5),// Space between the two rows
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Expanded(
+                    flex: 1,
+                    child: TextButton(
+                      onPressed: () {
+                        _deleteRed();
+                      },
+                      child: const Icon(
+                        Icons.backspace,
                         color: Colors.red,
-                        width: 4,
-                      ),
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(_borderRadius),
-                      ),
-                    ),
-                    child: FittedBox(
-                      fit: BoxFit.contain,
-                      child: Text(
-                        '$_redFinalScore', style: TextStyle(
-                          fontSize: _bottomFont,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white),
+                        size: 40.0,
+                        semanticLabel:
+                            'Text to announce in accessibility modes',
                       ),
                     ),
-                  ),
-                ),
-                SizedBox(
-                  width: _spacing,
-                ),
-                ElevatedButton(
-                  child: const Icon(Icons.autorenew, size: 40, color: Colors.white,),
-                  onPressed: () => showDialog<String>(
-                    context: context,
-                    builder: (BuildContext context) => AlertDialog(
-                      title: const Text('Reset Match?'),
-                      content: const Text(
-                          'Are you sure you want to reset match and erase all the scores?'),
-                      actions: <Widget>[
-                        TextButton(
-                          onPressed: () => Navigator.pop(context, 'Cancel'),
-                          child: const Text('Cancel'),
+                  ), // Delete Red
+                  Expanded(
+                    flex: 4,
+                    child: Container(
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: _containerColor,
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(borderRadius),
                         ),
-                        TextButton(
-                          onPressed: () =>
-                              {Navigator.pop(context, 'OK'), resetGame()},
-                          child: const Text('OK'),
-                        ),
-                      ],
-                    ),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.purple,
-                    shape: CircleBorder(),
-                  ),
-                ),
-                SizedBox(
-                  width: _spacing,
-                ),
-                Expanded(
-                  flex: 5,
-                  child: Container(
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Colors.blue,
-                        width: 4,
                       ),
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(_borderRadius),
-                      ),
-                    ),
-                    child: FittedBox(
-                    fit: BoxFit.contain,
-                    child: Text(
-                      '$_blueFinalScore', style: TextStyle(
-                        fontSize: _bottomFont,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white),
-                    ),
-                  ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(
-            height: _spacing,
-          ),
-          Expanded(
-            flex: 1,
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextButton(
-                    onPressed: () {
-                      _deleteRed();
-                    },
-                    child: Icon(
-                      Icons.backspace_outlined,
-                      color: Colors.red,
-                      size: 40.0,
-                      semanticLabel: 'Text to announce in accessibility modes',
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  width: _spacing,
-                ),
-                Expanded(
-                  flex: 4,
-                  child: Container(
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: _containerColor,
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(_borderRadius),
-                      ),
-                    ),
-                    child: Row(
-                      children: [
-                        TextButton(
-                          onPressed: () => startTimer(false),
-                          child: Icon(
-                            getTimerIcon(_pausePlay),
-                            color: Colors.white,
-                            size: 40.0,
-                            semanticLabel: 'Start Timer',
-                          ),
-                        ),
-                        Expanded(
-                          child: FittedBox(
-                            child: Text(
-                              intToTimeLeft(_current),
-                              style: TextStyle(
-                                  fontSize: _bottomFont,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        // Adjust as needed
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 8),
+                            child: InkWell(
+                              onTap: () => startTimer(false),
+                              child: Icon(
+                                getTimerIcon(_pausePlay),
+                                color: Colors.white,
+                                size: 30.0,
+                                semanticLabel: 'Start Timer',
+                              ),
                             ),
                           ),
-                        ),
-                        TextButton(
-                          onPressed: () => startTimer(true),
-                          child: Icon(
-                            Icons.refresh_outlined,
-                            color: Colors.white,
-                            size: 40.0,
-                            semanticLabel: 'Refresh Time',
+                          Text(
+                            intToTimeLeft(_current),
+                            style: const TextStyle(
+                                fontSize: 30,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white),
                           ),
-                        ),
-                      ],
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 8),
+                            child: InkWell(
+                              onTap: () => startTimer(true),
+                              child: const Icon(
+                                Icons.refresh_outlined,
+                                color: Colors.white,
+                                size: 30.0,
+                                semanticLabel: 'Refresh Time',
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                SizedBox(
-                  width: _spacing,
-                ),
-                Expanded(
-                  child: TextButton(
-                    onPressed: () {
-                      _deleteBlue();
-                    },
-                    child: Icon(
-                      Icons.backspace_outlined,
-                      color: Colors.blue,
-                      size: 40.0,
-                      semanticLabel: 'Text to announce in accessibility modes',
+                  Expanded(
+                    flex: 1,
+                    child: TextButton(
+                      onPressed: () {
+                        _deleteBlue();
+                      },
+                      child: const Icon(
+                        Icons.backspace,
+                        color: Colors.blue,
+                        size: 40.0,
+                        semanticLabel:
+                        'Text to announce in accessibility modes',
+                      ),
                     ),
-                  ),
-                ),
-              ],
-            ),
+                  ), // Delete Blue
+                ],
+              ),
+            ],
           ),
-          SizedBox(
-            height: _spacing,
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

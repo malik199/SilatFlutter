@@ -427,7 +427,7 @@ class _WeightClassesState extends State<WeightClasses> {
     double weightInKilos = _isKilos ? _weight! : _weight! * 0.453592; // Convert pounds to kilos if needed
     List<Map<String, dynamic>> classes = _weightClasses[_ageGroup]!;
     for (var weightClass in classes) {
-      if (weightInKilos > weightClass['over'] && weightInKilos < weightClass['under']) {
+      if (weightInKilos >= weightClass['over'] && weightInKilos < weightClass['under']) {
         setState(() {
           _classification = _gender == "male" ? weightClass['class_male'] : weightClass['class_female'];
         });
@@ -540,7 +540,7 @@ class _WeightClassesState extends State<WeightClasses> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text("Class:", style: TextStyle(
+                      Text('CLASS:', style: TextStyle(
                         fontSize: 25,
                         color: Colors.blue,
                         fontWeight: FontWeight.bold,

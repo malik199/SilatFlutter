@@ -142,8 +142,6 @@ class _HomePageState extends State<HomePage>
               _jawaraMudaData.add(student);
             }
 
-            debugPrint(belt);
-            debugPrint(curriculum);
             if (student['belt'] == belt &&
                 student['curriculum'] == curriculum) {
               _myBeltData.add(student);
