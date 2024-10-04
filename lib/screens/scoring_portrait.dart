@@ -650,22 +650,22 @@ class _ScoringPageState extends State<ScoringPortrait> {
                   ), // Delete Red
                   Expanded(
                     flex: 4,
-                    child: Container(
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: _containerColor,
-                        borderRadius: const BorderRadius.all(
-                          Radius.circular(borderRadius),
+                    child: InkWell(
+                      onTap: () => startTimer(false),
+                      child: Container(
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: _containerColor,
+                          borderRadius: const BorderRadius.all(
+                            Radius.circular(borderRadius),
+                          ),
                         ),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        // Adjust as needed
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 8),
-                            child: InkWell(
-                              onTap: () => startTimer(false),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          // Adjust as needed
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 8),
                               child: Icon(
                                 getTimerIcon(_pausePlay),
                                 color: Colors.white,
@@ -673,27 +673,27 @@ class _ScoringPageState extends State<ScoringPortrait> {
                                 semanticLabel: 'Start Timer',
                               ),
                             ),
-                          ),
-                          Text(
-                            intToTimeLeft(_current),
-                            style: const TextStyle(
-                                fontSize: 30,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 8),
-                            child: InkWell(
-                              onTap: () => startTimer(true),
-                              child: const Icon(
-                                Icons.refresh_outlined,
-                                color: Colors.white,
-                                size: 30.0,
-                                semanticLabel: 'Refresh Time',
+                            Text(
+                              intToTimeLeft(_current),
+                              style: const TextStyle(
+                                  fontSize: 30,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 8),
+                              child: InkWell(
+                                onTap: () => startTimer(true),
+                                child: const Icon(
+                                  Icons.refresh_outlined,
+                                  color: Colors.white,
+                                  size: 30.0,
+                                  semanticLabel: 'Refresh Time',
+                                ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),

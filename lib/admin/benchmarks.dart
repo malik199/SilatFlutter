@@ -25,15 +25,15 @@ class _BenchmarksState extends State<Benchmarks> {
   late int? _tournaments = 0;
   late int? _stripe = 0;
   late String? _email = "";
-  late int? _pushups = 0;
-  late int? _situps = 0;
-  late int? _pullups = 0;
-  late int? _deadhang = 0;
-  late int? _mileTime = 0;
-  late int? _dash = 0;
-  late int? _wallsit = 0;
-  late int? _boxjumps = 0;
-  late int? _squats = 0;
+  late int? bm_pushups = 0;
+  late int? bm_situps = 0;
+  late int? bm_pullups = 0;
+  late int? bm_deadhang = 0;
+  late int? bm_mileTime = 0;
+  late int? bm_dash = 0;
+  late int? bm_wallsit = 0;
+  late int? bm_boxjumps = 0;
+  late int? bm_squats = 0;
 
   List _listOfStripes = [0, 1, 2, 3, 4];
 
@@ -86,15 +86,15 @@ class _BenchmarksState extends State<Benchmarks> {
           firstNameController = TextEditingController(text: _firstName);
           lastNameController = TextEditingController(text: _lastName);
           _age = myData['age'];
-          _pushups = myData['pushups'];
-          _situps = myData['situps'];
-          _pullups = myData['pullups'];
-          _deadhang = myData['deadhang'];
-          _mileTime = myData['mile'];
-          _dash = myData['dash'];
-          _wallsit = myData['wallsits'];
-          _boxjumps = myData['boxjumps'];
-          _squats = myData['squats'];
+          bm_pushups = myData['bm_pushups'];
+          bm_situps = myData['bm_situps'];
+          bm_pullups = myData['bm_pullups'];
+          bm_deadhang = myData['bm_deadhang'];
+          bm_mileTime = myData['bm_mile'];
+          bm_dash = myData['bm_dash'];
+          bm_wallsit = myData['bm_wallsits'];
+          bm_boxjumps = myData['bm_boxjumps'];
+          bm_squats = myData['bm_squats'];
 
         });
       } else {
@@ -216,7 +216,7 @@ class _BenchmarksState extends State<Benchmarks> {
                   ),
                   subtitle: Text(
                       "Core strength by counting the number of sit-ups completed in a minute.", style: TextStyle(fontSize: _subtitleSize)),
-                  trailing: Text(_pushups != null ? _pushups.toString() : "",
+                  trailing: Text(bm_pushups != null ? bm_pushups.toString() : "",
                       style: TextStyle(
                           fontSize: _numberSize, fontWeight: FontWeight.bold)),
                 ),
@@ -228,7 +228,7 @@ class _BenchmarksState extends State<Benchmarks> {
                   ),
                   subtitle: Text(
                       "Upper body muscular strength by determining the maximum number of pull-ups you can perform.", style: TextStyle(fontSize: _subtitleSize)),
-                  trailing: Text(_pullups != null ? _pullups.toString() : "",
+                  trailing: Text(bm_pullups != null ? bm_pullups.toString() : "",
                       style: TextStyle(
                           fontSize: _numberSize, fontWeight: FontWeight.bold)),
                 ),
@@ -240,7 +240,7 @@ class _BenchmarksState extends State<Benchmarks> {
                   ),
                   subtitle: Text(
                       "Grip strength and endurance by timing how long a person can hang from a pull-up bar without letting go.", style: TextStyle(fontSize: _subtitleSize)),
-                  trailing: Text(_deeds != null ? _deeds.toString() : "",
+                  trailing: Text(bm_deadhang != null ? bm_deadhang.toString() : "",
                       style: TextStyle(
                           fontSize: _numberSize, fontWeight: FontWeight.bold)),
                 ),
@@ -252,7 +252,7 @@ class _BenchmarksState extends State<Benchmarks> {
                   ),
                   subtitle: Text(
                       "Cardiovascular endurance and speed by timing how quickly a person can run a mile.", style: TextStyle(fontSize: _subtitleSize)),
-                  trailing: Text(_deeds != null ? _deeds.toString() : "",
+                  trailing: Text(bm_mileTime != null ? bm_mileTime.toString() : "",
                       style: TextStyle(
                           fontSize: _numberSize, fontWeight: FontWeight.bold)),
                 ),
@@ -264,7 +264,7 @@ class _BenchmarksState extends State<Benchmarks> {
                   ),
                   subtitle: Text(
                       "Explosive power and sprint speed by timing how fast a person can run 50 meters.", style: TextStyle(fontSize: _subtitleSize)),
-                  trailing: Text(_deeds != null ? _deeds.toString() : "",
+                  trailing: Text(bm_dash != null ? bm_dash.toString() : "",
                       style: TextStyle(
                           fontSize: _numberSize, fontWeight: FontWeight.bold)),
                 ),
@@ -276,10 +276,10 @@ class _BenchmarksState extends State<Benchmarks> {
                   ),
                   subtitle: Text(
                       "Lower body strength and endurance by timing how long a person can maintain a wall sit position.", style: TextStyle(fontSize: _subtitleSize)),
-                  trailing: Text(_deeds != null ? _deeds.toString() : "",
+                  trailing: Text(bm_wallsit != null ? bm_wallsit.toString() : "",
                       style: TextStyle(
                           fontSize: _numberSize, fontWeight: FontWeight.bold)),
-                ),          
+                ),
                 ListTile(
                   leading: Icon(Icons.unarchive, size: _iconSize),
                   title: Text(
@@ -288,7 +288,7 @@ class _BenchmarksState extends State<Benchmarks> {
                   ),
                   subtitle: Text(
                       "Explosive leg power by counting how many times a person can jump onto and off a specified height box in a set time.", style: TextStyle(fontSize: _subtitleSize)),
-                  trailing: Text(_deeds != null ? _deeds.toString() : "",
+                  trailing: Text(bm_boxjumps != null ? bm_boxjumps.toString() : "",
                       style: TextStyle(
                           fontSize: _numberSize, fontWeight: FontWeight.bold)),
                 ),
@@ -300,7 +300,7 @@ class _BenchmarksState extends State<Benchmarks> {
                   ),
                   subtitle: Text(
                       "Lower body strength and stamina by counting the number of squats completed in one minute.", style: TextStyle(fontSize: _subtitleSize)),
-                  trailing: Text(_deeds != null ? _deeds.toString() : "",
+                  trailing: Text(bm_squats != null ? bm_squats.toString() : "",
                       style: TextStyle(
                           fontSize: _numberSize, fontWeight: FontWeight.bold)),
                 ),

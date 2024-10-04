@@ -23,12 +23,22 @@ class _ProfileState extends State<Profile> {
   String _curriculum = "satria_muda";
   String _location = "VA";
   int? _tournaments = 0;
-  int _firstPlaceWins = 0;
-  int _secondPlaceWins = 0;
+  int _1stplace = 0;
+  int _2ndplace = 0;
   int _classMerits = 0;
-  int _goodDeeds = 0;
+  int _deeds = 0;
   bool _isApprov = false;
   int _finalScore = 0;
+  late int? bm_pushups = 0;
+  late int? bm_situps = 0;
+  late int? bm_pullups = 0;
+  late int? bm_deadhang = 0;
+  late int? bm_mileTime = 0;
+  late int? bm_dash = 0;
+  late int? bm_wallsit = 0;
+  late int? bm_boxjumps = 0;
+  late int? bm_squats = 0;
+
   List<String> _listOfLocations = [];
   List<int> _listOfNumbers = [for (var i = 0; i <= 50; i++) i];
   double _spacingFromEdge = 40;
@@ -39,7 +49,7 @@ class _ProfileState extends State<Profile> {
   late String? _email = "";
 
   List _listOfStripes = [0, 1, 2, 3, 4];
-  
+
   double _sizeBoxWidth = 10;
   double _sizeBoxHeight = 16;
 
@@ -64,6 +74,33 @@ class _ProfileState extends State<Profile> {
 
   var myData;
 
+  void showNumberPickerDialog(BuildContext context, void Function(int) onNumberSelected) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Pick a Number"),
+          content: Container(
+            width: double.maxFinite,
+            height: 200,
+            child: ListView.builder(
+              itemCount: 101, // Adjust range as needed
+              itemBuilder: (BuildContext context, int index) {
+                return ListTile(
+                  title: Text("$index"),
+                  onTap: () {
+                    onNumberSelected(index);
+                    Navigator.of(context).pop();
+                  },
+                );
+              },
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   void _getUserData() {
     _database
         .child('users')
@@ -84,10 +121,10 @@ class _ProfileState extends State<Profile> {
           _lastName = myData['lastname'];
           _email = myData['email'];
           _beltColor = myData['belt'];
-          _firstPlaceWins = myData['1stplace'];
-          _secondPlaceWins = myData['2ndplace'];
+          _1stplace = myData['1stplace'];
+          _2ndplace = myData['2ndplace'];
           _classMerits = myData['classMerits'];
-          _goodDeeds = myData['deeds'];
+          _deeds = myData['deeds'];
           _finalScore = myData['score'];
           _tournaments = myData['tournaments'];
           _stripe = myData['stripe'];
@@ -95,6 +132,15 @@ class _ProfileState extends State<Profile> {
           firstNameController = TextEditingController(text: _firstName);
           lastNameController = TextEditingController(text: _lastName);
           _age = myData['age'];
+          bm_pushups = myData['bm_pushups'];
+          bm_situps = myData['bm_situps'];
+          bm_pullups = myData['bm_pullups'];
+          bm_deadhang = myData['bm_deadhang'];
+          bm_mileTime = myData['bm_mile'];
+          bm_dash = myData['bm_dash'];
+          bm_wallsit = myData['bm_wallsits'];
+          bm_boxjumps = myData['bm_boxjumps'];
+          bm_squats = myData['bm_squats'];
         });
       } else {
         print("No data");
@@ -104,7 +150,8 @@ class _ProfileState extends State<Profile> {
 
   void _getSchoolData() {
     _database.child('locations').once().then((snapshot) {
-      final data = new Map<String, dynamic>.from(snapshot.snapshot.value as Map);
+      final data =
+          new Map<String, dynamic>.from(snapshot.snapshot.value as Map);
       _listOfLocations.add("");
       setState(() {
         data.forEach((key, value) {
@@ -117,11 +164,11 @@ class _ProfileState extends State<Profile> {
 
   void calculateScore() {
     setState(() {
-      _finalScore = (_firstPlaceWins * 10) +
-          (_secondPlaceWins * 8) +
+      _finalScore = (_1stplace * 10) +
+          (_2ndplace * 8) +
           (_tournaments! * 6) +
           (_classMerits) +
-          (_goodDeeds);
+          (_deeds);
     });
   }
 
@@ -205,73 +252,76 @@ class _ProfileState extends State<Profile> {
           ],
         ),
       ),
-      body: ListView(
-        padding: EdgeInsets.symmetric(horizontal: 32),
-        physics: BouncingScrollPhysics(),
-        children: [
-          Form(
-            key: formKey, //key for form
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                //SizedBox(height: 8),
-                //InternetConnection(),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
+      body: SafeArea(
+        child: ListView(
+          physics: BouncingScrollPhysics(),
+          children: [
+            Form(
+              key: formKey, //key for form
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  //InternetConnection(),
+
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 12.0),
+                    child: Column(
                       children: [
-                        Icon(Icons.email, color: Colors.teal),
-                        SizedBox(width: _sizeBoxWidth),
-                        Text('$_email',
-                            style: TextStyle(
-                                color: Colors.teal, fontWeight: FontWeight.bold)),
+                        Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(Icons.email, color: Colors.teal),
+                              SizedBox(width: _sizeBoxWidth),
+                              Text('$_email',
+                                  style: TextStyle(
+                                      color: Colors.teal,
+                                      fontWeight: FontWeight.bold)),
+                            ],
+                          ),
+                          Text(_finalScore.toString(),
+                              style: TextStyle(
+                                  fontSize: 40,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.deepOrangeAccent))
+                        ],
+                      ),
+                        TextFormField(
+                          decoration: InputDecoration(labelText: 'First Name'),
+                          controller: firstNameController,
+                          validator: (value) {
+                            if (value!.length < 4) {
+                              return 'Enter at least 4 characters';
+                            } else {
+                              return null;
+                            }
+                          },
+                          maxLength: 15,
+                          onChanged: (value) =>
+                              setState(() => _firstName = value.toString()),
+                        ),
+                        TextFormField(
+                          decoration: InputDecoration(labelText: 'Last Name'),
+                          controller: lastNameController,
+                          validator: (value) {
+                            if (value!.length < 4) {
+                              return 'Enter at least 4 characters';
+                            } else {
+                              return null;
+                            }
+                          },
+                          maxLength: 15,
+                          onChanged: (value) =>
+                              setState(() => _lastName = value.toString()),
+                        ),
                       ],
                     ),
-                    Text(_finalScore.toString(),
-                        style: TextStyle(
-                            fontSize: 40,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.deepOrangeAccent))
-                  ],
-                ),
-                SizedBox(height: _sizeBoxHeight),
-                TextFormField(
-                  decoration: InputDecoration(labelText: 'First Name'),
-                  controller: firstNameController,
-                  validator: (value) {
-                    if (value!.length < 4) {
-                      return 'Enter at least 4 characters';
-                    } else {
-                      return null;
-                    }
-                  },
-                  maxLength: 15,
-                  onChanged: (value) =>
-                      setState(() => _firstName = value.toString()),
-                ),
-                TextFormField(
-                  decoration: InputDecoration(labelText: 'Last Name'),
-                  controller: lastNameController,
-                  validator: (value) {
-                    if (value!.length < 4) {
-                      return 'Enter at least 4 characters';
-                    } else {
-                      return null;
-                    }
-                  },
-                  maxLength: 15,
-                  onChanged: (value) =>
-                      setState(() => _lastName = value.toString()),
-                ),
-                Row(
-                  children: [
-                    Row(children: [
-                      Icon(Icons.assignment_ind),
-                      SizedBox(width: _sizeBoxWidth),
-                      Text("Age:"),
-                      SizedBox(width: _sizeBoxWidth),
-                      DropdownButton<int>(
+                  ),
+                  ListTile(
+                      leading: Icon(Icons.assignment_ind, size: _iconSize),
+                      title: Text("Age:"),
+                      trailing: DropdownButton<int>(
                         value: _age,
                         icon: const Icon(Icons.arrow_downward),
                         iconSize: 24,
@@ -286,21 +336,18 @@ class _ProfileState extends State<Profile> {
                             _age = newValue ?? 0;
                           });
                         },
-                        items: _listOfAges.map<DropdownMenuItem<int>>((value) {
+                        items:
+                            _listOfAges.map<DropdownMenuItem<int>>((value) {
                           return DropdownMenuItem(
                             value: value,
                             child: Text(value.toString()),
                           );
                         }).toList(),
-                      )
-                    ]),
-                    SizedBox(width: 30),
-                    Row(children: [
-                      Icon(Icons.list),
-                      SizedBox(width: _sizeBoxWidth),
-                      Text("Stripe:"),
-                      SizedBox(width: _sizeBoxWidth),
-                      DropdownButton<int>(
+                      )),
+                  ListTile(
+                      leading: Icon(Icons.list, size: _iconSize),
+                      title: Text("Stripe:"),
+                      trailing: DropdownButton<int>(
                         value: _stripe,
                         icon: const Icon(Icons.arrow_downward),
                         iconSize: 24,
@@ -315,316 +362,327 @@ class _ProfileState extends State<Profile> {
                             _stripe = newValue ?? 0;
                           });
                         },
-                        items:
-                            _listOfStripes.map<DropdownMenuItem<int>>((value) {
+                        items: _listOfStripes
+                            .map<DropdownMenuItem<int>>((value) {
                           return DropdownMenuItem(
                             value: value,
                             child: Text(value.toString()),
                           );
                         }).toList(),
-                      )
-                    ]),
-                  ],
-                ),
-                Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Icon(Icons.horizontal_split),
-                      Text("Belt:"),
-                      DropdownButton<String>(
-                          value: _beltColor,
-                          icon: Icon(Icons.arrow_downward),
-                          iconSize: 24,
-                          elevation: 16,
-                          style: TextStyle(color: Colors.deepPurple),
-                          underline: Container(
-                            height: 2,
-                            color: Colors.deepPurpleAccent,
-                          ),
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              _beltColor = newValue!;
-                            });
-                          },
-                          items: <String>[
-                            'white',
-                            'yellow',
-                            'green',
-                            'blue',
-                            'purple',
-                            'brown',
-                            'black',
-                            'red'
-                          ].map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList()),
-                      Icon(Icons.assignment),
-                      DropdownButton<String>(
-                        value: _curriculum,
+                      )),
+                  ListTile(
+                      leading:
+                        Icon(Icons.horizontal_split, size: _iconSize),
+                        title: Text("Belt:"),
+                        trailing: DropdownButton<String>(
+                            value: _beltColor,
+                            icon: Icon(Icons.arrow_downward),
+                            iconSize: 24,
+                            elevation: 16,
+                            style: TextStyle(color: Colors.deepPurple),
+                            underline: Container(
+                              height: 2,
+                              color: Colors.deepPurpleAccent,
+                            ),
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                _beltColor = newValue!;
+                              });
+                            },
+                            items: <String>[
+                              'white',
+                              'yellow',
+                              'green',
+                              'blue',
+                              'purple',
+                              'brown',
+                              'black',
+                              'red'
+                            ].map<DropdownMenuItem<String>>((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              );
+                            }).toList()),
+                  ),
+                  ListTile(
+                          leading: Icon(Icons.assignment, size: _iconSize),
+                          title: Text("Curriculum"),
+                          trailing: DropdownButton<String>(
+                            value: _curriculum,
+                            icon: const Icon(Icons.arrow_downward),
+                            iconSize: 24,
+                            elevation: 16,
+                            underline: Container(
+                              height: 2,
+                            ),
+                            style: TextStyle(color: Colors.deepPurple),
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                _curriculum = newValue!;
+                              });
+                            },
+                            items: <String>[
+                              'jawara_muda',
+                              'satria_muda',
+                              'abah_jawara',
+                              'guest',
+                              'instructor'
+                            ].map<DropdownMenuItem<String>>((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              );
+                            }).toList(),
+                          )
+                        ),
+                  ListTile(
+                    leading: Icon(Icons.place),
+                      title:    Text(
+                        "Location",
+                      ),
+                      trailing: DropdownButton<String>(
+                        value: _location,
                         icon: const Icon(Icons.arrow_downward),
                         iconSize: 24,
                         elevation: 16,
                         underline: Container(
                           height: 2,
                         ),
+                        style: TextStyle(color: Colors.deepPurple),
                         onChanged: (String? newValue) {
                           setState(() {
-                            _curriculum = newValue!;
+                            _location = newValue!;
                           });
                         },
-                        items: <String>[
-                          'jawara_muda',
-                          'satria_muda',
-                          'abah_jawara',
-                          'guest',
-                          'instructor'
-                        ].map<DropdownMenuItem<String>>((String value) {
+                        items: _listOfLocations
+                            .map<DropdownMenuItem<String>>((String value) {
                           return DropdownMenuItem<String>(
                             value: value,
                             child: Text(value),
                           );
                         }).toList(),
-                      )
-                    ]),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,                  children: [
-                    Icon(Icons.place),
-                    SizedBox(width: _sizeBoxWidth),
-                    Text(
-                      "Location",
-                    ),
-                    SizedBox(width: _sizeBoxWidth),
-                    DropdownButton<String>(
-                      value: _location,
-                      icon: const Icon(Icons.arrow_downward),
-                      iconSize: 24,
-                      elevation: 16,
-                      underline: Container(
-                        height: 2,
                       ),
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          _location = newValue!;
-                        });
-                      },
-                      items: _listOfLocations
-                          .map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                    ),
-                  ],
-                ),
-                Divider(thickness: 2),
-                Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                  Column(
-                    children: [
-                      Row(
-                        children: [
-                          Icon(Icons.follow_the_signs),
-                          SizedBox(width: _sizeBoxWidth),
-                          Text("Tourn."),
-                          SizedBox(width: _sizeBoxWidth),
-                          DropdownButton<int>(
-                            value: _tournaments,
-                            icon: const Icon(Icons.arrow_downward),
-                            iconSize: 24,
-                            elevation: 16,
-                            underline: Container(
-                              height: 2,
-                            ),
-                            onChanged: (int? newValue) {
-                              setState(() {
-                                _tournaments = newValue!;
-                              });
-                              calculateScore();
-                            },
-                            items: _listOfNumbers
-                                .map<DropdownMenuItem<int>>((int value) {
-                              return DropdownMenuItem<int>(
-                                value: value,
-                                child: Text(value.toString()),
-                              );
-                            }).toList(),
-                          ),
-                        ],
-                      ),
-
-                    ],
                   ),
-                  Column(
-                    children: [
-                      Row(
-                        children: [
-                          Icon(Icons.filter_1),
-                          SizedBox(width: _sizeBoxWidth),
-                          Text("1st Place"),
-                          SizedBox(width: _sizeBoxWidth),
-                          DropdownButton<int>(
-                            value: _firstPlaceWins,
-                            icon: const Icon(Icons.arrow_downward),
-                            iconSize: 24,
-                            elevation: 16,
-                            underline: Container(
-                              height: 2,
-                            ),
-                            onChanged: (int? newValue) {
-                              setState(() {
-                                _firstPlaceWins = newValue!;
-                              });
-                              calculateScore();
-                            },
-                            items: _listOfNumbers
-                                .map<DropdownMenuItem<int>>((int value) {
-                              return DropdownMenuItem<int>(
-                                value: value,
-                                child: Text(value.toString()),
-                              );
-                            }).toList(),
-                          ),
-                        ],
-                      ),
-
-                    ],
-                  )
-                ]),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-
-                  Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Icon(Icons.filter_2),
-                          SizedBox(width: _sizeBoxWidth),
-                          Text("2nd Place"),
-                          SizedBox(width: _sizeBoxWidth),
-                          DropdownButton<int>(
-                            value: _secondPlaceWins,
-                            icon: const Icon(Icons.arrow_downward),
-                            iconSize: 24,
-                            elevation: 16,
-                            underline: Container(
-                              height: 2,
-                            ),
-                            onChanged: (int? newValue) {
-                              setState(() {
-                                _secondPlaceWins = newValue!;
-                              });
-                              calculateScore();
-                            },
-                            items: _listOfNumbers
-                                .map<DropdownMenuItem<int>>((int value) {
-                              return DropdownMenuItem<int>(
-                                value: value,
-                                child: Text(value.toString()),
-                              );
-                            }).toList(),
-                          ),
-                        ],
-                      ),
-
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      Row(
-                        children: [
-                          Icon(Icons.store),
-                          SizedBox(width: _sizeBoxWidth),
-                          Text("Merits"),
-                          SizedBox(width: spacingWidth),
-                          DropdownButton<int>(
-                            value: _classMerits,
-                            icon: const Icon(Icons.arrow_downward),
-                            iconSize: 24,
-                            elevation: 16,
-                            underline: Container(
-                              height: 2,
-                            ),
-                            onChanged: (int? newValue) {
-                              setState(() {
-                                _classMerits = newValue!;
-                              });
-                              calculateScore();
-                            },
-                            items: _listOfNumbers
-                                .map<DropdownMenuItem<int>>((int value) {
-                              return DropdownMenuItem<int>(
-                                value: value,
-                                child: Text(value.toString()),
-                              );
-                            }).toList(),
-                          ),
-                        ],
-                      ),
-
-                    ],
-                  )
-                ]),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                  Icon(Icons.verified),
-                  SizedBox(width: spacingWidth),
-                  Text("Good Deeds:"),
-                  SizedBox(width: spacingWidth),
-                  DropdownButton<int>(
-                    value: _goodDeeds,
-                    icon: const Icon(Icons.arrow_downward),
-                    iconSize: 24,
-                    elevation: 16,
-                    underline: Container(
-                      height: 2,
+                  Divider(thickness: 2),
+                  ListTile(
+                    leading: Icon(Icons.follow_the_signs, size: _iconSize),
+                    title: Text(
+                      "Tournaments",
+                      style: TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    onChanged: (int? newValue) {
-                      setState(() {
-                        _goodDeeds = newValue!;
-                      });
-                      calculateScore();
-                    },
-                    items:
-                        _listOfNumbers.map<DropdownMenuItem<int>>((int value) {
-                      return DropdownMenuItem<int>(
-                        value: value,
-                        child: Text(value.toString()),
-                      );
-                    }).toList(),
+                    subtitle: Text(
+                        "Number of tournaments that you have competed in.",
+                        style: TextStyle(fontSize: _subtitleSize)),
+                    trailing: Text(
+                        _tournaments != null ? _tournaments.toString() : "",
+                        style: TextStyle(
+                            fontSize: _numberSize,
+                            fontWeight: FontWeight.bold)),
                   ),
-                  SizedBox(width: _sizeBoxWidth),
-                ]),
-                Divider(
-                  thickness: 2,
-                ),
-                SizedBox(height: _sizeBoxHeight),
-                Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                  ElevatedButton.icon(
-                      style: ElevatedButton.styleFrom(
-                          shape: new RoundedRectangleBorder(
-                            borderRadius: new BorderRadius.circular(12.0),
-                          ),
-                          backgroundColor: Colors.purple,
-                          foregroundColor: Colors.white,
-                          textStyle: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold)),
-                      icon: Icon(Icons.save),
-                      label: Text("Submit for Approval",
-                          style: TextStyle(color: Colors.white)),
-                      onPressed: () => sendProfileForApproval())
-                ])
-              ],
+                  ListTile(
+                    leading: Icon(Icons.filter_1, size: _iconSize),
+                    title: Text(
+                      "1st Place",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Text("Number of first place wins.",
+                        style: TextStyle(fontSize: _subtitleSize)),
+                    trailing: Text(
+                        _1stplace.toString(),
+                        style: TextStyle(
+                            fontSize: _numberSize,
+                            fontWeight: FontWeight.bold)),
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.filter_2, size: _iconSize),
+                    title: Text(
+                      "2nd Place",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Text("Number of 2nd place wins.",
+                        style: TextStyle(fontSize: _subtitleSize)),
+                    trailing: Text(
+                        _2ndplace.toString(),
+                        style: TextStyle(
+                            fontSize: _numberSize,
+                            fontWeight: FontWeight.bold)),
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.store, size: _iconSize),
+                    title: Text(
+                      "Class Merits",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Text(
+                        "Winning a class event, being an outstanding student in class.",
+                        style: TextStyle(fontSize: _subtitleSize)),
+                    trailing: Text(
+                        _classMerits.toString(),
+                        style: TextStyle(
+                            fontSize: _numberSize,
+                            fontWeight: FontWeight.bold)),
+                  ),
+                  ListTile(
+                    leading:
+                        Icon(Icons.airline_seat_flat_angled, size: _iconSize),
+                    title: Text(
+                      "Pushups",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Text(
+                        "Number of push-ups a person can complete in one minute to assess upper body strength and endurance.",
+                        style: TextStyle(fontSize: _subtitleSize)),
+                    trailing: Text(_deeds.toString(),
+                        style: TextStyle(
+                            fontSize: _numberSize,
+                            fontWeight: FontWeight.bold)),
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.sledding, size: _iconSize),
+                    title: Text(
+                      "Situps",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Text(
+                        "Core strength by counting the number of sit-ups completed in a minute.",
+                        style: TextStyle(fontSize: _subtitleSize)),
+                    trailing: Text(
+                        bm_pushups != null ? bm_pushups.toString() : "",
+                        style: TextStyle(
+                            fontSize: _numberSize,
+                            fontWeight: FontWeight.bold)),
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.sports_handball, size: _iconSize),
+                    title: Text(
+                      "Pullups",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Text(
+                        "Upper body muscular strength by determining the maximum number of pull-ups you can perform.",
+                        style: TextStyle(fontSize: _subtitleSize)),
+                    trailing: Text(
+                        bm_pullups != null ? bm_pullups.toString() : "",
+                        style: TextStyle(
+                            fontSize: _numberSize,
+                            fontWeight: FontWeight.bold)),
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.handshake, size: _iconSize),
+                    title: Text(
+                      "Deadhang",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Text(
+                        "Grip strength and endurance by timing how long a person can hang from a pull-up bar without letting go.",
+                        style: TextStyle(fontSize: _subtitleSize)),
+                    trailing: Text(
+                        bm_deadhang != null ? bm_deadhang.toString() : "",
+                        style: TextStyle(
+                            fontSize: _numberSize,
+                            fontWeight: FontWeight.bold)),
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.directions_walk, size: _iconSize),
+                    title: Text(
+                      "Mile Time",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Text(
+                        "Cardiovascular endurance and speed by timing how quickly a person can run a mile.",
+                        style: TextStyle(fontSize: _subtitleSize)),
+                    trailing: Text(
+                        bm_mileTime != null ? bm_mileTime.toString() : "",
+                        style: TextStyle(
+                            fontSize: _numberSize,
+                            fontWeight: FontWeight.bold)),
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.directions_run, size: _iconSize),
+                    title: Text(
+                      "50m Dash",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Text(
+                        "Explosive power and sprint speed by timing how fast a person can run 50 meters.",
+                        style: TextStyle(fontSize: _subtitleSize)),
+                    trailing: Text(bm_dash != null ? bm_dash.toString() : "",
+                        style: TextStyle(
+                            fontSize: _numberSize,
+                            fontWeight: FontWeight.bold)),
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.airline_seat_legroom_normal,
+                        size: _iconSize),
+                    title: Text(
+                      "Wallsit Time",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Text(
+                        "Lower body strength and endurance by timing how long a person can maintain a wall sit position.",
+                        style: TextStyle(fontSize: _subtitleSize)),
+                    trailing: Text(
+                        bm_wallsit != null ? bm_wallsit.toString() : "",
+                        style: TextStyle(
+                            fontSize: _numberSize,
+                            fontWeight: FontWeight.bold)),
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.unarchive, size: _iconSize),
+                    title: Text(
+                      "Box Jumps",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Text(
+                        "Explosive leg power by counting how many times a person can jump onto and off a specified height box in a set time.",
+                        style: TextStyle(fontSize: _subtitleSize)),
+                    trailing: Text(
+                        bm_boxjumps != null ? bm_boxjumps.toString() : "",
+                        style: TextStyle(
+                            fontSize: _numberSize,
+                            fontWeight: FontWeight.bold)),
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.airline_seat_legroom_reduced,
+                        size: _iconSize),
+                    title: Text(
+                      "Squats",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Text(
+                        "Lower body strength and stamina by counting the number of squats completed in one minute.",
+                        style: TextStyle(fontSize: _subtitleSize)),
+                    trailing: Text(
+                        bm_squats != null ? bm_squats.toString() : "",
+                        style: TextStyle(
+                            fontSize: _numberSize,
+                            fontWeight: FontWeight.bold)),
+                  ),
+                  Divider(
+                    thickness: 2,
+                  ),
+                  SizedBox(height: _sizeBoxHeight),
+                  Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                    ElevatedButton.icon(
+                        style: ElevatedButton.styleFrom(
+                            shape: new RoundedRectangleBorder(
+                              borderRadius: new BorderRadius.circular(12.0),
+                            ),
+                            backgroundColor: Colors.purple,
+                            foregroundColor: Colors.white,
+                            textStyle: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold)),
+                        icon: Icon(Icons.save),
+                        label: Text("Submit for Approval",
+                            style: TextStyle(color: Colors.white)),
+                        onPressed: () => sendProfileForApproval())
+                  ])
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
