@@ -198,47 +198,48 @@ class _ScoringPageState extends State<ScoringPortrait> {
   @override
   Widget build(BuildContext context) {
     const double _largeFont = 70;
-    const double _smallFont = 22;
+    const double _smallFont = 18;
     const double _padding = 10.0;
     const double _spacing = 10.0;
     const double _borderRadius = 8;
     const double spacing = 10.0;
-    const double bottomFont = 60;
+    const double bottomFont = 40;
     const double borderRadius = 8;
 
     const TextStyle whiteTextColor = TextStyle(color: Colors.white);
     final ButtonStyle redStyle = ButtonStyle(
-        backgroundColor: MaterialStateProperty.all(Colors.red),
-        shape: MaterialStateProperty.all(
+        backgroundColor: WidgetStateProperty.all(Colors.red),
+        shape: WidgetStateProperty.all(
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(2))),
-        textStyle: MaterialStateProperty.all(TextStyle(
+        textStyle: WidgetStateProperty.all(TextStyle(
             fontSize: _largeFont,
             fontWeight: FontWeight.bold,
             color: Colors.white)));
     final ButtonStyle blueStyle = ButtonStyle(
-        shape: MaterialStateProperty.all(
+        shape: WidgetStateProperty.all(
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(2))),
-        backgroundColor: MaterialStateProperty.all(Colors.blue),
-        textStyle: MaterialStateProperty.all(
+        backgroundColor: WidgetStateProperty.all(Colors.blue),
+        textStyle: WidgetStateProperty.all(
             TextStyle(fontSize: _largeFont, fontWeight: FontWeight.bold)));
     final ButtonStyle redSmallerStyle = ButtonStyle(
-        shape: MaterialStateProperty.all(
+        shape: WidgetStateProperty.all(
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(2))),
-        backgroundColor: MaterialStateProperty.all(Colors.red),
-        textStyle: MaterialStateProperty.all(
+        backgroundColor: WidgetStateProperty.all(Colors.red),
+        textStyle: WidgetStateProperty.all(
             TextStyle(fontSize: _smallFont, fontWeight: FontWeight.bold)));
     final ButtonStyle blueSmallerStyle = ButtonStyle(
-        shape: MaterialStateProperty.all(
+        shape: WidgetStateProperty.all(
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(2))),
-        backgroundColor: MaterialStateProperty.all(Colors.blue),
-        textStyle: MaterialStateProperty.all(
+        backgroundColor: WidgetStateProperty.all(Colors.blue),
+        textStyle: WidgetStateProperty.all(
             TextStyle(fontSize: _smallFont, fontWeight: FontWeight.bold)));
     final TextStyle _scoreBoardStyle = TextStyle(
-        fontSize: _smallFont, fontWeight: FontWeight.bold, color: Colors.black);
+        fontSize: _smallFont, fontWeight: FontWeight.bold, color: Colors.black, height: 1,);
 
     return Column(
       children: <Widget>[
         Expanded(
+          flex: 3,
           child: Row(
             children: <Widget>[
               Expanded(
@@ -547,174 +548,175 @@ class _ScoringPageState extends State<ScoringPortrait> {
             ],
           ),
         ),
-        Container(
-          width: double.infinity,
-          height:
-              160.0, // Adjust the height as needed to fit two rows of buttons// Add padding to the container
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  Expanded(
-                    flex: 3,
-                    child: Container(
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Colors.red,
-                            width: 4,
-                          ),
-                          borderRadius: const BorderRadius.all(
-                              Radius.circular(borderRadius))),
-                      child: FittedBox(
-                        child: Text('$_redFinalScore',
-                            style: const TextStyle(
-                                fontSize: bottomFont,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white)),
-                      ),
-                    ),
-                  ), // Red Score
-                  ElevatedButton(
-                    onPressed: () => showDialog<String>(
-                      context: context,
-                      builder: (BuildContext context) => AlertDialog(
-                        title: const Text('Reset Match?'),
-                        content: const Text(
-                            'Are you sure you want to reset match and erase all the scores?'),
-                        actions: <Widget>[
-                          TextButton(
-                            onPressed: () => Navigator.pop(context, 'Cancel'),
-                            child: const Text('Cancel'),
-                          ),
-                          TextButton(
-                            onPressed: () =>
-                                {Navigator.pop(context, 'OK'), resetGame()},
-                            child: const Text('OK'),
-                          ),
-                        ],
-                      ),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.purple,
-                      shape: const CircleBorder(),
-                    ),
-                    child: const Icon(
-                      Icons.autorenew,
-                      size: 40,
-                      color: Colors.white,
-                    ),
-                  ), // Restart
-                  Expanded(
-                    flex: 3,
-                    child: Container(
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Colors.blue,
-                            width: 4,
-                          ),
-                          borderRadius: const BorderRadius.all(
-                              Radius.circular(borderRadius))),
-                      child: FittedBox(
-                        child: Text('$_blueFinalScore',
-                            style: const TextStyle(
-                                fontSize: bottomFont,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white)),
-                      ),
-                    ),
-                  ), // Blue Score
-                ],
-              ),
-              SizedBox(height: 5),// Space between the two rows
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Expanded(
-                    flex: 1,
-                    child: TextButton(
-                      onPressed: () {
-                        _deleteRed();
-                      },
-                      child: const Icon(
-                        Icons.backspace,
-                        color: Colors.red,
-                        size: 40.0,
-                        semanticLabel:
-                            'Text to announce in accessibility modes',
-                      ),
-                    ),
-                  ), // Delete Red
-                  Expanded(
-                    flex: 4,
-                    child: InkWell(
-                      onTap: () => startTimer(false),
+        Expanded(
+          flex: 1,
+          child: Container(
+            width: double.infinity, // Adjust the height as needed to fit two rows of buttons// Add padding to the container
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    Expanded(
+                      flex: 3,
                       child: Container(
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
-                          color: _containerColor,
-                          borderRadius: const BorderRadius.all(
-                            Radius.circular(borderRadius),
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          // Adjust as needed
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 8),
-                              child: Icon(
-                                getTimerIcon(_pausePlay),
-                                color: Colors.white,
-                                size: 30.0,
-                                semanticLabel: 'Start Timer',
-                              ),
+                            border: Border.all(
+                              color: Colors.red,
+                              width: 4,
                             ),
-                            Text(
-                              intToTimeLeft(_current),
+                            borderRadius: const BorderRadius.all(
+                                Radius.circular(borderRadius))),
+                        child: FittedBox(
+                          child: Text('$_redFinalScore',
                               style: const TextStyle(
-                                  fontSize: 30,
+                                  fontSize: bottomFont,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.white),
+                                  color: Colors.white)),
+                        ),
+                      ),
+                    ), // Red Score
+                    ElevatedButton(
+                      onPressed: () => showDialog<String>(
+                        context: context,
+                        builder: (BuildContext context) => AlertDialog(
+                          title: const Text('Reset Match?'),
+                          content: const Text(
+                              'Are you sure you want to reset match and erase all the scores?'),
+                          actions: <Widget>[
+                            TextButton(
+                              onPressed: () => Navigator.pop(context, 'Cancel'),
+                              child: const Text('Cancel'),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 8),
-                              child: InkWell(
-                                onTap: () => startTimer(true),
-                                child: const Icon(
-                                  Icons.refresh_outlined,
-                                  color: Colors.white,
-                                  size: 30.0,
-                                  semanticLabel: 'Refresh Time',
-                                ),
-                              ),
+                            TextButton(
+                              onPressed: () =>
+                                  {Navigator.pop(context, 'OK'), resetGame()},
+                              child: const Text('OK'),
                             ),
                           ],
                         ),
                       ),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: TextButton(
-                      onPressed: () {
-                        _deleteBlue();
-                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.purple,
+                        shape: const CircleBorder(),
+                      ),
                       child: const Icon(
-                        Icons.backspace,
-                        color: Colors.blue,
-                        size: 40.0,
-                        semanticLabel:
-                        'Text to announce in accessibility modes',
+                        Icons.autorenew,
+                        size: 40,
+                        color: Colors.white,
+                      ),
+                    ), // Restart
+                    Expanded(
+                      flex: 3,
+                      child: Container(
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Colors.blue,
+                              width: 4,
+                            ),
+                            borderRadius: const BorderRadius.all(
+                                Radius.circular(borderRadius))),
+                        child: FittedBox(
+                          child: Text('$_blueFinalScore',
+                              style: const TextStyle(
+                                  fontSize: bottomFont,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white)),
+                        ),
+                      ),
+                    ), // Blue Score
+                  ],
+                ),
+                SizedBox(height: 5),// Space between the two rows
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Expanded(
+                      flex: 1,
+                      child: TextButton(
+                        onPressed: () {
+                          _deleteRed();
+                        },
+                        child: const Icon(
+                          Icons.backspace,
+                          color: Colors.red,
+                          size: 40.0,
+                          semanticLabel:
+                              'Text to announce in accessibility modes',
+                        ),
+                      ),
+                    ), // Delete Red
+                    Expanded(
+                      flex: 4,
+                      child: InkWell(
+                        onTap: () => startTimer(false),
+                        child: Container(
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: _containerColor,
+                            borderRadius: const BorderRadius.all(
+                              Radius.circular(borderRadius),
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            // Adjust as needed
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 8),
+                                child: Icon(
+                                  getTimerIcon(_pausePlay),
+                                  color: Colors.white,
+                                  size: 30.0,
+                                  semanticLabel: 'Start Timer',
+                                ),
+                              ),
+                              Text(
+                                intToTimeLeft(_current),
+                                style: const TextStyle(
+                                    fontSize: 30,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 8),
+                                child: InkWell(
+                                  onTap: () => startTimer(true),
+                                  child: const Icon(
+                                    Icons.refresh_outlined,
+                                    color: Colors.white,
+                                    size: 30.0,
+                                    semanticLabel: 'Refresh Time',
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                     ),
-                  ), // Delete Blue
-                ],
-              ),
-            ],
+                    Expanded(
+                      flex: 1,
+                      child: TextButton(
+                        onPressed: () {
+                          _deleteBlue();
+                        },
+                        child: const Icon(
+                          Icons.backspace,
+                          color: Colors.blue,
+                          size: 40.0,
+                          semanticLabel:
+                          'Text to announce in accessibility modes',
+                        ),
+                      ),
+                    ), // Delete Blue
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ],

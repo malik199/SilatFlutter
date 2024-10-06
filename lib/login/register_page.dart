@@ -31,64 +31,64 @@ class _RegisterPageState extends State<RegisterPage> {
 
 
   void registerUser() async {
+    if (_registerFormKey.currentState!.validate()) {
       setState(() {
         _isProcessing = true;
       });
 
-      if (_registerFormKey.currentState!
-          .validate()) {
-        User? user = await FireAuth
-            .registerUsingEmailPassword(
-          name:
-          '${_firstnameTextController.text} ${_lastnameTextController.text}',
+      try {
+        User? user = await FireAuth.registerUsingEmailPassword(
+          name: '${_firstnameTextController.text} ${_lastnameTextController.text}',
           email: _emailTextController.text,
-          password:
-          _passwordTextController.text,
+          password: _passwordTextController.text,
         );
 
         if (user != null) {
-          await _database.ref('/users').push().set({
+          await _database.ref('users').child(user.uid).set({
             'uid': user.uid,
             'belt': 'white',
-            'comments':
-            'Welcome to Silat martial arts.',
+            'comments': 'Welcome to Silat martial arts.',
             'curriculum': _age > 11 ? "jawara_muda" : "satria_muda",
-            'email':
-            _emailTextController.text,
-            'firstname':
-            _firstnameTextController
-                .text,
-            'lastname':
-            _lastnameTextController
-                .text,
+            'email': _emailTextController.text,
+            'firstname': _firstnameTextController.text,
+            'lastname': _lastnameTextController.text,
             'isApproved': false,
             'stripe': 0,
             'age': _age,
             'location': _location,
-            'startDate': DateTime.now()
-
-          }).catchError((error) => print(
-              'You got an error! $error'));
-          Navigator.of(context)
-              .pushAndRemoveUntil(
-            MaterialPageRoute(
-              builder: (context) =>
-                  LandingPage(user: user),
-            ),
+            'startDate': DateTime.now().toString(),
+          });
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => LandingPage(user: user)),
             ModalRoute.withName('/'),
           );
+        } else {
+          _showErrorSnackBar('Failed to register. This email might already be in use. Try a different email.');
         }
-
-        setState(() {
-          _isProcessing = false;
-        });
-      } else {
+      } on FirebaseAuthException catch (e) {
+        if (e.code == 'email-already-in-use') {
+          _showErrorSnackBar('This email is already in use. Please use a different email.');
+        } else {
+          _showErrorSnackBar('Failed to register. Please try again later.');
+        }
+      } finally {
         setState(() {
           _isProcessing = false;
         });
       }
+    }
   }
 
+  void _showErrorSnackBar(String message) {
+    final snackBar = SnackBar(
+      content: Text(
+        message,
+        style: TextStyle(color: Colors.white),
+      ),
+      backgroundColor: Colors.red,
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
 
   double _spacing = 10.0;
   bool _isProcessing = false;

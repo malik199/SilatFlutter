@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:silat_flutter/utils/connectivity.dart';
+import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
 
 import '../models/edit_user.dart';
 
@@ -16,6 +19,7 @@ class _ProfileState extends State<Profile> {
   final _database = FirebaseDatabase.instance.ref();
   //late StreamSubscription _userDBStream;
   var myUser;
+  int _currentValue = 3;
 
   double spacingWidth = 10;
   double spacingHeight = 10;
@@ -32,10 +36,10 @@ class _ProfileState extends State<Profile> {
   late int? bm_pushups = 0;
   late int? bm_situps = 0;
   late int? bm_pullups = 0;
-  late int? bm_deadhang = 0;
-  late int? bm_mileTime = 0;
-  late int? bm_dash = 0;
-  late int? bm_wallsit = 0;
+  late String? bm_deadhang;
+  late String? bm_mileTime;
+  late String? bm_dash;
+  late String? bm_wallsit;
   late int? bm_boxjumps = 0;
   late int? bm_squats = 0;
 
@@ -55,8 +59,22 @@ class _ProfileState extends State<Profile> {
 
   late String? _dbkey = "";
 
-  TextEditingController? firstNameController = TextEditingController();
-  TextEditingController? lastNameController = TextEditingController();
+  TextEditingController? _firstNameController = TextEditingController();
+  TextEditingController? _lastNameController = TextEditingController();
+  TextEditingController? _tournamentController = TextEditingController();
+  TextEditingController? _1stplaceController = TextEditingController();
+  TextEditingController? _2ndplaceController = TextEditingController();
+  TextEditingController? _classMeritsController = TextEditingController();
+  TextEditingController? _deedsController = TextEditingController();
+  TextEditingController? _bm_pushupsController = TextEditingController();
+  TextEditingController? _bm_situpsController = TextEditingController();
+  TextEditingController? _bm_pullupsController = TextEditingController();
+  TextEditingController? _bm_deadhangController = TextEditingController();
+  TextEditingController? _bm_mileTimeController = TextEditingController();
+  TextEditingController? _bm_dashController = TextEditingController();
+  TextEditingController? _bm_wallSitController = TextEditingController();
+  TextEditingController? _bm_boxJumpsController = TextEditingController();
+  TextEditingController? _bm_squatsController = TextEditingController();
 
   int _age = 6;
   List _listOfAges = [for (var i = 6; i <= 50; i++) i];
@@ -74,7 +92,8 @@ class _ProfileState extends State<Profile> {
 
   var myData;
 
-  void showNumberPickerDialog(BuildContext context, void Function(int) onNumberSelected) {
+  void showNumberPickerDialog(
+      BuildContext context, void Function(int) onNumberSelected) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -121,26 +140,55 @@ class _ProfileState extends State<Profile> {
           _lastName = myData['lastname'];
           _email = myData['email'];
           _beltColor = myData['belt'];
-          _1stplace = myData['1stplace'];
-          _2ndplace = myData['2ndplace'];
-          _classMerits = myData['classMerits'];
-          _deeds = myData['deeds'];
-          _finalScore = myData['score'];
-          _tournaments = myData['tournaments'];
-          _stripe = myData['stripe'];
+          _1stplace = myData['1stplace'] ?? 0;
+          _2ndplace = myData['2ndplace'] ?? 0;
+          _classMerits = myData['classMerits'] ?? 0;
+          _deeds = myData['deeds'] ?? 0;
+          _finalScore = myData['score'] ?? 0;
+          _tournaments = myData['tournaments'] ?? 0;
+          _stripe = myData['stripe'] ?? 0;
           _location = myData['location'];
-          firstNameController = TextEditingController(text: _firstName);
-          lastNameController = TextEditingController(text: _lastName);
-          _age = myData['age'];
-          bm_pushups = myData['bm_pushups'];
-          bm_situps = myData['bm_situps'];
-          bm_pullups = myData['bm_pullups'];
-          bm_deadhang = myData['bm_deadhang'];
-          bm_mileTime = myData['bm_mile'];
-          bm_dash = myData['bm_dash'];
-          bm_wallsit = myData['bm_wallsits'];
-          bm_boxjumps = myData['bm_boxjumps'];
-          bm_squats = myData['bm_squats'];
+          _firstNameController = TextEditingController(text: myData['firstname']);
+          _lastNameController = TextEditingController(text: myData['lastname']);
+          _tournamentController =
+              TextEditingController(text: _tournaments.toString());
+          _1stplaceController =
+              TextEditingController(text: _1stplace.toString());
+          _2ndplaceController =
+              TextEditingController(text: _2ndplace.toString());
+          _classMeritsController =
+              TextEditingController(text: _classMerits.toString());
+          _deedsController = TextEditingController(text: _deeds.toString());
+
+          _bm_pushupsController =
+              TextEditingController(text: myData['bm_pushups'] == null ? '0' : myData['bm_pushups'].toString());
+          _bm_pullupsController =
+              TextEditingController(text: myData['bm_pullups'] == null ? '0' : myData['bm_pullups'].toString());
+          _bm_situpsController =
+              TextEditingController(text: myData['bm_situps'] == null ? '0' : myData['bm_situps'].toString());
+          _bm_deadhangController =
+              TextEditingController(text: myData['bm_deadhang'] == null ? '0:00' : myData['bm_deadhang'].toString());
+          _bm_mileTimeController =
+              TextEditingController(text: myData['bm_mile'] == null ? '0:00' : myData['bm_mile'].toString());
+          _bm_dashController =
+              TextEditingController(text: myData['bm_dash'] == null ? '0:00' : myData['bm_dash'].toString());
+          _bm_wallSitController =
+              TextEditingController(text: myData['bm_wallsits'] == null ? '0:00' : myData['bm_wallsits'].toString());
+          _bm_boxJumpsController =
+              TextEditingController(text: myData['bm_boxjumps'] == null ? '0' : myData['bm_boxjumps'].toString());
+          _bm_squatsController =
+              TextEditingController(text: myData['bm_squats'] == null ? '0' : myData['bm_squats'].toString());
+
+          _age = myData['age'] ?? 0;
+          bm_pushups = myData['bm_pushups'] ?? 0;
+          bm_situps = myData['bm_situps'] ?? 0;
+          bm_pullups = myData['bm_pullups'] ?? 0;
+          bm_deadhang = myData['bm_deadhang'].toString() ?? '0';
+          bm_mileTime = myData['bm_mile'].toString() ?? '0';
+          bm_dash = myData['bm_dash'].toString() ?? '0';
+          bm_wallsit = myData['bm_wallsits'].toString() ?? '0';
+          bm_boxjumps = myData['bm_boxjumps'] ?? 0;
+          bm_squats = myData['bm_squats'] ?? 0;
         });
       } else {
         print("No data");
@@ -182,7 +230,7 @@ class _ProfileState extends State<Profile> {
     if (isValid!) {
       if (_dbkey == "") {
         await _database
-            .child('/users')
+            .child('/pending')
             .push()
             .set({
               'uid': _currentUser?.uid,
@@ -195,7 +243,22 @@ class _ProfileState extends State<Profile> {
               'isApproved': false,
               'stripe': _stripe,
               'age': _age,
-              'location': 'VA'
+              'location': 'VA',
+              '1stplace': _1stplace,
+              '2ndplace': _2ndplace,
+              'bm_boxjumps': bm_boxjumps,
+              'bm_dash': bm_dash,
+              'bm_deadhang': bm_deadhang,
+              'bm_mile': bm_mileTime,
+              'bm_pullups': bm_pullups,
+              'bm_pushups': bm_pushups,
+              'bm_situps': bm_situps,
+              'bm_squats': bm_squats,
+              'bm_wallsits': bm_wallsit,
+              'classMerits': _classMerits,
+              'deeds': _deeds,
+              'score': _finalScore,
+              'tournaments': _tournaments,
             })
             .then((value) =>
                 {ScaffoldMessenger.of(context).showSnackBar(snackBarGreen)})
@@ -203,13 +266,35 @@ class _ProfileState extends State<Profile> {
                 {ScaffoldMessenger.of(context).showSnackBar(snackBarRed)});
       } else {
         _database
-            .child('/users')
+            .child('/pending')
             .child(_dbkey.toString())
             .update({
+              'uid': _currentUser?.uid,
+              'belt': 'white',
+              'comments': 'Welcome to Silat martial arts.',
+              'curriculum': _age > 11 ? "jawara_muda" : "satria_muda",
+              'email': _currentUser?.email,
               'firstname': _firstName,
               'lastname': _lastName,
-              'age': _age,
+              'isApproved': false,
               'stripe': _stripe,
+              'age': _age,
+              'location': 'VA',
+              '1stplace': _1stplace,
+              '2ndplace': _2ndplace,
+              'bm_boxjumps': bm_boxjumps,
+              'bm_dash': bm_dash,
+              'bm_deadhang': bm_deadhang,
+              'bm_mile': bm_mileTime,
+              'bm_pullups': bm_pullups,
+              'bm_pushups': bm_pushups,
+              'bm_situps': bm_situps,
+              'bm_squats': bm_squats,
+              'bm_wallsits': bm_wallsit,
+              'classMerits': _classMerits,
+              'deeds': _deeds,
+              'score': _finalScore,
+              'tournaments': _tournaments,
             })
             .then((value) =>
                 {ScaffoldMessenger.of(context).showSnackBar(snackBarGreen)})
@@ -219,12 +304,28 @@ class _ProfileState extends State<Profile> {
     }
   }
 
+  Future<void> callCloudFunction(String dbKey) async {
+    try {
+      final url = Uri.parse('https://receivekeyandtrigger-5zrfm7bq3q-uc.a.run.app');
+      final response = await http.post(url, body: json.encode({'dbKey': dbKey}),
+          headers: {'Content-Type': 'application/json'});
+
+      if (response.statusCode == 200) {
+        print('Function responded: ${response.body}');
+      } else {
+        print('Failed to call function: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error calling function: $e');
+    }
+  }
+
   final snackBarRed = SnackBar(
     content: Text('A problem occurred.'),
     backgroundColor: Colors.red,
   );
   final snackBarGreen = SnackBar(
-    content: Text('Success! You have updated your profile.'),
+    content: Text('Success! Your update is now awaiting approval.'),
     backgroundColor: Colors.green,
   );
 
@@ -262,34 +363,42 @@ class _ProfileState extends State<Profile> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   //InternetConnection(),
-
+                  Center(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        callCloudFunction(_dbkey!);
+                      },
+                      child: Text('Update User Data'),
+                    ),
+                  ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 12.0),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 0, horizontal: 12.0),
                     child: Column(
                       children: [
                         Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              Icon(Icons.email, color: Colors.teal),
-                              SizedBox(width: _sizeBoxWidth),
-                              Text('$_email',
-                                  style: TextStyle(
-                                      color: Colors.teal,
-                                      fontWeight: FontWeight.bold)),
-                            ],
-                          ),
-                          Text(_finalScore.toString(),
-                              style: TextStyle(
-                                  fontSize: 40,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.deepOrangeAccent))
-                        ],
-                      ),
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(Icons.email, color: Colors.teal),
+                                SizedBox(width: _sizeBoxWidth),
+                                Text('$_email',
+                                    style: TextStyle(
+                                        color: Colors.teal,
+                                        fontWeight: FontWeight.bold)),
+                              ],
+                            ),
+                            Text(_finalScore.toString(),
+                                style: TextStyle(
+                                    fontSize: 40,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.deepOrangeAccent))
+                          ],
+                        ),
                         TextFormField(
                           decoration: InputDecoration(labelText: 'First Name'),
-                          controller: firstNameController,
+                          controller: _firstNameController,
                           validator: (value) {
                             if (value!.length < 4) {
                               return 'Enter at least 4 characters';
@@ -303,7 +412,7 @@ class _ProfileState extends State<Profile> {
                         ),
                         TextFormField(
                           decoration: InputDecoration(labelText: 'Last Name'),
-                          controller: lastNameController,
+                          controller: _lastNameController,
                           validator: (value) {
                             if (value!.length < 4) {
                               return 'Enter at least 4 characters';
@@ -326,18 +435,17 @@ class _ProfileState extends State<Profile> {
                         icon: const Icon(Icons.arrow_downward),
                         iconSize: 24,
                         elevation: 16,
-                        style: const TextStyle(color: Colors.deepPurple),
+                        style: const TextStyle(color: Colors.amber),
                         underline: Container(
                           height: 2,
-                          color: Colors.deepPurpleAccent,
+                          color: Colors.amberAccent,
                         ),
                         onChanged: (int? newValue) {
                           setState(() {
                             _age = newValue ?? 0;
                           });
                         },
-                        items:
-                            _listOfAges.map<DropdownMenuItem<int>>((value) {
+                        items: _listOfAges.map<DropdownMenuItem<int>>((value) {
                           return DropdownMenuItem(
                             value: value,
                             child: Text(value.toString()),
@@ -352,18 +460,18 @@ class _ProfileState extends State<Profile> {
                         icon: const Icon(Icons.arrow_downward),
                         iconSize: 24,
                         elevation: 16,
-                        style: const TextStyle(color: Colors.deepPurple),
+                        style: const TextStyle(color: Colors.amber),
                         underline: Container(
                           height: 2,
-                          color: Colors.deepPurpleAccent,
+                          color: Colors.amberAccent,
                         ),
                         onChanged: (int? newValue) {
                           setState(() {
                             _stripe = newValue ?? 0;
                           });
                         },
-                        items: _listOfStripes
-                            .map<DropdownMenuItem<int>>((value) {
+                        items:
+                            _listOfStripes.map<DropdownMenuItem<int>>((value) {
                           return DropdownMenuItem(
                             value: value,
                             child: Text(value.toString()),
@@ -371,115 +479,138 @@ class _ProfileState extends State<Profile> {
                         }).toList(),
                       )),
                   ListTile(
-                      leading:
-                        Icon(Icons.horizontal_split, size: _iconSize),
-                        title: Text("Belt:"),
-                        trailing: DropdownButton<String>(
-                            value: _beltColor,
-                            icon: Icon(Icons.arrow_downward),
-                            iconSize: 24,
-                            elevation: 16,
-                            style: TextStyle(color: Colors.deepPurple),
-                            underline: Container(
-                              height: 2,
-                              color: Colors.deepPurpleAccent,
-                            ),
-                            onChanged: (String? newValue) {
-                              setState(() {
-                                _beltColor = newValue!;
-                              });
-                            },
-                            items: <String>[
-                              'white',
-                              'yellow',
-                              'green',
-                              'blue',
-                              'purple',
-                              'brown',
-                              'black',
-                              'red'
-                            ].map<DropdownMenuItem<String>>((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value),
-                              );
-                            }).toList()),
+                    leading: Icon(Icons.horizontal_split, size: _iconSize),
+                    title: Text("Belt:"),
+                    trailing: DropdownButton<String>(
+                        value: _beltColor,
+                        icon: Icon(Icons.arrow_downward),
+                        iconSize: 24,
+                        elevation: 16,
+                        style: TextStyle(color: Colors.amber),
+                        underline: Container(
+                          height: 2,
+                          color: Colors.amberAccent,
+                        ),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            _beltColor = newValue!;
+                          });
+                        },
+                        items: <String>[
+                          'white',
+                          'yellow',
+                          'green',
+                          'blue',
+                          'purple',
+                          'brown',
+                          'black',
+                          'red'
+                        ].map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList()),
                   ),
                   ListTile(
-                          leading: Icon(Icons.assignment, size: _iconSize),
-                          title: Text("Curriculum"),
-                          trailing: DropdownButton<String>(
-                            value: _curriculum,
-                            icon: const Icon(Icons.arrow_downward),
-                            iconSize: 24,
-                            elevation: 16,
-                            underline: Container(
-                              height: 2,
-                            ),
-                            style: TextStyle(color: Colors.deepPurple),
-                            onChanged: (String? newValue) {
-                              setState(() {
-                                _curriculum = newValue!;
-                              });
-                            },
-                            items: <String>[
-                              'jawara_muda',
-                              'satria_muda',
-                              'abah_jawara',
-                              'guest',
-                              'instructor'
-                            ].map<DropdownMenuItem<String>>((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value),
-                              );
-                            }).toList(),
-                          )
-                        ),
-                  ListTile(
-                    leading: Icon(Icons.place),
-                      title:    Text(
-                        "Location",
-                      ),
+                      leading: Icon(Icons.assignment, size: _iconSize),
+                      title: Text("Curriculum"),
                       trailing: DropdownButton<String>(
-                        value: _location,
+                        value: _curriculum,
                         icon: const Icon(Icons.arrow_downward),
                         iconSize: 24,
                         elevation: 16,
                         underline: Container(
                           height: 2,
+                          color: Colors.amberAccent,
                         ),
-                        style: TextStyle(color: Colors.deepPurple),
+                        style: TextStyle(color: Colors.amber),
                         onChanged: (String? newValue) {
                           setState(() {
-                            _location = newValue!;
+                            _curriculum = newValue!;
                           });
                         },
-                        items: _listOfLocations
-                            .map<DropdownMenuItem<String>>((String value) {
+                        items: <String>[
+                          'jawara_muda',
+                          'satria_muda',
+                          'abah_jawara',
+                          'guest',
+                          'instructor'
+                        ].map<DropdownMenuItem<String>>((String value) {
                           return DropdownMenuItem<String>(
                             value: value,
                             child: Text(value),
                           );
                         }).toList(),
+                      )),
+                  ListTile(
+                    leading: Icon(Icons.place),
+                    title: Text(
+                      "Location",
+                    ),
+                    trailing: DropdownButton<String>(
+                      value: _location,
+                      icon: const Icon(Icons.arrow_downward),
+                      iconSize: 24,
+                      elevation: 16,
+                      underline: Container(
+                        height: 2,
+                        color: Colors.amberAccent,
                       ),
+                      style: TextStyle(color: Colors.amber),
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          _location = newValue!;
+                        });
+                      },
+                      items: _listOfLocations
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
                   ),
                   Divider(thickness: 2),
                   ListTile(
-                    leading: Icon(Icons.follow_the_signs, size: _iconSize),
-                    title: Text(
-                      "Tournaments",
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    subtitle: Text(
-                        "Number of tournaments that you have competed in.",
-                        style: TextStyle(fontSize: _subtitleSize)),
-                    trailing: Text(
-                        _tournaments != null ? _tournaments.toString() : "",
-                        style: TextStyle(
-                            fontSize: _numberSize,
-                            fontWeight: FontWeight.bold)),
-                  ),
+                      leading: Icon(Icons.follow_the_signs, size: _iconSize),
+                      title: Text(
+                        "Tournaments",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      subtitle: Text(
+                          "Number of tournaments that you have competed in.",
+                          style: TextStyle(fontSize: _subtitleSize)),
+                      trailing: TextField(
+                        textAlign: TextAlign.right,
+                        controller: _tournamentController,
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          border:
+                              OutlineInputBorder(), // Adds a border around the input
+                          contentPadding: EdgeInsets.symmetric(
+                              vertical: 10.0,
+                              horizontal: 10.0), // Padding inside the border
+                          isDense: true, // Reduces the field's height
+                          counterText:
+                              '', // Hides the counter text that appears below the TextField
+                          constraints: BoxConstraints(
+                            maxWidth: 60, // Adjust width to fit about 5 digits
+                          ),
+                        ),
+                        inputFormatters: <TextInputFormatter>[
+                          FilteringTextInputFormatter.digitsOnly,
+                          LengthLimitingTextInputFormatter(
+                              5), // Limiting the input to 5 characters
+                        ],
+                        onChanged: (String newValue) {
+                          if (newValue == "") {
+                            newValue = '0';
+                          }
+                          setState(() => _tournaments = int.parse(newValue));
+                        },
+                      )),
                   ListTile(
                     leading: Icon(Icons.filter_1, size: _iconSize),
                     title: Text(
@@ -488,11 +619,35 @@ class _ProfileState extends State<Profile> {
                     ),
                     subtitle: Text("Number of first place wins.",
                         style: TextStyle(fontSize: _subtitleSize)),
-                    trailing: Text(
-                        _1stplace.toString(),
-                        style: TextStyle(
-                            fontSize: _numberSize,
-                            fontWeight: FontWeight.bold)),
+                    trailing: TextField(
+                      textAlign: TextAlign.right,
+                      controller: _1stplaceController,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        border:
+                            OutlineInputBorder(), // Adds a border around the input
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 10.0,
+                            horizontal: 10.0), // Padding inside the border
+                        isDense: true, // Reduces the field's height
+                        counterText:
+                            '', // Hides the counter text that appears below the TextField
+                        constraints: BoxConstraints(
+                          maxWidth: 60, // Adjust width to fit about 5 digits
+                        ),
+                      ),
+                      inputFormatters: <TextInputFormatter>[
+                        FilteringTextInputFormatter.digitsOnly,
+                        LengthLimitingTextInputFormatter(
+                            5), // Limiting the input to 5 characters
+                      ],
+                      onChanged: (String newValue) {
+                        if (newValue == "") {
+                          newValue = '0';
+                        }
+                        setState(() => _1stplace = int.parse(newValue));
+                      },
+                    ),
                   ),
                   ListTile(
                     leading: Icon(Icons.filter_2, size: _iconSize),
@@ -502,11 +657,35 @@ class _ProfileState extends State<Profile> {
                     ),
                     subtitle: Text("Number of 2nd place wins.",
                         style: TextStyle(fontSize: _subtitleSize)),
-                    trailing: Text(
-                        _2ndplace.toString(),
-                        style: TextStyle(
-                            fontSize: _numberSize,
-                            fontWeight: FontWeight.bold)),
+                    trailing: TextField(
+                      textAlign: TextAlign.right,
+                      controller: _2ndplaceController,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        border:
+                            OutlineInputBorder(), // Adds a border around the input
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 10.0,
+                            horizontal: 10.0), // Padding inside the border
+                        isDense: true, // Reduces the field's height
+                        counterText:
+                            '', // Hides the counter text that appears below the TextField
+                        constraints: BoxConstraints(
+                          maxWidth: 60, // Adjust width to fit about 5 digits
+                        ),
+                      ),
+                      inputFormatters: <TextInputFormatter>[
+                        FilteringTextInputFormatter.digitsOnly,
+                        LengthLimitingTextInputFormatter(
+                            5), // Limiting the input to 5 characters
+                      ],
+                      onChanged: (String newValue) {
+                        if (newValue == "") {
+                          newValue = '0';
+                        }
+                        setState(() => _2ndplace = int.parse(newValue));
+                      },
+                    ),
                   ),
                   ListTile(
                     leading: Icon(Icons.store, size: _iconSize),
@@ -517,11 +696,74 @@ class _ProfileState extends State<Profile> {
                     subtitle: Text(
                         "Winning a class event, being an outstanding student in class.",
                         style: TextStyle(fontSize: _subtitleSize)),
-                    trailing: Text(
-                        _classMerits.toString(),
-                        style: TextStyle(
-                            fontSize: _numberSize,
-                            fontWeight: FontWeight.bold)),
+                    trailing: TextField(
+                      textAlign: TextAlign.right,
+                      controller: _classMeritsController,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        border:
+                            OutlineInputBorder(), // Adds a border around the input
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 10.0,
+                            horizontal: 10.0), // Padding inside the border
+                        isDense: true, // Reduces the field's height
+                        counterText:
+                            '', // Hides the counter text that appears below the TextField
+                        constraints: BoxConstraints(
+                          maxWidth: 60, // Adjust width to fit about 5 digits
+                        ),
+                      ),
+                      inputFormatters: <TextInputFormatter>[
+                        FilteringTextInputFormatter.digitsOnly,
+                        LengthLimitingTextInputFormatter(
+                            5), // Limiting the input to 5 characters
+                      ],
+                      onChanged: (String newValue) {
+                        if (newValue == "") {
+                          newValue = '0';
+                        }
+                        setState(() => _classMerits = int.parse(newValue));
+                      },
+                    ),
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.verified, size: _iconSize),
+                    title: Text(
+                      "Good Deeds",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Text(
+                        "Doing good deeds such as helping the poor, volunteering, etc.",
+                        style: TextStyle(fontSize: _subtitleSize)),
+                    trailing: TextField(
+                      textAlign: TextAlign.right,
+                      controller: _deedsController,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        border:
+                            OutlineInputBorder(), // Adds a border around the input
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 10.0,
+                            horizontal: 10.0), // Padding inside the border
+                        isDense: true, // Reduces the field's height
+                        counterText:
+                            '', // Hides the counter text that appears below the TextField
+                        constraints: BoxConstraints(
+                          maxWidth: 60, // Adjust width to fit about 5 digits
+                        ),
+                      ),
+                      inputFormatters: <TextInputFormatter>[
+                        FilteringTextInputFormatter.digitsOnly,
+                        LengthLimitingTextInputFormatter(
+                            5), // Limiting the input to 5 characters
+                      ],
+                      onChanged: (String newValue) {
+                        if (newValue == "") {
+                          newValue = '0';
+                        }
+                        setState(() => _deeds = int.parse(newValue));
+                      },
+                    ),
                   ),
                   ListTile(
                     leading:
@@ -533,10 +775,35 @@ class _ProfileState extends State<Profile> {
                     subtitle: Text(
                         "Number of push-ups a person can complete in one minute to assess upper body strength and endurance.",
                         style: TextStyle(fontSize: _subtitleSize)),
-                    trailing: Text(_deeds.toString(),
-                        style: TextStyle(
-                            fontSize: _numberSize,
-                            fontWeight: FontWeight.bold)),
+                    trailing: TextField(
+                      textAlign: TextAlign.right,
+                      controller: _bm_pushupsController,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        border:
+                            OutlineInputBorder(), // Adds a border around the input
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 10.0,
+                            horizontal: 10.0), // Padding inside the border
+                        isDense: true, // Reduces the field's height
+                        counterText:
+                            '', // Hides the counter text that appears below the TextField
+                        constraints: BoxConstraints(
+                          maxWidth: 60, // Adjust width to fit about 5 digits
+                        ),
+                      ),
+                      inputFormatters: <TextInputFormatter>[
+                        FilteringTextInputFormatter.digitsOnly,
+                        LengthLimitingTextInputFormatter(
+                            5), // Limiting the input to 5 characters
+                      ],
+                      onChanged: (String newValue) {
+                        if (newValue == "") {
+                          newValue = '0';
+                        }
+                        setState(() => bm_pushups = int.parse(newValue));
+                      },
+                    ),
                   ),
                   ListTile(
                     leading: Icon(Icons.sledding, size: _iconSize),
@@ -547,11 +814,35 @@ class _ProfileState extends State<Profile> {
                     subtitle: Text(
                         "Core strength by counting the number of sit-ups completed in a minute.",
                         style: TextStyle(fontSize: _subtitleSize)),
-                    trailing: Text(
-                        bm_pushups != null ? bm_pushups.toString() : "",
-                        style: TextStyle(
-                            fontSize: _numberSize,
-                            fontWeight: FontWeight.bold)),
+                    trailing: TextField(
+                      textAlign: TextAlign.right,
+                      controller: _bm_situpsController,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        border:
+                            OutlineInputBorder(), // Adds a border around the input
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 10.0,
+                            horizontal: 10.0), // Padding inside the border
+                        isDense: true, // Reduces the field's height
+                        counterText:
+                            '', // Hides the counter text that appears below the TextField
+                        constraints: BoxConstraints(
+                          maxWidth: 60, // Adjust width to fit about 5 digits
+                        ),
+                      ),
+                      inputFormatters: <TextInputFormatter>[
+                        FilteringTextInputFormatter.digitsOnly,
+                        LengthLimitingTextInputFormatter(
+                            5), // Limiting the input to 5 characters
+                      ],
+                      onChanged: (String newValue) {
+                        if (newValue == "") {
+                          newValue = '0';
+                        }
+                        setState(() => bm_situps = int.parse(newValue));
+                      },
+                    ),
                   ),
                   ListTile(
                     leading: Icon(Icons.sports_handball, size: _iconSize),
@@ -562,11 +853,35 @@ class _ProfileState extends State<Profile> {
                     subtitle: Text(
                         "Upper body muscular strength by determining the maximum number of pull-ups you can perform.",
                         style: TextStyle(fontSize: _subtitleSize)),
-                    trailing: Text(
-                        bm_pullups != null ? bm_pullups.toString() : "",
-                        style: TextStyle(
-                            fontSize: _numberSize,
-                            fontWeight: FontWeight.bold)),
+                    trailing: TextField(
+                      textAlign: TextAlign.right,
+                      controller: _bm_pullupsController,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        border:
+                            OutlineInputBorder(), // Adds a border around the input
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 10.0,
+                            horizontal: 10.0), // Padding inside the border
+                        isDense: true, // Reduces the field's height
+                        counterText:
+                            '', // Hides the counter text that appears below the TextField
+                        constraints: BoxConstraints(
+                          maxWidth: 60, // Adjust width to fit about 5 digits
+                        ),
+                      ),
+                      inputFormatters: <TextInputFormatter>[
+                        FilteringTextInputFormatter.digitsOnly,
+                        LengthLimitingTextInputFormatter(
+                            5), // Limiting the input to 5 characters
+                      ],
+                      onChanged: (String newValue) {
+                        if (newValue == "") {
+                          newValue = '0';
+                        }
+                        setState(() => bm_pullups = int.parse(newValue));
+                      },
+                    ),
                   ),
                   ListTile(
                     leading: Icon(Icons.handshake, size: _iconSize),
@@ -577,11 +892,34 @@ class _ProfileState extends State<Profile> {
                     subtitle: Text(
                         "Grip strength and endurance by timing how long a person can hang from a pull-up bar without letting go.",
                         style: TextStyle(fontSize: _subtitleSize)),
-                    trailing: Text(
-                        bm_deadhang != null ? bm_deadhang.toString() : "",
-                        style: TextStyle(
-                            fontSize: _numberSize,
-                            fontWeight: FontWeight.bold)),
+                    trailing: TextField(
+                      textAlign: TextAlign.right,
+                      controller: _bm_deadhangController,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        border:
+                            OutlineInputBorder(), // Adds a border around the input
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 10.0,
+                            horizontal: 10.0), // Padding inside the border
+                        isDense: true, // Reduces the field's height
+                        counterText:
+                            '', // Hides the counter text that appears below the TextField
+                        constraints: BoxConstraints(
+                          maxWidth: 60, // Adjust width to fit about 5 digits
+                        ),
+                      ),
+                      inputFormatters: <TextInputFormatter>[
+                        FilteringTextInputFormatter.allow(RegExp(
+                            r'^[0-9:]*$')), // Limiting the input to 5 characters
+                      ],
+                      onChanged: (String newValue) {
+                        if (newValue == "") {
+                          newValue = '0';
+                        }
+                        setState(() => bm_deadhang = newValue);
+                      },
+                    ),
                   ),
                   ListTile(
                     leading: Icon(Icons.directions_walk, size: _iconSize),
@@ -592,11 +930,34 @@ class _ProfileState extends State<Profile> {
                     subtitle: Text(
                         "Cardiovascular endurance and speed by timing how quickly a person can run a mile.",
                         style: TextStyle(fontSize: _subtitleSize)),
-                    trailing: Text(
-                        bm_mileTime != null ? bm_mileTime.toString() : "",
-                        style: TextStyle(
-                            fontSize: _numberSize,
-                            fontWeight: FontWeight.bold)),
+                    trailing: TextField(
+                      textAlign: TextAlign.right,
+                      controller: _bm_mileTimeController,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        border:
+                            OutlineInputBorder(), // Adds a border around the input
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 10.0,
+                            horizontal: 10.0), // Padding inside the border
+                        isDense: true, // Reduces the field's height
+                        counterText:
+                            '', // Hides the counter text that appears below the TextField
+                        constraints: BoxConstraints(
+                          maxWidth: 60, // Adjust width to fit about 5 digits
+                        ),
+                      ),
+                      inputFormatters: <TextInputFormatter>[
+                        FilteringTextInputFormatter.allow(RegExp(
+                            r'^[0-9:]*$')), // Limiting the input to 5 characters
+                      ],
+                      onChanged: (String newValue) {
+                        if (newValue == "") {
+                          newValue = '0';
+                        }
+                        setState(() => bm_mileTime = newValue);
+                      },
+                    ),
                   ),
                   ListTile(
                     leading: Icon(Icons.directions_run, size: _iconSize),
@@ -607,10 +968,34 @@ class _ProfileState extends State<Profile> {
                     subtitle: Text(
                         "Explosive power and sprint speed by timing how fast a person can run 50 meters.",
                         style: TextStyle(fontSize: _subtitleSize)),
-                    trailing: Text(bm_dash != null ? bm_dash.toString() : "",
-                        style: TextStyle(
-                            fontSize: _numberSize,
-                            fontWeight: FontWeight.bold)),
+                    trailing: TextField(
+                      textAlign: TextAlign.right,
+                      controller: _bm_dashController,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        border:
+                            OutlineInputBorder(), // Adds a border around the input
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 10.0,
+                            horizontal: 10.0), // Padding inside the border
+                        isDense: true, // Reduces the field's height
+                        counterText:
+                            '', // Hides the counter text that appears below the TextField
+                        constraints: BoxConstraints(
+                          maxWidth: 60, // Adjust width to fit about 5 digits
+                        ),
+                      ),
+                      inputFormatters: <TextInputFormatter>[
+                        FilteringTextInputFormatter.allow(RegExp(
+                            r'^[0-9:]*$')), // Limiting the input to 5 characters
+                      ],
+                      onChanged: (String newValue) {
+                        if (newValue == "") {
+                          newValue = '0';
+                        }
+                        setState(() => bm_dash = newValue);
+                      },
+                    ),
                   ),
                   ListTile(
                     leading: Icon(Icons.airline_seat_legroom_normal,
@@ -622,11 +1007,34 @@ class _ProfileState extends State<Profile> {
                     subtitle: Text(
                         "Lower body strength and endurance by timing how long a person can maintain a wall sit position.",
                         style: TextStyle(fontSize: _subtitleSize)),
-                    trailing: Text(
-                        bm_wallsit != null ? bm_wallsit.toString() : "",
-                        style: TextStyle(
-                            fontSize: _numberSize,
-                            fontWeight: FontWeight.bold)),
+                    trailing: TextField(
+                      textAlign: TextAlign.right,
+                      controller: _bm_wallSitController,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        border:
+                            OutlineInputBorder(), // Adds a border around the input
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 10.0,
+                            horizontal: 10.0), // Padding inside the border
+                        isDense: true, // Reduces the field's height
+                        counterText:
+                            '', // Hides the counter text that appears below the TextField
+                        constraints: BoxConstraints(
+                          maxWidth: 60, // Adjust width to fit about 5 digits
+                        ),
+                      ),
+                      inputFormatters: <TextInputFormatter>[
+                        FilteringTextInputFormatter.allow(RegExp(
+                            r'^[0-9:]*$')), // Limiting the input to 5 characters
+                      ],
+                      onChanged: (String newValue) {
+                        if (newValue == "") {
+                          newValue = '0';
+                        }
+                        setState(() => bm_wallsit = newValue);
+                      },
+                    ),
                   ),
                   ListTile(
                     leading: Icon(Icons.unarchive, size: _iconSize),
@@ -637,11 +1045,35 @@ class _ProfileState extends State<Profile> {
                     subtitle: Text(
                         "Explosive leg power by counting how many times a person can jump onto and off a specified height box in a set time.",
                         style: TextStyle(fontSize: _subtitleSize)),
-                    trailing: Text(
-                        bm_boxjumps != null ? bm_boxjumps.toString() : "",
-                        style: TextStyle(
-                            fontSize: _numberSize,
-                            fontWeight: FontWeight.bold)),
+                    trailing: TextField(
+                      textAlign: TextAlign.right,
+                      controller: _bm_boxJumpsController,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        border:
+                            OutlineInputBorder(), // Adds a border around the input
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 10.0,
+                            horizontal: 10.0), // Padding inside the border
+                        isDense: true, // Reduces the field's height
+                        counterText:
+                            '', // Hides the counter text that appears below the TextField
+                        constraints: BoxConstraints(
+                          maxWidth: 60, // Adjust width to fit about 5 digits
+                        ),
+                      ),
+                      inputFormatters: <TextInputFormatter>[
+                        FilteringTextInputFormatter.digitsOnly,
+                        LengthLimitingTextInputFormatter(
+                            5), // Limiting the input to 5 characters
+                      ],
+                      onChanged: (String newValue) {
+                        if (newValue == "") {
+                          newValue = '0';
+                        }
+                        setState(() => bm_boxjumps = int.parse(newValue));
+                      },
+                    ),
                   ),
                   ListTile(
                     leading: Icon(Icons.airline_seat_legroom_reduced,
@@ -653,11 +1085,35 @@ class _ProfileState extends State<Profile> {
                     subtitle: Text(
                         "Lower body strength and stamina by counting the number of squats completed in one minute.",
                         style: TextStyle(fontSize: _subtitleSize)),
-                    trailing: Text(
-                        bm_squats != null ? bm_squats.toString() : "",
-                        style: TextStyle(
-                            fontSize: _numberSize,
-                            fontWeight: FontWeight.bold)),
+                    trailing: TextField(
+                      textAlign: TextAlign.right,
+                      controller: _bm_squatsController,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        border:
+                            OutlineInputBorder(), // Adds a border around the input
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 10.0,
+                            horizontal: 10.0), // Padding inside the border
+                        isDense: true, // Reduces the field's height
+                        counterText:
+                            '', // Hides the counter text that appears below the TextField
+                        constraints: BoxConstraints(
+                          maxWidth: 60, // Adjust width to fit about 5 digits
+                        ),
+                      ),
+                      inputFormatters: <TextInputFormatter>[
+                        FilteringTextInputFormatter.digitsOnly,
+                        LengthLimitingTextInputFormatter(
+                            5), // Limiting the input to 5 characters
+                      ],
+                      onChanged: (String newValue) {
+                        if (newValue == "") {
+                          newValue = '0';
+                        }
+                        setState(() => bm_squats = int.parse(newValue));
+                      },
+                    ),
                   ),
                   Divider(
                     thickness: 2,

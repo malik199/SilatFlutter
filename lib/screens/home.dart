@@ -37,9 +37,9 @@ class _HomePageState extends State<HomePage>
 
   String _quoteOfTheWeek = "";
 
-  int _tournaments = 0;
-  int _1stPlace = 0;
-  int _2ndPlace = 0;
+  int? _tournaments = 0;
+  int? _1stPlace = 0;
+  int? _2ndPlace = 0;
   int _goodDeeds = 0;
   int _classMerits = 0;
   int _pushUps = 0;
@@ -47,7 +47,7 @@ class _HomePageState extends State<HomePage>
   String? _deadHang = '0:00';
   int _pullUps = 0;
   int _flexibility = 0;
-  int _score = 0;
+  int? _score = 0;
 
   double _numberSize = 25;
   double _lineHeight = 1;

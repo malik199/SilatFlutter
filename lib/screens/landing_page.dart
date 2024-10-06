@@ -67,10 +67,7 @@ class _LandingPageState extends State<LandingPage> {
               color: Colors.red, fontWeight: FontWeight.bold, fontSize: 20),
         ),
         Text("${_currentUser.email}",
-            style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-                color: Colors.black45)),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
         Text(
           'is not verified',
           style: TextStyle(
@@ -134,6 +131,27 @@ class _LandingPageState extends State<LandingPage> {
                   ),
                 ],
               ),
+SizedBox(height: 50),
+        ElevatedButton.icon(
+          // Use ElevatedButton.icon constructor
+          icon: Icon(Icons.exit_to_app, size: 18), // Add a logout icon
+          label: Text('Log Out', style: TextStyle(fontSize: 12)), // Text label for the button
+          onPressed: () async {
+            await FirebaseAuth.instance.signOut();
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => LogOut()),
+            );
+          },
+
+          style: ElevatedButton.styleFrom(
+
+            minimumSize: Size(64, 32),
+            padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+            foregroundColor: Colors.white,
+            backgroundColor: Colors.red, // Text color
+          ),
+        )
       ],
     );
   }
@@ -146,201 +164,230 @@ class _LandingPageState extends State<LandingPage> {
       ScoringPortrait(),
       Events(),
     ];
-    return Scaffold(
-      drawer: Drawer(
-        child: _currentUser.emailVerified
-            ? ListView(
-                // Important: Remove any padding from the ListView.
-                padding: EdgeInsets.zero,
-                children: [
-                  DrawerHeader(
-                    child: Container(
-                        width: MediaQuery.of(context).size.width,
-                        child: Image.asset(
-                          "assets/images/silatlogo.png",
-                        )),
-                    decoration: BoxDecoration(
-                      color: Colors.blue,
-                    ),
-                  ),
-                  ListTile(
-                    leading: Icon(Icons.person_outline),
-                    title: const Text('My Profile'),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => Profile()),
-                      );
-                    },
-                  ),
-                  ListTile(
-                    leading: Icon(Icons.person_outline),
-                    title: const Text('My Benchmarks'),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => Benchmarks()),
-                      );
-                    },
-                  ),
-                  ListTile(
-                    leading: Icon(Icons.playlist_add_check),
-                    title: const Text('Belt Advancement'),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => Advancement()),
-                      );
-                    },
-                  ),
-                  ListTile(
-                    leading: Icon(Icons.record_voice_over),
-                    title: const Text('The Creed (English)'),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => CreedEnglish()),
-                      );
-                    },
-                  ),
-                  ListTile(
-                    leading: Icon(Icons.record_voice_over),
-                    title: const Text('The Creed (Indonesian)'),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => CreedIndonesian()),
-                      );
-                    },
-                  ),
-                  ListTile(
-                    leading: Icon(Icons.scale),
-                    title: const Text('Find My Weight Class'),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => WeightClasses()),
-                      );
-                    },
-                  ),
-                  ListTile(
-                    leading: Icon(Icons.article),
-                    title: const Text('Rules of the Class'),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => Rules()),
-                      );
-                    },
-                  ),
-                  if (_isAdmin) // admin only area
-                    Column(
+    return _currentUser.emailVerified
+        ? Scaffold(
+            drawer: Drawer(
+              child: _currentUser.emailVerified
+                  ? ListView(
+                      // Important: Remove any padding from the ListView.
+                      padding: EdgeInsets.zero,
                       children: [
+                        DrawerHeader(
+                          child: Container(
+                              width: MediaQuery.of(context).size.width,
+                              child: Image.asset(
+                                "assets/images/silatlogo.png",
+                              )),
+                          decoration: BoxDecoration(
+                            color: Colors.blue,
+                          ),
+                        ),
                         ListTile(
-                          leading: Icon(Icons.thumb_up, color: Colors.green),
-                          title: const Text('Current Students', style: TextStyle(color: Colors.green),),
+                          leading: Icon(Icons.person_outline),
+                          title: const Text('My Profile'),
                           onTap: () {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => ApprovedUsers()),
+                                  builder: (context) => Profile()),
                             );
                           },
                         ),
                         ListTile(
-                          leading: Icon(Icons.format_quote, color: Colors.green),
-                          title: const Text('Add Quote', style: TextStyle(color: Colors.green),),
+                          leading: Icon(Icons.person_outline),
+                          title: const Text('My Benchmarks'),
                           onTap: () {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => AddQuotePage()),
+                                  builder: (context) => Benchmarks()),
                             );
                           },
                         ),
                         ListTile(
-                          leading: Icon(Icons.event, color: Colors.red),
-                          title: const Text('Add Event', style: TextStyle(color: Colors.red),),
+                          leading: Icon(Icons.playlist_add_check),
+                          title: const Text('Belt Advancement'),
                           onTap: () {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => AddEventsPage()),
+                                  builder: (context) => Advancement()),
                             );
                           },
                         ),
                         ListTile(
-                          leading: Icon(Icons.event, color: Colors.red),
-                          title: const Text('Guests', style: TextStyle(color: Colors.red),),
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => Guests()),
-                            );
-                          },
-                        ),
-                        ListTile(
-                          leading: Icon(Icons.help_outline, color: Colors.red),
-                          title: const Text('Unapproved Users', style: TextStyle(color: Colors.red),),
+                          leading: Icon(Icons.record_voice_over),
+                          title: const Text('The Creed (English)'),
                           onTap: () {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => UnapprovedUsers()),
+                                  builder: (context) => CreedEnglish()),
+                            );
+                          },
+                        ),
+                        ListTile(
+                          leading: Icon(Icons.record_voice_over),
+                          title: const Text('The Creed (Indonesian)'),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => CreedIndonesian()),
+                            );
+                          },
+                        ),
+                        ListTile(
+                          leading: Icon(Icons.scale),
+                          title: const Text('Find My Weight Class'),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => WeightClasses()),
+                            );
+                          },
+                        ),
+                        ListTile(
+                          leading: Icon(Icons.article),
+                          title: const Text('Rules of the Class'),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => Rules()),
+                            );
+                          },
+                        ),
+                        if (_isAdmin) // admin only area
+                          Column(
+                            children: [
+                              ListTile(
+                                leading:
+                                    Icon(Icons.thumb_up, color: Colors.green),
+                                title: const Text(
+                                  'Current Students',
+                                  style: TextStyle(color: Colors.green),
+                                ),
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => ApprovedUsers()),
+                                  );
+                                },
+                              ),
+                              ListTile(
+                                leading: Icon(Icons.format_quote,
+                                    color: Colors.green),
+                                title: const Text(
+                                  'Add Quote',
+                                  style: TextStyle(color: Colors.green),
+                                ),
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => AddQuotePage()),
+                                  );
+                                },
+                              ),
+                              ListTile(
+                                leading: Icon(Icons.event, color: Colors.red),
+                                title: const Text(
+                                  'Add Event',
+                                  style: TextStyle(color: Colors.red),
+                                ),
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => AddEventsPage()),
+                                  );
+                                },
+                              ),
+                              ListTile(
+                                leading: Icon(Icons.event, color: Colors.red),
+                                title: const Text(
+                                  'Guests',
+                                  style: TextStyle(color: Colors.red),
+                                ),
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => Guests()),
+                                  );
+                                },
+                              ),
+                              ListTile(
+                                leading:
+                                    Icon(Icons.help_outline, color: Colors.red),
+                                title: const Text(
+                                  'Unapproved Users',
+                                  style: TextStyle(color: Colors.red),
+                                ),
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            UnapprovedUsers()),
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                        ListTile(
+                          leading: Icon(Icons.logout),
+                          title: const Text('Log Out'),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => LogOut()),
                             );
                           },
                         ),
                       ],
-                    ),
-
-                  ListTile(
-                    leading: Icon(Icons.logout),
-                    title: const Text('Log Out'),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => LogOut()),
-                      );
-                    },
-                  ),
-                ],
-              )
-            : null,
-      ),
-      appBar: AppBar(
-        title: Header(headerText: _currentUser.displayName.toString()),
-      ),
-      body: _currentUser.emailVerified ? _pages[currentPageIndex] : [pleaseVerifyWidget()][currentPageIndex],
-      bottomNavigationBar: NavigationBar(
-        onDestinationSelected: (int index) {
-          setState(() {
-            currentPageIndex = index;
-          });
-        },
-        indicatorColor: Colors.amber,
-        selectedIndex: currentPageIndex,
-        destinations: const <Widget>[
-          NavigationDestination(
-            selectedIcon: Icon(Icons.home),
-            icon: Icon(Icons.home_outlined),
-            label: 'Home',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.sports_kabaddi),
-            label: 'Techniques',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.table_view),
-            label: 'Scoring',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.event),
-            label: 'Events',
-          ),
-        ],
-      ),
-    );
+                    )
+                  : null,
+            ),
+            appBar: AppBar(
+              title: Header(headerText: _currentUser.displayName.toString()),
+            ),
+            body: _pages[currentPageIndex],
+            bottomNavigationBar: NavigationBar(
+              onDestinationSelected: (int index) {
+                setState(() {
+                  currentPageIndex = index;
+                });
+              },
+              indicatorColor: Colors.amber,
+              selectedIndex: currentPageIndex,
+              destinations: const <Widget>[
+                NavigationDestination(
+                  selectedIcon: Icon(Icons.home),
+                  icon: Icon(Icons.home_outlined),
+                  label: 'Home',
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.sports_kabaddi),
+                  label: 'Techniques',
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.table_view),
+                  label: 'Scoring',
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.event),
+                  label: 'Events',
+                ),
+              ],
+            ),
+          )
+        : Scaffold(
+            appBar: AppBar(
+              title: Header(headerText: "Please verify email"),
+            ),
+            body: pleaseVerifyWidget());
   }
 }
