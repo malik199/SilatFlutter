@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:silat_flutter/admin/benchmarks.dart';
 import 'package:silat_flutter/admin/guests.dart';
+import 'package:silat_flutter/admin/pending_changes.dart';
 import 'package:silat_flutter/screens/add_events.dart';
 import 'package:silat_flutter/screens/add_quote.dart';
 import 'package:silat_flutter/screens/advancement.dart';
@@ -261,6 +262,21 @@ SizedBox(height: 50),
                         if (_isAdmin) // admin only area
                           Column(
                             children: [
+                              ListTile(
+                                leading:
+                                Icon(Icons.pending, color: Colors.green),
+                                title: const Text(
+                                  'Pending Changes',
+                                  style: TextStyle(color: Colors.green),
+                                ),
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => PendingChanges()),
+                                  );
+                                },
+                              ),
                               ListTile(
                                 leading:
                                     Icon(Icons.thumb_up, color: Colors.green),

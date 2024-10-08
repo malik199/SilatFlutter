@@ -52,7 +52,7 @@ class _GuestsState extends State<Guests> {
               subtitle: Text(formatCurriculum(dbItem?['curriculum'])),
             ),
             children: [
-              EditUserWidget(dbItem: dbItem, dbkey: dbkey)
+              EditUserWidget(dbItem: dbItem, dbkey: dbkey, editMode: 'update',)
             ],
           ),
         )

@@ -4,14 +4,15 @@ import 'package:firebase_database/ui/firebase_animated_list.dart';
 import '../models/pull_color_model.dart';
 import '../models/edit_user.dart';
 
-class ApprovedUsers extends StatefulWidget {
-  const ApprovedUsers({Key? key}) : super(key: key);
+class PendingChanges extends StatefulWidget {
+  const PendingChanges({Key? key}) : super(key: key);
 
   @override
-  _ApprovedUsersState createState() => _ApprovedUsersState();
+  _PendingChangesState createState() => _PendingChangesState();
 }
 
-class _ApprovedUsersState extends State<ApprovedUsers> {
+class _PendingChangesState extends State<PendingChanges> {
+  final DatabaseReference databaseReference = FirebaseDatabase.instance.ref().child('pending');
   double spacingWidth = 10;
   double spacingHeight = 10;
 
@@ -31,7 +32,7 @@ class _ApprovedUsersState extends State<ApprovedUsers> {
     });
   }
 
-  Widget _buildUsers({Map? dbItem, myIndex, dbkey}) {
+  Widget _buildUsers({Map? dbItem, myIndex, dbkey, editMode}) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -52,7 +53,7 @@ class _ApprovedUsersState extends State<ApprovedUsers> {
               subtitle: Text(formatCurriculum(dbItem?['curriculum'])),
             ),
             children: [
-              EditUserWidget(dbItem: dbItem, dbkey: dbkey, editMode: 'update',)
+              EditUserWidget(dbItem: dbItem, dbkey: dbkey, editMode: editMode)
             ],
           ),
         )
@@ -64,19 +65,34 @@ class _ApprovedUsersState extends State<ApprovedUsers> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Current Students'),
+        title: Text('Pending Changes'),
       ),
       body: SafeArea(
         child: FirebaseAnimatedList(
-          query: FirebaseDatabase.instance
-              .ref('users')
-              .orderByChild('isApproved')
-              .equalTo(true),
+          query: databaseReference,
           itemBuilder: (BuildContext context, DataSnapshot? snapshot,
               Animation<double> animation, int index) {
-            final dbItemValue = snapshot?.value as Map;
+
+            // Check for null snapshot and snapshot.value
+            if (snapshot?.value == null) {
+              return SizedBox.shrink(); // Alternatively, you could return a placeholder
+            }
+
+            // Safely cast to Map and handle non-Map values
+            final dbItemValue = (snapshot?.value is Map) ? snapshot?.value as Map : {};
+
+            // Include the key in dbItemValue if not null
+            if (snapshot!.key != null) {
+              dbItemValue['key'] = snapshot.key;
+            }
+
+            // Check curriculum condition and return appropriate widget
+            return (dbItemValue['curriculum'] != "guest"
+                ? _buildUsers(dbItem: dbItemValue, myIndex: index, dbkey: snapshot.key, editMode: 'pending')
+                : SizedBox.shrink());
+/*            final dbItemValue = snapshot?.value as Map;
             dbItemValue['key'] = snapshot!.key;
-            return (dbItemValue['curriculum'] != "guest" ? _buildUsers(dbItem: dbItemValue, myIndex: index, dbkey: snapshot.key) : SizedBox.shrink());
+            return (dbItemValue['curriculum'] != "guest" ? _buildUsers(dbItem: dbItemValue, myIndex: index, dbkey: snapshot.key) : SizedBox.shrink());*/
           },
         ),
       ),

@@ -49,7 +49,7 @@ class _UnapprovedUsersState extends State<UnapprovedUsers> {
               ),
               subtitle: Text(formatCurriculum(dbItem?['curriculum'])),
             ),
-            children: [EditUserWidget(dbItem: dbItem, dbkey: dbkey)],
+            children: [EditUserWidget(dbItem: dbItem, dbkey: dbkey, editMode: 'update',)],
           ),
         )
       ],

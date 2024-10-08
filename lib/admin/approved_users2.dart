@@ -77,7 +77,7 @@ class _ApprovedUsersState extends State<ApprovedUsers> {
                 ),
                 subtitle: Text(formatCurriculum(dbItem?['curriculum'])),
               ),
-              body: EditUserWidget(dbItem: dbItem, dbkey: dbItem?['id']),
+              body: EditUserWidget(dbItem: dbItem, dbkey: dbItem?['id'], editMode: 'update',),
             ),
           )
               .toList(),

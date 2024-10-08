@@ -111,7 +111,7 @@ class _TechniquesHomeState extends State<TechniquesHome> {
     Widget showSwitchCurriculumButton() {
       return (_unchangingCurriculum == "instructor" || _currentBelt == "black")
           ? ElevatedButton.icon(
-              label: Text('SWITCH CURRICULUMS', style: TextStyle(fontWeight: FontWeight.bold)),
+              label: Text('SWITCH CURRICULUMS', style: TextStyle(fontWeight: FontWeight.bold, fontFamily: 'PTSansNarrow')),
               icon: Icon(Icons.swap_horiz),
               onPressed: () {
                 switchCurriculums(_currentCurriculum);

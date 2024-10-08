@@ -92,32 +92,48 @@ class _ProfileState extends State<Profile> {
 
   var myData;
 
-  void showNumberPickerDialog(
-      BuildContext context, void Function(int) onNumberSelected) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text("Pick a Number"),
-          content: Container(
-            width: double.maxFinite,
-            height: 200,
-            child: ListView.builder(
-              itemCount: 101, // Adjust range as needed
-              itemBuilder: (BuildContext context, int index) {
-                return ListTile(
-                  title: Text("$index"),
-                  onTap: () {
-                    onNumberSelected(index);
-                    Navigator.of(context).pop();
-                  },
-                );
-              },
+  void calculateScore() {
+    setState(() {
+      _finalScore = (_1stplace * 10) +
+          (_2ndplace * 8) +
+          (_tournaments! * 6) +
+          (_classMerits) +
+          (_deeds);
+    });
+  }
+  Widget _pendingWidget = Container();
+  void checkForPendingUpdates(String dbKey) {
+    _database.child('pending').child(dbKey).once().then((rtdbData) {
+      if (rtdbData.snapshot.exists) {
+        setState(() {
+          _pendingWidget = Container(
+            padding: EdgeInsets.symmetric(vertical: 0, horizontal: 20),
+            decoration: BoxDecoration(
+              color: Colors.pink,
+              borderRadius: BorderRadius.circular(10),
             ),
+            child: Text(
+              'Pending updates',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+              ),
+            ),
+          );
+        });
+      }
+    }).catchError((error) {
+      setState(() {
+        _pendingWidget = Container(
+          alignment: Alignment.center,
+          child: Text(
+            'Error checking updates',
+            style: TextStyle(fontSize: 16, color: Colors.red),
           ),
         );
-      },
-    );
+      });
+      print('Failed to check for pending updates: $error');
+    });
   }
 
   void _getUserData() {
@@ -190,6 +206,8 @@ class _ProfileState extends State<Profile> {
           bm_boxjumps = myData['bm_boxjumps'] ?? 0;
           bm_squats = myData['bm_squats'] ?? 0;
         });
+
+        checkForPendingUpdates(_dbkey!);
       } else {
         print("No data");
       }
@@ -207,16 +225,6 @@ class _ProfileState extends State<Profile> {
           print(value['state']);
         });
       });
-    });
-  }
-
-  void calculateScore() {
-    setState(() {
-      _finalScore = (_1stplace * 10) +
-          (_2ndplace * 8) +
-          (_tournaments! * 6) +
-          (_classMerits) +
-          (_deeds);
     });
   }
 
@@ -264,6 +272,7 @@ class _ProfileState extends State<Profile> {
                 {ScaffoldMessenger.of(context).showSnackBar(snackBarGreen)})
             .catchError((error) =>
                 {ScaffoldMessenger.of(context).showSnackBar(snackBarRed)});
+
       } else {
         _database
             .child('/pending')
@@ -364,12 +373,7 @@ class _ProfileState extends State<Profile> {
                 children: [
                   //InternetConnection(),
                   Center(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        callCloudFunction(_dbkey!);
-                      },
-                      child: Text('Update User Data'),
-                    ),
+                    child: _pendingWidget
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(
@@ -609,6 +613,7 @@ class _ProfileState extends State<Profile> {
                             newValue = '0';
                           }
                           setState(() => _tournaments = int.parse(newValue));
+                          calculateScore();
                         },
                       )),
                   ListTile(
@@ -646,6 +651,7 @@ class _ProfileState extends State<Profile> {
                           newValue = '0';
                         }
                         setState(() => _1stplace = int.parse(newValue));
+                        calculateScore();
                       },
                     ),
                   ),
@@ -684,6 +690,7 @@ class _ProfileState extends State<Profile> {
                           newValue = '0';
                         }
                         setState(() => _2ndplace = int.parse(newValue));
+                        calculateScore();
                       },
                     ),
                   ),
@@ -723,6 +730,7 @@ class _ProfileState extends State<Profile> {
                           newValue = '0';
                         }
                         setState(() => _classMerits = int.parse(newValue));
+                        calculateScore();
                       },
                     ),
                   ),
@@ -762,6 +770,7 @@ class _ProfileState extends State<Profile> {
                           newValue = '0';
                         }
                         setState(() => _deeds = int.parse(newValue));
+                        calculateScore();
                       },
                     ),
                   ),
