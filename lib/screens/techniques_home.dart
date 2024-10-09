@@ -131,7 +131,7 @@ class _TechniquesHomeState extends State<TechniquesHome> {
 
     Widget allTechniqueWidget = SingleChildScrollView(
         child: Column(children: [
-          //InternetConnection(),
+          InternetConnection(),
           Padding(
             padding: const EdgeInsets.all(_spacing),
             child: Text(

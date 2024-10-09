@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:cloud_functions/cloud_functions.dart';
+import 'package:flutter/services.dart';
 
 class EditUserWidget extends StatefulWidget {
   const EditUserWidget({
@@ -18,53 +20,124 @@ class EditUserWidget extends StatefulWidget {
 
 class _EditUserWidgetState extends State<EditUserWidget> {
   DatabaseReference _database = FirebaseDatabase.instance.ref();
+  final HttpsCallable callable =
+      FirebaseFunctions.instance.httpsCallable('transferUserData');
+  final formKey = GlobalKey<FormState>();
 
   double spacingWidth = 10;
   double spacingHeight = 10;
+
+  late String? _firstName = "";
+  late String? _lastName = "";
+  late int? _stripe = 0;
+  late String? _email = "";
+  int _age = 6;
+
   String _beltColor = "";
   String _curriculum = "";
   String _location = "";
   int _tournaments = 0;
-  int _firstPlaceWins = 0;
-  int _secondPlaceWins = 0;
+  int _1stplace = 0;
+  int _2ndplace = 0;
   int _classMerits = 0;
-  int _goodDeeds = 0;
+  int _deeds = 0;
   bool _isApprov = false;
   int _finalScore = 0;
   List<String> _listOfLocations = [];
   List<int> _listOfNumbers = [for (var i = 0; i <= 50; i++) i];
-  int _pushups = 0;
-  int _situps = 0;
-  int _pullups = 0;
-  String _deadhang = "";
-  String _mile = "";
-  String _dash = "";
-  String _wallsit = "";
-  int _boxJump = 0;
-  int _squats = 0;
+  List _listOfAges = [for (var i = 5; i <= 50; i++) i];
+
+  late int? bm_pushups = 0;
+  late int? bm_situps = 0;
+  late int? bm_pullups = 0;
+  late String? bm_deadhang;
+  late String? bm_mile;
+  late String? bm_dash;
+  late String? bm_wallsits;
+  late int? bm_boxjumps = 0;
+  late int? bm_squats = 0;
+
+  TextEditingController? _firstNameController = TextEditingController();
+  TextEditingController? _lastNameController = TextEditingController();
+
+  TextEditingController? _bm_pushupsController = TextEditingController();
+  TextEditingController? _bm_situpsController = TextEditingController();
+  TextEditingController? _bm_pullupsController = TextEditingController();
+  TextEditingController? _bm_deadhangController = TextEditingController();
+  TextEditingController? _bm_mileTimeController = TextEditingController();
+  TextEditingController? _bm_dashController = TextEditingController();
+  TextEditingController? _bm_wallSitController = TextEditingController();
+  TextEditingController? _bm_boxJumpsController = TextEditingController();
+  TextEditingController? _bm_squatsController = TextEditingController();
 
   @override
   void initState() {
+    _firstName = widget.dbItem?['firstname'];
+    _lastName = widget.dbItem?['lastname'];
+    _age = widget.dbItem?['age'] ?? 0;
+    _email = widget.dbItem?['email'];
     _beltColor = widget.dbItem?['belt'];
     _curriculum = widget.dbItem?['curriculum'];
     _isApprov = widget.dbItem?['isApproved'];
     _tournaments = widget.dbItem?['tournaments'] ?? 0;
-    _firstPlaceWins = widget.dbItem?['1stplace'] ?? 0;
-    _secondPlaceWins = widget.dbItem?['2ndplace'] ?? 0;
+    _1stplace = widget.dbItem?['1stplace'] ?? 0;
+    _2ndplace = widget.dbItem?['2ndplace'] ?? 0;
     _classMerits = widget.dbItem?['classMerits'] ?? 0;
-    _goodDeeds = widget.dbItem?['deeds'] ?? 0;
+    _deeds = widget.dbItem?['deeds'] ?? 0;
     _finalScore = widget.dbItem?['score'] ?? 0;
     _location = widget.dbItem?['location'] ?? "";
     // bench marks
-    _pushups = widget.dbItem?['bm_pushups'] ?? 0;
-    _situps = widget.dbItem?['bm_situps'] ?? 0;
-    _pullups = widget.dbItem?['bm_pullups'] ?? 0;
-    _deadhang = widget.dbItem?['bm_deadhang'] ?? '0:00';
-    _mile = widget.dbItem?['bm_mile'] ?? '0:00';
-    _dash = widget.dbItem?['bm_dash'] ?? '0:00';
-    _wallsit = widget.dbItem?['bm_wallsits'] ?? '0:00';
-    _boxJump = widget.dbItem?['bm_boxjumps'] ?? 0;
-    _squats = widget.dbItem?['bm_squats'] ?? 0;
+    bm_pushups = widget.dbItem?['bm_pushups'] ?? 0;
+    bm_situps = widget.dbItem?['bm_situps'] ?? 0;
+    bm_pullups = widget.dbItem?['bm_pullups'] ?? 0;
+    bm_deadhang = widget.dbItem?['bm_deadhang'] ?? '0:00';
+    bm_mile = widget.dbItem?['bm_mile'] ?? '0:00';
+    bm_dash = widget.dbItem?['bm_dash'] ?? '0:00';
+    bm_wallsits = widget.dbItem?['bm_wallsits'] ?? '0:00';
+    bm_boxjumps = widget.dbItem?['bm_boxjumps'] ?? 0;
+    bm_squats = widget.dbItem?['bm_squats'] ?? 0;
+
+    _firstNameController =
+        TextEditingController(text: widget.dbItem?['firstname']);
+    _lastNameController =
+        TextEditingController(text: widget.dbItem?['lastname']);
+
+    _bm_pushupsController = TextEditingController(
+        text: widget.dbItem?['bm_pushups'] == null
+            ? '0'
+            : widget.dbItem?['bm_pushups'].toString());
+    _bm_pullupsController = TextEditingController(
+        text: widget.dbItem?['bm_pullups'] == null
+            ? '0'
+            : widget.dbItem?['bm_pullups'].toString());
+    _bm_situpsController = TextEditingController(
+        text: widget.dbItem?['bm_situps'] == null
+            ? '0'
+            : widget.dbItem?['bm_situps'].toString());
+    _bm_deadhangController = TextEditingController(
+        text: widget.dbItem?['bm_deadhang'] == null
+            ? '0:00'
+            : widget.dbItem?['bm_deadhang'].toString());
+    _bm_mileTimeController = TextEditingController(
+        text: widget.dbItem?['bm_mile'] == null
+            ? '0:00'
+            : widget.dbItem?['bm_mile'].toString());
+    _bm_dashController = TextEditingController(
+        text: widget.dbItem?['bm_dash'] == null
+            ? '0:00'
+            : widget.dbItem?['bm_dash'].toString());
+    _bm_wallSitController = TextEditingController(
+        text: widget.dbItem?['bm_wallsits'] == null
+            ? '0:00'
+            : widget.dbItem?['bm_wallsits'].toString());
+    _bm_boxJumpsController = TextEditingController(
+        text: widget.dbItem?['bm_boxjumps'] == null
+            ? '0'
+            : widget.dbItem?['bm_boxjumps'].toString());
+    _bm_squatsController = TextEditingController(
+        text: widget.dbItem?['bm_squats'] == null
+            ? '0'
+            : widget.dbItem?['bm_squats'].toString());
 
     _getSchoolData();
     super.initState();
@@ -85,11 +158,11 @@ class _EditUserWidgetState extends State<EditUserWidget> {
 
   void calculateScore() {
     setState(() {
-      _finalScore = (_firstPlaceWins * 10) +
-          (_secondPlaceWins * 8) +
+      _finalScore = (_1stplace * 10) +
+          (_2ndplace * 8) +
           (_tournaments * 6) +
           (_classMerits) +
-          (_goodDeeds);
+          (_deeds);
     });
   }
 
@@ -173,8 +246,8 @@ class _EditUserWidgetState extends State<EditUserWidget> {
     );
   }
 
-  Widget submitButton(BuildContext context){
-    if(widget.editMode == 'pending') {
+  Widget submitButton(BuildContext context) {
+    if (widget.editMode == 'pending') {
       return Row(
         children: [
           Expanded(
@@ -186,15 +259,17 @@ class _EditUserWidgetState extends State<EditUserWidget> {
                     ),
                     backgroundColor: Colors.pinkAccent,
                     foregroundColor: Colors.white,
-                    textStyle: TextStyle(
-                        fontSize: 20, fontWeight: FontWeight.bold)),
+                    textStyle:
+                        TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                 icon: Icon(Icons.save),
                 label: Text("Approve Pending Changes",
-                    style: TextStyle(color: Colors.white, fontFamily: 'PTSansNarrow',)),
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontFamily: 'PTSansNarrow',
+                    )),
                 onPressed: () {
                   _showConfirmationDialog(context);
                 }),
-
           ),
           Expanded(
             flex: 1,
@@ -220,33 +295,48 @@ class _EditUserWidgetState extends State<EditUserWidget> {
                     ),
                     backgroundColor: Colors.purple,
                     foregroundColor: Colors.white,
-                    padding:
-                    EdgeInsets.symmetric(horizontal: 50, vertical: 10),
-                    textStyle: TextStyle(
-                        fontSize: 20, fontWeight: FontWeight.bold)),
+                    padding: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
+                    textStyle:
+                        TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                 icon: Icon(Icons.save),
                 label: Text("Update Profile",
-                    style: TextStyle(color: Colors.white, fontFamily: 'PTSansNarrow',)),
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontFamily: 'PTSansNarrow',
+                    )),
                 onPressed: () {
                   _database
                       .child('/users')
                       .child(widget.dbkey)
                       .update({
-                    'belt': _beltColor,
-                    'curriculum': _curriculum,
-                    'isApproved': _isApprov,
-                    'tournaments': _tournaments,
-                    '1stplace': _firstPlaceWins,
-                    '2ndplace': _secondPlaceWins,
-                    'classMerits': _classMerits,
-                    'deeds': _goodDeeds,
-                    'score': _finalScore,
-                    'location': _location
-                  })
+                        'firstname': _firstName,
+                        'lastname': _lastName,
+                        'belt': _beltColor,
+                        'stripe': _stripe,
+                        'age': _age,
+                        'curriculum': _curriculum,
+                        'isApproved': _isApprov,
+                        'tournaments': _tournaments,
+                        '1stplace': _1stplace,
+                        '2ndplace': _2ndplace,
+                        'classMerits': _classMerits,
+                        'deeds': _deeds,
+                        'score': _finalScore,
+                        'location': _location,
+                        'bm_boxjumps': bm_boxjumps,
+                        'bm_dash': bm_dash,
+                        'bm_deadhang': bm_deadhang,
+                        'bm_mile': bm_mile,
+                        'bm_pullups': bm_pullups,
+                        'bm_pushups': bm_pushups,
+                        'bm_situps': bm_situps,
+                        'bm_squats': bm_squats,
+                        'bm_wallsits': bm_wallsits,
+                      })
                       .then((value) => ScaffoldMessenger.of(context)
-                      .showSnackBar(snackBarGreen))
+                          .showSnackBar(snackBarGreen))
                       .catchError((error) => ScaffoldMessenger.of(context)
-                      .showSnackBar(snackBarRed));
+                          .showSnackBar(snackBarRed));
                 }),
           ),
           Expanded(
@@ -281,15 +371,15 @@ class _EditUserWidgetState extends State<EditUserWidget> {
             ),
             TextButton(
               onPressed: () {
-                // Here you can add your action for approval
+                _approveChanges(widget.dbkey);
                 print("Changes Approved!");
-                ScaffoldMessenger.of(context).showSnackBar(
+                /* ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       backgroundColor: Colors.green,
                       content: Text("Changes have been approved!!", style: TextStyle(color: Colors.white)),
                       duration: Duration(seconds: 2), // How long to show the Snackbar
                     )
-                );
+                ); */
                 Navigator.of(context).pop(); // Dismiss the dialog
               },
               child: Text("Approve"),
@@ -298,6 +388,17 @@ class _EditUserWidgetState extends State<EditUserWidget> {
         );
       },
     );
+  }
+
+  Future<void> _approveChanges(String dbKey) async {
+    final HttpsCallableResult result = await callable.call(<String, dynamic>{
+      'dbKey': dbKey,
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   final snackBarRed = SnackBar(
@@ -319,347 +420,754 @@ class _EditUserWidgetState extends State<EditUserWidget> {
       padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 8.0),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    Icon(Icons.email),
-                    SizedBox(width: _smallSpacing),
-                    Text(widget.dbItem?['email']),
-                  ],
+        child: Form(
+          key: formKey,
+          child: Column(
+            children: [
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: 'First Name',
+                  isDense: true,
                 ),
-                Row(
-                  children: [
-                    Icon(Icons.horizontal_split),
-                    SizedBox(width: _smallSpacing),
-                    DropdownButton<String>(
-                      value: _beltColor,
-                      icon: const Icon(Icons.arrow_downward),
-                      iconSize: 24,
-                      elevation: 16,
-                      underline: Container(
-                        height: 2,
-                      ),
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          _beltColor = newValue!;
-                        });
-                      },
-                      items: <String>[
-                        'white',
-                        'yellow',
-                        'green',
-                        'blue',
-                        'purple',
-                        'brown',
-                        'black',
-                        'red'
-                      ].map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    Icon(Icons.assignment),
-                    SizedBox(width: _smallSpacing),
-                    DropdownButton<String>(
-                      value: _curriculum,
-                      icon: const Icon(Icons.arrow_downward),
-                      iconSize: 24,
-                      elevation: 16,
-                      underline: Container(
-                        height: 2,
-                      ),
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          _curriculum = newValue!;
-                        });
-                      },
-                      items: <String>[
-                        'jawara_muda',
-                        'satria_muda',
-                      ].map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Icon(Icons.place),
-                    DropdownButton<String>(
-                      value: _location,
-                      icon: const Icon(Icons.arrow_downward),
-                      iconSize: 24,
-                      elevation: 16,
-                      underline: Container(
-                        height: 2,
-                      ),
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          _location = newValue!;
-                        });
-                      },
-                      items: _listOfLocations
-                          .map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Icon(Icons.thumb_up_alt, color: Colors.green),
-                    Switch(
-                        value: _isApprov,
-                        onChanged: (bool value) {
-                          setState(() => _isApprov = value);
-                        }),
-                  ],
-                ),
-              ],
-            ),
-            Divider(thickness: 2),
-            SizedBox(height: _smallSpacing),
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(Icons.follow_the_signs),
-                      SizedBox(width: _smallSpacing),
-                      Text("Tournaments:"),
-                      SizedBox(width: _smallSpacing),
-                      DropdownButton<int>(
-                        value: _tournaments,
-                        icon: const Icon(Icons.arrow_downward),
-                        iconSize: 24,
-                        elevation: 16,
-                        underline: Container(
-                          height: 2,
-                        ),
-                        onChanged: (int? newValue) {
-                          setState(() {
-                            _tournaments = newValue!;
-                          });
-                          calculateScore();
-                        },
-                        items: _listOfNumbers
-                            .map<DropdownMenuItem<int>>((int value) {
-                          return DropdownMenuItem<int>(
-                            value: value,
-                            child: Text(value.toString()),
-                          );
-                        }).toList(),
-                      ),
-                    ],
-                  ),
-                ],
+                controller: _firstNameController,
+                validator: (value) {
+                  if (value!.length < 4) {
+                    return 'Enter at least 4 characters';
+                  } else {
+                    return null;
+                  }
+                },
+                maxLength: 15,
+                onChanged: (value) =>
+                    setState(() => _firstName = value.toString()),
               ),
-              Column(
-                children: [
-                  Row(
-                    children: [
-                      Icon(Icons.filter_1),
-                      SizedBox(width: _smallSpacing),
-                      Text("1st Places:"),
-                      SizedBox(width: _smallSpacing),
-                      DropdownButton<int>(
-                        value: _firstPlaceWins,
-                        icon: const Icon(Icons.arrow_downward),
-                        iconSize: 24,
-                        elevation: 16,
-                        underline: Container(
-                          height: 2,
-                        ),
-                        onChanged: (int? newValue) {
-                          setState(() {
-                            _firstPlaceWins = newValue!;
-                          });
-                          calculateScore();
-                        },
-                        items: _listOfNumbers
-                            .map<DropdownMenuItem<int>>((int value) {
-                          return DropdownMenuItem<int>(
-                            value: value,
-                            child: Text(value.toString()),
-                          );
-                        }).toList(),
-                      ),
-                    ],
-                  ),
-                ],
-              )
-            ]),
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              Column(
-                children: [
-                  Row(
-                    children: [
-                      Icon(Icons.filter_2),
-                      SizedBox(width: _smallSpacing),
-                      Text("2nd Places:"),
-                      SizedBox(width: _smallSpacing),
-                      DropdownButton<int>(
-                        value: _secondPlaceWins,
-                        icon: const Icon(Icons.arrow_downward),
-                        iconSize: 24,
-                        elevation: 16,
-                        underline: Container(
-                          height: 2,
-                        ),
-                        onChanged: (int? newValue) {
-                          setState(() {
-                            _secondPlaceWins = newValue!;
-                          });
-                          calculateScore();
-                        },
-                        items: _listOfNumbers
-                            .map<DropdownMenuItem<int>>((int value) {
-                          return DropdownMenuItem<int>(
-                            value: value,
-                            child: Text(value.toString()),
-                          );
-                        }).toList(),
-                      ),
-                    ],
-                  ),
-                ],
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: 'Last Name',
+                  isDense: true,
+                ),
+                controller: _lastNameController,
+                validator: (value) {
+                  if (value!.length < 4) {
+                    return 'Enter at least 4 characters';
+                  } else {
+                    return null;
+                  }
+                },
+                maxLength: 15,
+                onChanged: (value) =>
+                    setState(() => _lastName = value.toString()),
               ),
-              Column(
-                children: [
-                  Row(
-                    children: [
-                      Icon(Icons.store),
-                      SizedBox(width: _smallSpacing),
-                      Text("Class Merits:"),
-                      SizedBox(width: _smallSpacing),
-                      DropdownButton<int>(
-                        value: _classMerits,
-                        icon: const Icon(Icons.arrow_downward),
-                        iconSize: 24,
-                        elevation: 16,
-                        underline: Container(
-                          height: 2,
-                        ),
-                        onChanged: (int? newValue) {
-                          setState(() {
-                            _classMerits = newValue!;
-                          });
-                          calculateScore();
-                        },
-                        items: _listOfNumbers
-                            .map<DropdownMenuItem<int>>((int value) {
-                          return DropdownMenuItem<int>(
-                            value: value,
-                            child: Text(value.toString()),
-                          );
-                        }).toList(),
-                      ),
-                    ],
-                  ),
-                ],
-              )
-            ]),
-            Row(
+              Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-              Row(
-                children: [
-                  Icon(Icons.verified),
-                  SizedBox(width: _smallSpacing),
-                  Text("Good Deeds: "),
-                  DropdownButton<int>(
-                    value: _goodDeeds,
-                    icon: const Icon(Icons.arrow_downward),
-                    iconSize: 24,
-                    elevation: 16,
-                    underline: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Center(
-                        child: Container(
+                  Row(
+                    children: [
+                      Icon(Icons.assignment),
+                      SizedBox(width: _smallSpacing),
+                      DropdownButton<String>(
+                        value: _curriculum,
+                        icon: const Icon(Icons.arrow_downward),
+                        iconSize: 24,
+                        elevation: 16,
+                        underline: Container(
                           height: 2,
                         ),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            _curriculum = newValue!;
+                          });
+                        },
+                        items: <String>[
+                          'jawara_muda',
+                          'satria_muda',
+                          'instructor',
+                          'guest',
+                          'abah_jawara'
+                        ].map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
                       ),
-                    ),
-                    onChanged: (int? newValue) {
-                      setState(() {
-                        _goodDeeds = newValue!;
-                      });
-                      calculateScore();
-                    },
-                    items: _listOfNumbers.map<DropdownMenuItem<int>>((int value) {
-                      return DropdownMenuItem<int>(
-                        value: value,
-                        child: Text(value.toString()),
-                      );
-                    }).toList(),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Icon(Icons.place),
+                      Text("Location: "),
+                      DropdownButton<String>(
+                        value: _location,
+                        icon: const Icon(Icons.arrow_downward),
+                        iconSize: 24,
+                        elevation: 16,
+                        underline: Container(
+                          height: 2,
+                        ),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            _location = newValue!;
+                          });
+                        },
+                        items: _listOfLocations
+                            .map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                      ),
+                    ],
+                  ),
+
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.assignment_ind),
+                      SizedBox(width: _smallSpacing),
+                      Text("Age:"),
+                      SizedBox(width: _smallSpacing),
+                      DropdownButton<int>(
+                        value: _age,
+                        icon: const Icon(Icons.arrow_downward),
+                        iconSize: 24,
+                        elevation: 16,
+                        style: const TextStyle(color: Colors.amber),
+                        underline: Container(
+                          height: 2,
+                          color: Colors.amberAccent,
+                        ),
+                        onChanged: (int? newValue) {
+                          setState(() {
+                            _age = newValue ?? 0;
+                          });
+                        },
+                        items: _listOfAges.map<DropdownMenuItem<int>>((value) {
+                          return DropdownMenuItem(
+                            value: value,
+                            child: Text(value.toString()),
+                          );
+                        }).toList(),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Icon(Icons.thumb_up_alt, color: Colors.green),
+                      SizedBox(width: _smallSpacing),
+                      Text("Approved:"),
+                      SizedBox(width: _smallSpacing),
+                      Switch(
+                          value: _isApprov,
+                          onChanged: (bool value) {
+                            setState(() => _isApprov = value);
+                          }),
+                    ],
                   ),
                 ],
               ),
-              Text(_finalScore.toString(),
-                  style: TextStyle(
-                      fontSize: 40,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.deepOrangeAccent))
-            ]),
-            Divider(
-              thickness: 2,
-            ),
-            Row(children: [
-              Text('Pushups: '),
-              Text(_pushups.toString(), style: TextStyle(fontWeight: FontWeight.bold, color: Colors.amber,)),
-              SizedBox(width: _mediumSpacing),
-              Text('Situps: '),
-              Text(_situps.toString(), style: TextStyle(fontWeight: FontWeight.bold, color: Colors.amber,)),
-              SizedBox(width: _mediumSpacing),
-              Text('Pullups: '),
-              Text(_pullups.toString(), style: TextStyle(fontWeight: FontWeight.bold, color: Colors.amber,)),
-            ]),
-            Row(children: [
-              Text('Deadhang: '),
-              Text(_deadhang, style: TextStyle(fontWeight: FontWeight.bold, color: Colors.amber,)),
-              SizedBox(width: _mediumSpacing),
-              Text('Mile: '),
-              Text(_mile, style: TextStyle(fontWeight: FontWeight.bold, color: Colors.amber,)),
-              SizedBox(width: _mediumSpacing),
-              Text('50m-Dash: '),
-              Text(_dash, style: TextStyle(fontWeight: FontWeight.bold, color: Colors.amber,)),
-            ]),
-            Row(children: [
-              Text('Wallsit: '),
-              Text(_wallsit, style: TextStyle(fontWeight: FontWeight.bold, color: Colors.amber,)),
-              SizedBox(width: _mediumSpacing),
-              Text('Box-jumps: '),
-              Text(_boxJump.toString(), style: TextStyle(fontWeight: FontWeight.bold, color: Colors.amber,)),
-              SizedBox(width: _mediumSpacing),
-              Text('Squats: '),
-              Text(_squats.toString(), style: TextStyle(fontWeight: FontWeight.bold, color: Colors.amber,)),
-            ]),
-            SizedBox(height: _mediumSpacing),
-            submitButton(context),
-            SizedBox(height: _mediumSpacing),
-          ],
+              Divider(thickness: 2),
+              SizedBox(height: _smallSpacing),
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(Icons.follow_the_signs),
+                        SizedBox(width: _smallSpacing),
+                        Text("Tournaments:"),
+                        SizedBox(width: _smallSpacing),
+                        DropdownButton<int>(
+                          value: _tournaments,
+                          icon: const Icon(Icons.arrow_downward),
+                          iconSize: 24,
+                          elevation: 16,
+                          underline: Container(
+                            height: 2,
+                          ),
+                          onChanged: (int? newValue) {
+                            setState(() {
+                              _tournaments = newValue!;
+                            });
+                            calculateScore();
+                          },
+                          items: _listOfNumbers
+                              .map<DropdownMenuItem<int>>((int value) {
+                            return DropdownMenuItem<int>(
+                              value: value,
+                              child: Text(value.toString()),
+                            );
+                          }).toList(),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                Column(
+                  children: [
+                    Row(
+                      children: [
+                        Icon(Icons.filter_1),
+                        SizedBox(width: _smallSpacing),
+                        Text("1st Places:"),
+                        SizedBox(width: _smallSpacing),
+                        DropdownButton<int>(
+                          value: _1stplace,
+                          icon: const Icon(Icons.arrow_downward),
+                          iconSize: 24,
+                          elevation: 16,
+                          underline: Container(
+                            height: 2,
+                          ),
+                          onChanged: (int? newValue) {
+                            setState(() {
+                              _1stplace = newValue!;
+                            });
+                            calculateScore();
+                          },
+                          items: _listOfNumbers
+                              .map<DropdownMenuItem<int>>((int value) {
+                            return DropdownMenuItem<int>(
+                              value: value,
+                              child: Text(value.toString()),
+                            );
+                          }).toList(),
+                        ),
+                      ],
+                    ),
+                  ],
+                )
+              ]),
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                Column(
+                  children: [
+                    Row(
+                      children: [
+                        Icon(Icons.filter_2),
+                        SizedBox(width: _smallSpacing),
+                        Text("2nd Places:"),
+                        SizedBox(width: _smallSpacing),
+                        DropdownButton<int>(
+                          value: _2ndplace,
+                          icon: const Icon(Icons.arrow_downward),
+                          iconSize: 24,
+                          elevation: 16,
+                          underline: Container(
+                            height: 2,
+                          ),
+                          onChanged: (int? newValue) {
+                            setState(() {
+                              _2ndplace = newValue!;
+                            });
+                            calculateScore();
+                          },
+                          items: _listOfNumbers
+                              .map<DropdownMenuItem<int>>((int value) {
+                            return DropdownMenuItem<int>(
+                              value: value,
+                              child: Text(value.toString()),
+                            );
+                          }).toList(),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                Column(
+                  children: [
+                    Row(
+                      children: [
+                        Icon(Icons.store),
+                        SizedBox(width: _smallSpacing),
+                        Text("Class Merits:"),
+                        SizedBox(width: _smallSpacing),
+                        DropdownButton<int>(
+                          value: _classMerits,
+                          icon: const Icon(Icons.arrow_downward),
+                          iconSize: 24,
+                          elevation: 16,
+                          underline: Container(
+                            height: 2,
+                          ),
+                          onChanged: (int? newValue) {
+                            setState(() {
+                              _classMerits = newValue!;
+                            });
+                            calculateScore();
+                          },
+                          items: _listOfNumbers
+                              .map<DropdownMenuItem<int>>((int value) {
+                            return DropdownMenuItem<int>(
+                              value: value,
+                              child: Text(value.toString()),
+                            );
+                          }).toList(),
+                        ),
+                      ],
+                    ),
+                  ],
+                )
+              ]),
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                Row(
+                  children: [
+                    Icon(Icons.verified),
+                    SizedBox(width: _smallSpacing),
+                    Text("Good Deeds: "),
+                    DropdownButton<int>(
+                      value: _deeds,
+                      icon: const Icon(Icons.arrow_downward),
+                      iconSize: 24,
+                      elevation: 16,
+                      underline: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Center(
+                          child: Container(
+                            height: 2,
+                          ),
+                        ),
+                      ),
+                      onChanged: (int? newValue) {
+                        setState(() {
+                          _deeds = newValue!;
+                        });
+                        calculateScore();
+                      },
+                      items: _listOfNumbers
+                          .map<DropdownMenuItem<int>>((int value) {
+                        return DropdownMenuItem<int>(
+                          value: value,
+                          child: Text(value.toString()),
+                        );
+                      }).toList(),
+                    ),
+                  ],
+                ),
+                Text(_finalScore.toString(),
+                    style: TextStyle(
+                        fontSize: 40,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.deepOrangeAccent))
+              ]),
+              Divider(
+                thickness: 2,
+              ),
+              SizedBox(
+                height: _smallSpacing,
+              ),
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          "Pushups",
+                          textAlign: TextAlign.left,
+                        ),
+                        SizedBox(
+                          width: _smallSpacing,
+                        ),
+                        TextField(
+                          textAlign: TextAlign.center,
+                          controller: _bm_pushupsController,
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            border:
+                                OutlineInputBorder(), // Adds a border around the input
+                            contentPadding: EdgeInsets.symmetric(
+                                vertical: 1.0,
+                                horizontal: 1.0), // Padding inside the border
+                            isDense: true, // Reduces the field's height
+                            counterText:
+                                '', // Hides the counter text that appears below the TextField
+                            constraints: BoxConstraints(
+                              maxWidth:
+                                  40, // Adjust width to fit about 5 digits
+                            ),
+                          ),
+                          inputFormatters: <TextInputFormatter>[
+                            FilteringTextInputFormatter.allow(
+                                RegExp(r'^[0-9:.]*$'))
+                            // Limiting the input to 5 characters
+                          ],
+                          onSubmitted: (String newValue) {
+                            if (newValue == "") {
+                              newValue = '0';
+                            }
+                            setState(() => bm_pushups = newValue as int?);
+                          },
+                          style: TextStyle(
+                            fontSize: 14.0, color: Colors.amber,
+                            // Set your desired font size here, smaller than the default
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          "Situps",
+                          textAlign: TextAlign.left,
+                        ),
+                        SizedBox(
+                          width: _smallSpacing,
+                        ),
+                        TextField(
+                          textAlign: TextAlign.center,
+                          controller: _bm_situpsController,
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            border:
+                                OutlineInputBorder(), // Adds a border around the input
+                            contentPadding: EdgeInsets.symmetric(
+                                vertical: 1.0,
+                                horizontal: 1.0), // Padding inside the border
+                            isDense: true, // Reduces the field's height
+                            counterText:
+                                '', // Hides the counter text that appears below the TextField
+                            constraints: BoxConstraints(
+                              maxWidth:
+                                  40, // Adjust width to fit about 5 digits
+                            ),
+                          ),
+                          inputFormatters: <TextInputFormatter>[
+                            FilteringTextInputFormatter.allow(
+                                RegExp(r'^[0-9:.]*$'))
+                            // Limiting the input to 5 characters
+                          ],
+                          onSubmitted: (String newValue) {
+                            if (newValue == "") {
+                              newValue = '0';
+                            }
+                            setState(() => bm_situps = newValue as int?);
+                          },
+                          style: TextStyle(
+                            fontSize: 14.0, color: Colors.amber,
+                            // Set your desired font size here, smaller than the default
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text("Pullups"),
+                        SizedBox(
+                          width: _smallSpacing,
+                        ),
+                        TextField(
+                          textAlign: TextAlign.center,
+                          controller: _bm_pullupsController,
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            border:
+                                OutlineInputBorder(), // Adds a border around the input
+                            contentPadding: EdgeInsets.symmetric(
+                                vertical: 1.0,
+                                horizontal: 1.0), // Padding inside the border
+                            isDense: true, // Reduces the field's height
+                            counterText:
+                                '', // Hides the counter text that appears below the TextField
+                            constraints: BoxConstraints(
+                              maxWidth:
+                                  40, // Adjust width to fit about 5 digits
+                            ),
+                          ),
+                          inputFormatters: <TextInputFormatter>[
+                            FilteringTextInputFormatter.allow(
+                                RegExp(r'^[0-9:.]*$'))
+                            // Limiting the input to 5 characters
+                          ],
+                          onSubmitted: (String newValue) {
+                            if (newValue == "") {
+                              newValue = '0';
+                            }
+                            setState(() => bm_pullups = newValue as int?);
+                          },
+                          style: TextStyle(
+                            fontSize: 14.0, color: Colors.amber,
+                            // Set your desired font size here, smaller than the default
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Row(
+                      children: [
+                        Text("Deadhang"),
+                        SizedBox(
+                          width: _smallSpacing,
+                        ),
+                        TextField(
+                          textAlign: TextAlign.center,
+                          controller: _bm_deadhangController,
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            border:
+                                OutlineInputBorder(), // Adds a border around the input
+                            contentPadding: EdgeInsets.symmetric(
+                                vertical: 1.0,
+                                horizontal: 1.0), // Padding inside the border
+                            isDense: true, // Reduces the field's height
+                            counterText:
+                                '', // Hides the counter text that appears below the TextField
+                            constraints: BoxConstraints(
+                              maxWidth:
+                                  40, // Adjust width to fit about 5 digits
+                            ),
+                          ),
+                          inputFormatters: <TextInputFormatter>[
+                            FilteringTextInputFormatter.allow(
+                                RegExp(r'^[0-9:.]*$'))
+                            // Limiting the input to 5 characters
+                          ],
+                          onSubmitted: (String newValue) {
+                            if (newValue == "") {
+                              newValue = '0';
+                            }
+                            setState(() => bm_deadhang = newValue);
+                          },
+                          style: TextStyle(
+                            fontSize: 14.0, color: Colors.amber,
+                            // Set your desired font size here, smaller than the default
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text("Mile Time"),
+                        SizedBox(
+                          width: _smallSpacing,
+                        ),
+                        TextField(
+                          textAlign: TextAlign.center,
+                          controller: _bm_mileTimeController,
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            border:
+                                OutlineInputBorder(), // Adds a border around the input
+                            contentPadding: EdgeInsets.symmetric(
+                                vertical: 1.0,
+                                horizontal: 1.0), // Padding inside the border
+                            isDense: true, // Reduces the field's height
+                            counterText:
+                                '', // Hides the counter text that appears below the TextField
+                            constraints: BoxConstraints(
+                              maxWidth:
+                                  40, // Adjust width to fit about 5 digits
+                            ),
+                          ),
+                          inputFormatters: <TextInputFormatter>[
+                            FilteringTextInputFormatter.allow(
+                                RegExp(r'^[0-9:.]*$'))
+                            // Limiting the input to 5 characters
+                          ],
+                          onSubmitted: (String newValue) {
+                            if (newValue == "") {
+                              newValue = '0';
+                            }
+                            setState(() => bm_mile = newValue);
+                          },
+                          style: TextStyle(
+                            fontSize: 14.0, color: Colors.amber,
+                            // Set your desired font size here, smaller than the default
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text("50m Dash"),
+                        SizedBox(
+                          width: _smallSpacing,
+                        ),
+                        TextField(
+                          textAlign: TextAlign.center,
+                          controller: _bm_dashController,
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            border:
+                                OutlineInputBorder(), // Adds a border around the input
+                            contentPadding: EdgeInsets.symmetric(
+                                vertical: 1.0,
+                                horizontal: 1.0), // Padding inside the border
+                            isDense: true, // Reduces the field's height
+                            counterText:
+                                '', // Hides the counter text that appears below the TextField
+                            constraints: BoxConstraints(
+                              maxWidth:
+                                  40, // Adjust width to fit about 5 digits
+                            ),
+                          ),
+                          inputFormatters: <TextInputFormatter>[
+                            FilteringTextInputFormatter.allow(
+                                RegExp(r'^[0-9:.]*$'))
+                            // Limiting the input to 5 characters
+                          ],
+                          onSubmitted: (String newValue) {
+                            if (newValue == "") {
+                              newValue = '0';
+                            }
+                            setState(() => bm_dash = newValue);
+                          },
+                          style: TextStyle(
+                            fontSize: 14.0, color: Colors.amber,
+                            // Set your desired font size here, smaller than the default
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Row(
+                      children: [
+                        Text("Wallsits"),
+                        SizedBox(
+                          width: _smallSpacing,
+                        ),
+                        TextField(
+                          textAlign: TextAlign.center,
+                          controller: _bm_wallSitController,
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            border:
+                                OutlineInputBorder(), // Adds a border around the input
+                            contentPadding: EdgeInsets.symmetric(
+                                vertical: 1.0,
+                                horizontal: 1.0), // Padding inside the border
+                            isDense: true, // Reduces the field's height
+                            counterText:
+                                '', // Hides the counter text that appears below the TextField
+                            constraints: BoxConstraints(
+                              maxWidth:
+                                  40, // Adjust width to fit about 5 digits
+                            ),
+                          ),
+                          inputFormatters: <TextInputFormatter>[
+                            FilteringTextInputFormatter.allow(
+                                RegExp(r'^[0-9:.]*$'))
+                            // Limiting the input to 5 characters
+                          ],
+                          onSubmitted: (String newValue) {
+                            if (newValue == "") {
+                              newValue = '0';
+                            }
+                            setState(() => bm_wallsits = newValue);
+                          },
+                          style: TextStyle(
+                            fontSize: 14.0, color: Colors.amber,
+                            // Set your desired font size here, smaller than the default
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text("Box-jumps"),
+                        SizedBox(
+                          width: _smallSpacing,
+                        ),
+                        TextField(
+                          textAlign: TextAlign.center,
+                          controller: _bm_boxJumpsController,
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            border:
+                                OutlineInputBorder(), // Adds a border around the input
+                            contentPadding: EdgeInsets.symmetric(
+                                vertical: 1.0,
+                                horizontal: 1.0), // Padding inside the border
+                            isDense: true, // Reduces the field's height
+                            counterText:
+                                '', // Hides the counter text that appears below the TextField
+                            constraints: BoxConstraints(
+                              maxWidth:
+                                  40, // Adjust width to fit about 5 digits
+                            ),
+                          ),
+                          inputFormatters: <TextInputFormatter>[
+                            FilteringTextInputFormatter.allow(
+                                RegExp(r'^[0-9:.]*$'))
+                            // Limiting the input to 5 characters
+                          ],
+                          onSubmitted: (String newValue) {
+                            if (newValue == "") {
+                              newValue = '0';
+                            }
+                            setState(() => bm_boxjumps = newValue as int?);
+                          },
+                          style: TextStyle(
+                            fontSize: 14.0, color: Colors.amber,
+                            // Set your desired font size here, smaller than the default
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text("Squats"),
+                        SizedBox(
+                          width: _smallSpacing,
+                        ),
+                        TextField(
+                          textAlign: TextAlign.center,
+                          controller: _bm_squatsController,
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            border:
+                                OutlineInputBorder(), // Adds a border around the input
+                            contentPadding: EdgeInsets.symmetric(
+                                vertical: 1.0,
+                                horizontal: 1.0), // Padding inside the border
+                            isDense: true, // Reduces the field's height
+                            counterText:
+                                '', // Hides the counter text that appears below the TextField
+                            constraints: BoxConstraints(
+                              maxWidth:
+                                  40, // Adjust width to fit about 5 digits
+                            ),
+                          ),
+                          inputFormatters: <TextInputFormatter>[
+                            FilteringTextInputFormatter.allow(
+                                RegExp(r'^[0-9:.]*$'))
+                            // Limiting the input to 5 characters
+                          ],
+                          onSubmitted: (String newValue) {
+                            if (newValue == "") {
+                              newValue = '0';
+                            }
+                            setState(() => bm_squats = newValue as int?);
+                          },
+                          style: TextStyle(
+                            color: Colors.amber,
+                            fontSize: 14.0,
+                            // Set your desired font size here, smaller than the default
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ]),
+              SizedBox(height: _mediumSpacing),
+              submitButton(context),
+              SizedBox(height: _mediumSpacing),
+            ],
+          ),
         ),
       ),
     );

@@ -7,24 +7,24 @@ class Advancement extends StatelessWidget {
     double _smallFont = 13;
     double _mediumFont = 15;
     double _largeFont = 22;
-
+    double _spacing = 10;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Belt Advancement', style: TextStyle(color: Colors.black),),
+        title: const Text('Belt Advancement'),
       ),
       body: SingleChildScrollView(
         child: Container(
-          color: Colors.grey[300],
+          padding: EdgeInsets.all(10.0),
+          color: Colors.grey[800],
           child: Column(
             children: [
-              SizedBox(height: 10),
               Text(
                   "Note: An advancement can only be obtained if approved by a black/red belt. Stripes beyond black belt must be awarded by someone who is two levels more advanced.",
                   textAlign: TextAlign.center,
                   style: TextStyle(
                       fontSize: _smallFont,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black)),
+               )),
               Divider(),
               Text("Satria Muda",
                   textAlign: TextAlign.center,
@@ -35,28 +35,31 @@ class Advancement extends StatelessWidget {
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 15,
-                      color: Colors.black38)),
-              SizedBox(height: 20),
+                  )),
               Text(
                   "Students must memorize the Creed before wearing the uniform.",
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: _smallFont, color: Colors.black)),
+                  style: TextStyle(fontSize: _smallFont)),
+              SizedBox(height: _spacing),
               BeltsComplex(
                   curriculum: "satria_muda", color: "white", stripes: 5),
+              SizedBox(height: _spacing),
               BeltsComplex(
                   curriculum: "satria_muda", color: "yellow", stripes: 5),
+              SizedBox(height: _spacing),
               BeltsComplex(
                   curriculum: "satria_muda", color: "green", stripes: 5),
               Text("Tournament required.",
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: _smallFont, color: Colors.black)),
+                  style: TextStyle(fontSize: _smallFont)),
               BeltsComplex(
                   curriculum: "satria_muda", color: "blue", stripes: 5),
+              SizedBox(height: _spacing),
               BeltsComplex(
                   curriculum: "satria_muda", color: "purple", stripes: 5),
               Text("Tournament required.",
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: _smallFont, color: Colors.black)),
+                  style: TextStyle(fontSize: _smallFont)),
               BeltsComplex(
                   curriculum: "satria_muda", color: "brown", stripes: 5),
               Text("Jawara Muda",
@@ -71,43 +74,49 @@ class Advancement extends StatelessWidget {
                       color: Colors.black38)),
               BeltsComplex(
                   curriculum: "jawara_muda", color: "white", stripes: 5),
+              SizedBox(height: _spacing),
               BeltsComplex(
                   curriculum: "jawara_muda", color: "yellow", stripes: 5),
               Text("Tournament required.",
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: _smallFont, color: Colors.black)),
+                  style: TextStyle(fontSize: _smallFont)),
               BeltsComplex(
                   curriculum: "jawara_muda", color: "green", stripes: 5),
               Text(
                   "Must memorize the creed in Indonesian language.\nTournament required.",
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: _smallFont, color: Colors.black)),
+                  style: TextStyle(fontSize: _smallFont)),
               BeltsComplex(
                   curriculum: "jawara_muda", color: "blue", stripes: 5),
               Text("Tournament required.",
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: _smallFont, color: Colors.black)),
+                  style: TextStyle(fontSize: _smallFont)),
               BeltsComplex(
                   curriculum: "jawara_muda", color: "purple", stripes: 3),
               Text(
                   "Requires a non-sparring test, or participation in 10 tournaments",
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: _smallFont, color: Colors.black)),
+                  style: TextStyle(fontSize: _smallFont)),
               BeltsComplex(
                   curriculum: "jawara_muda",
                   color: "purple",
                   jawaraStripe: true,
                   stripes: 3),
+              SizedBox(height: _spacing),
               BeltsComplex(curriculum: "jawara_muda", color: "brown"),
               Text(
                   "Requires a non-sparring test, or participation in 12 tournaments",
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: _smallFont, color: Colors.black)),
+                  style: TextStyle(fontSize: _smallFont)),
               BeltsComplex(
                   curriculum: "jawara_muda",
                   color: "brown",
                   jawaraStripe: true,
                   stripes: 3),
+              Text(
+                  "Requires an international tournament",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: _smallFont)),
               Text("Instructor",
                   textAlign: TextAlign.center,
                   style: TextStyle(
@@ -125,7 +134,7 @@ class Advancement extends StatelessWidget {
                   hasYellowStripe: true),
               Text("2 years of active teaching & practice",
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: _smallFont, color: Colors.black)),
+                  style: TextStyle(fontSize: _smallFont)),
               BeltsComplex(
                   curriculum: "jawara_muda",
                   color: "black",
@@ -133,7 +142,7 @@ class Advancement extends StatelessWidget {
                   hasYellowStripe: true),
               Text("4 years of active teaching & practice",
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: _smallFont, color: Colors.black)),
+                  style: TextStyle(fontSize: _smallFont)),
               BeltsComplex(
                   curriculum: "jawara_muda",
                   color: "black",
@@ -142,7 +151,7 @@ class Advancement extends StatelessWidget {
               Text(
                   "6 years of active teaching & practice.\nTournament required.",
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: _smallFont, color: Colors.black)),
+                  style: TextStyle(fontSize: _smallFont)),
               BeltsComplex(
                   curriculum: "jawara_muda",
                   color: "black",
@@ -151,7 +160,7 @@ class Advancement extends StatelessWidget {
               Text(
                   "8 years of active teaching & practice.\nTournament required.",
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: _smallFont, color: Colors.black)),
+                  style: TextStyle(fontSize: _smallFont)),
               BeltsComplex(
                   curriculum: "jawara_muda",
                   color: "black",
@@ -160,22 +169,22 @@ class Advancement extends StatelessWidget {
               Text(
                   "10 years of active teaching & practice.\nTrain in South-East Asia for 1 month",
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: _smallFont, color: Colors.black)),
+                  style: TextStyle(fontSize: _smallFont)),
               BeltsComplex(curriculum: "jawara_muda", color: "red", stripes: 6),
               Text(
                   "15 years of active teaching & practice.\nTrain in South-East Asia for 2 months",
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: _smallFont, color: Colors.black)),
+                  style: TextStyle(fontSize: _smallFont)),
               BeltsComplex(curriculum: "jawara_muda", color: "red", stripes: 7),
               Text(
                   "20 years of active teaching & practice.\nTrain in South-East Asia for 3 months",
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: _smallFont, color: Colors.black)),
+                  style: TextStyle(fontSize: _smallFont)),
               BeltsComplex(curriculum: "jawara_muda", color: "red", stripes: 8),
               Text(
                   "+25 years of active teaching & practice.\nTrain in South-East Asia for +4 months",
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: _smallFont, color: Colors.black)),
+                  style: TextStyle(fontSize: _smallFont)),
               BeltsComplex(curriculum: "jawara_muda", color: "red", stripes: 9),
               SizedBox(height: 20)
             ],

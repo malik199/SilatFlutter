@@ -38,7 +38,7 @@ class _UnapprovedUsersState extends State<UnapprovedUsers> {
         Card(
           color: Colors.orangeAccent,
           child: ExpansionTile(
-            backgroundColor: Colors.grey[100],
+            backgroundColor: Colors.black,
             title: ListTile(
               leading: Icon(Icons.no_accounts, size: 50.0, color: Colors.red),
               title: Text(

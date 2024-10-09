@@ -28,10 +28,10 @@ class _BenchmarksState extends State<Benchmarks> {
   late int? bm_pushups = 0;
   late int? bm_situps = 0;
   late int? bm_pullups = 0;
-  late int? bm_deadhang = 0;
-  late int? bm_mileTime = 0;
-  late int? bm_dash = 0;
-  late int? bm_wallsit = 0;
+  late String? bm_deadhang = '0:00';
+  late String? bm_mileTime = '0:00';
+  late String? bm_dash = '0:00';
+  late String? bm_wallsit = '0:00';
   late int? bm_boxjumps = 0;
   late int? bm_squats = 0;
 

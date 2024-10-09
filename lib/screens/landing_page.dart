@@ -19,6 +19,7 @@ import 'package:silat_flutter/admin/approved_users.dart';
 import 'package:silat_flutter/admin/unapproved_users.dart';
 import 'package:silat_flutter/models/isAdmin.dart';
 import 'package:silat_flutter/screens/weight_classes.dart';
+import 'package:silat_flutter/utils/connectivity.dart';
 import 'package:silat_flutter/utils/fire_auth.dart';
 import 'package:silat_flutter/login/log_out.dart';
 
@@ -194,7 +195,7 @@ SizedBox(height: 50),
                             );
                           },
                         ),
-                        ListTile(
+/*                        ListTile(
                           leading: Icon(Icons.person_outline),
                           title: const Text('My Benchmarks'),
                           onTap: () {
@@ -204,7 +205,7 @@ SizedBox(height: 50),
                                   builder: (context) => Benchmarks()),
                             );
                           },
-                        ),
+                        ),*/
                         ListTile(
                           leading: Icon(Icons.playlist_add_check),
                           title: const Text('Belt Advancement'),
@@ -264,10 +265,10 @@ SizedBox(height: 50),
                             children: [
                               ListTile(
                                 leading:
-                                Icon(Icons.pending, color: Colors.green),
+                                Icon(Icons.pending, color: Colors.yellow),
                                 title: const Text(
                                   'Pending Changes',
-                                  style: TextStyle(color: Colors.green),
+                                  style: TextStyle(color: Colors.yellow),
                                 ),
                                 onTap: () {
                                   Navigator.push(

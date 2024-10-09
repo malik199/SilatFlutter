@@ -36,25 +36,26 @@ class _ApprovedUsersState extends State<ApprovedUsers> {
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Card(
-          child: ExpansionTile(
-            title: ListTile(
-              leading: (dbItem?['curriculum'] == 'jawara_muda'
-                  ? Icon(Icons.person,
-                  size: 50.0, color: PullColor().getColor(dbItem?['belt']))
-                  : Icon(Icons.perm_identity,
-                  size: 50.0,
-                  color: PullColor().getColor(dbItem?['belt']))),
-              title: Text(
-                dbItem?['firstname'] + " " + dbItem?['lastname'],
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              subtitle: Text(formatCurriculum(dbItem?['curriculum'])),
+        Divider(),
+        ExpansionTile(
+          title: ListTile(
+            visualDensity: VisualDensity(horizontal: -4, vertical: -4),  // More compact layout
+            contentPadding: EdgeInsets.all(0),
+            leading: (dbItem?['curriculum'] == 'jawara_muda'
+                ? Icon(Icons.person,
+                size: 50.0, color: PullColor().getColor(dbItem?['belt']))
+                : Icon(Icons.perm_identity,
+                size: 50.0,
+                color: PullColor().getColor(dbItem?['belt']))),
+            title: Text(
+              dbItem?['firstname'] + " " + dbItem?['lastname'],
+              style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            children: [
-              EditUserWidget(dbItem: dbItem, dbkey: dbkey, editMode: 'update',)
-            ],
+            subtitle: Text(formatCurriculum(dbItem?['curriculum'])),
           ),
+          children: [
+            EditUserWidget(dbItem: dbItem, dbkey: dbkey, editMode: 'update',)
+          ],
         )
       ],
     );
@@ -70,13 +71,12 @@ class _ApprovedUsersState extends State<ApprovedUsers> {
         child: FirebaseAnimatedList(
           query: FirebaseDatabase.instance
               .ref('users')
-              .orderByChild('isApproved')
-              .equalTo(true),
+              .orderByChild('firstname'),
           itemBuilder: (BuildContext context, DataSnapshot? snapshot,
               Animation<double> animation, int index) {
             final dbItemValue = snapshot?.value as Map;
             dbItemValue['key'] = snapshot!.key;
-            return (dbItemValue['curriculum'] != "guest" ? _buildUsers(dbItem: dbItemValue, myIndex: index, dbkey: snapshot.key) : SizedBox.shrink());
+            return (dbItemValue['curriculum'] != "guest" && dbItemValue['isApproved'] == true  ? _buildUsers(dbItem: dbItemValue, myIndex: index, dbkey: snapshot.key) : SizedBox.shrink());
           },
         ),
       ),

@@ -34,6 +34,7 @@ class _HomePageState extends State<HomePage>
   int _stripe = 0;
   int _age = 0;
   String _location = "";
+  double _iconSize = 25;
 
   String _quoteOfTheWeek = "";
 
@@ -48,12 +49,22 @@ class _HomePageState extends State<HomePage>
   int _pullUps = 0;
   int _flexibility = 0;
   int? _score = 0;
+  int? bm_pushups = 0;
+  int? bm_situps = 0;
+  int? bm_pullups = 0;
+  String? bm_deadhang;
+  String? bm_mile;
+  String? bm_dash;
+  String? bm_wallsits;
+  int? bm_boxjumps = 0;
+  int? bm_squats = 0;
 
   double _numberSize = 25;
   double _lineHeight = 1;
   double _statsFontSize = 11;
+  double _littleFontSize = 13;
   double _betweenWidgetPadding = 10;
-
+  double _smallSpacing = 5;
   double _statsPopUpHeaderFontSize = 16;
   double _statsSubtitleFontSize = 9;
 
@@ -107,6 +118,16 @@ class _HomePageState extends State<HomePage>
             _1stPlace = value['1stplace'];
             _2ndPlace = value['2ndplace'];
             _score = value['score'];
+            bm_pushups = value['bm_pushups'] ?? 0;
+            bm_situps = value['bm_situps'] ?? 0;
+            bm_pullups = value['bm_pullups'] ?? 0;
+            bm_deadhang = value['bm_deadhang'].toString() ?? '0';
+            bm_mile = value['bm_mile'].toString() ?? '0';
+            bm_dash = value['bm_dash'].toString() ?? '0';
+            bm_wallsits = value['bm_wallsits'].toString() ?? '0';
+            bm_boxjumps = value['bm_boxjumps'] ?? 0;
+            bm_squats = value['bm_squats'] ?? 0;
+
           });
         });
 
@@ -344,7 +365,9 @@ class _HomePageState extends State<HomePage>
               ),
               Divider(),
               ListTile(
-                leading: Icon(Icons.follow_the_signs, size: 40.0),
+                dense: true,
+                contentPadding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0), // Reduced padding
+                leading: Icon(Icons.follow_the_signs, size: _iconSize),
                 title: Text(
                   "Tournaments",
                   style: TextStyle(
@@ -362,7 +385,9 @@ class _HomePageState extends State<HomePage>
                         fontSize: _numberSize, fontWeight: FontWeight.bold)),
               ),
               ListTile(
-                leading: Icon(Icons.filter_1, size: 40.0),
+                dense: true,
+                contentPadding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0), // Reduced padding
+                leading: Icon(Icons.filter_1, size: _iconSize),
                 title: Text(
                   "1st Place",
                   style: TextStyle(
@@ -378,7 +403,9 @@ class _HomePageState extends State<HomePage>
                         fontSize: _numberSize, fontWeight: FontWeight.bold)),
               ),
               ListTile(
-                leading: Icon(Icons.filter_2, size: 40.0),
+                dense: true,
+                contentPadding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0), // Reduced padding
+                leading: Icon(Icons.filter_2, size: _iconSize),
                 title: Text(
                   "2nd Place",
                   style: TextStyle(
@@ -394,7 +421,9 @@ class _HomePageState extends State<HomePage>
                         fontSize: _numberSize, fontWeight: FontWeight.bold)),
               ),
               ListTile(
-                leading: Icon(Icons.store, size: 40.0),
+                dense: true,
+                contentPadding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0), // Reduced padding
+                leading: Icon(Icons.store, size: _iconSize),
                 title: Text(
                   "Class Merits",
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
@@ -412,7 +441,9 @@ class _HomePageState extends State<HomePage>
               ),
               SizedBox(height: 10),
               ListTile(
-                leading: Icon(Icons.verified, size: 40.0),
+                dense: true,
+                contentPadding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0), // Reduced padding
+                leading: Icon(Icons.verified, size: _iconSize),
                 title: Text(
                   "Good Deeds",
                   style: TextStyle(
@@ -430,12 +461,178 @@ class _HomePageState extends State<HomePage>
               ),
               SizedBox(height: 10),
               Divider(),
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          "Pushups",
+                          style: TextStyle(
+                            fontSize: _littleFontSize)
+                        ),
+                        SizedBox(
+                          width: _smallSpacing,
+                        ),
+                        Text(bm_pushups.toString(),
+                          style: TextStyle(
+                            fontSize: _littleFontSize, color: Colors.amber,
+                            // Set your desired font size here, smaller than the default
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          "Situps",
+                          style: TextStyle(
+                            fontSize: _littleFontSize,
+                          )),
+                        SizedBox(
+                          width: _smallSpacing,
+                        ),
+                        Text(bm_situps.toString(),
+                          style: TextStyle(
+                            fontSize: _littleFontSize, color: Colors.amber,
+                            // Set your desired font size here, smaller than the default
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text("Pullups",
+                          style: TextStyle(
+                            fontSize: _littleFontSize,)),
+                        SizedBox(
+                          width: _smallSpacing,
+                        ),
+                        Text(bm_pullups.toString(),
+                          style: TextStyle(
+                            fontSize: _littleFontSize, color: Colors.amber,
+                            // Set your desired font size here, smaller than the default
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Row(
+                      children: [
+                        Text("Deadhang",
+                          style: TextStyle(
+                              fontSize: _littleFontSize)),
+                        SizedBox(
+                          width: _smallSpacing,
+                        ),
+                        Text(bm_deadhang as String,
+                          style: TextStyle(
+                            fontSize: _littleFontSize, color: Colors.amber,
+                            // Set your desired font size here, smaller than the default
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text("Mile Time",
+                          style: TextStyle(
+                            fontSize: _littleFontSize),),
+                        SizedBox(
+                          width: _smallSpacing,
+                        ),
+                        Text(bm_mile as String,
+                          style: TextStyle(
+                            fontSize: _littleFontSize, color: Colors.amber,
+                            // Set your desired font size here, smaller than the default
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text("50m Dash",
+                          style: TextStyle(
+                            fontSize: _littleFontSize),),
+                        SizedBox(
+                          width: _smallSpacing,
+                        ),
+                        Text(bm_dash as String,
+                          style: TextStyle(
+                            fontSize: 14.0, color: Colors.amber,
+                            // Set your desired font size here, smaller than the default
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Row(
+                      children: [
+                        Text("Wallsits",
+                          style: TextStyle(
+                            fontSize: _littleFontSize),),
+                        SizedBox(
+                          width: _smallSpacing,
+                        ),
+                        Text(bm_wallsits as String,
+                          style: TextStyle(
+                            fontSize: 14.0, color: Colors.amber,
+                            // Set your desired font size here, smaller than the default
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text("Box-jumps",
+                          style: TextStyle(
+                            fontSize: _littleFontSize),),
+                        SizedBox(
+                          width: _smallSpacing,
+                        ),
+                        Text(bm_boxjumps.toString(),
+                          style: TextStyle(
+                            fontSize: _littleFontSize, color: Colors.amber,
+                            // Set your desired font size here, smaller than the default
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text("Squats",
+                          style: TextStyle(
+                            fontSize: _littleFontSize),),
+                        SizedBox(
+                          width: _smallSpacing,
+                        ),
+                        Text(bm_squats.toString(),
+                          style: TextStyle(
+                            fontSize: _littleFontSize, color: Colors.amber,
+                            // Set your desired font size here, smaller than the default
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ]),
+              SizedBox(height: 20),
               Text("Total Score: ${(obj['score'] ?? "").toString()}",
                   style: TextStyle(
                       fontFamily: 'PTSansNarrow',
                       fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                      color: Colors.deepPurple)),
+                      fontSize: 25,
+                      color: Colors.lightBlue)),
             ]),
           ),
           actions: <Widget>[
@@ -479,13 +676,14 @@ class _HomePageState extends State<HomePage>
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          // InternetConnection(), TODO: ADD Connectivity
+          InternetConnection(),
           Padding(
             padding: const EdgeInsets.all(10.0),
             child: Column(
               children: [
                 Row(
                   children: [
+
                     Expanded(
                       child: Container(
                         decoration: BoxDecoration(
@@ -499,6 +697,7 @@ class _HomePageState extends State<HomePage>
                               mainAxisAlignment: MainAxisAlignment
                                   .spaceAround, // Adjusted to space between
                               children: [
+
                                 TextButton(
                                   onPressed: () => Navigator.push(
                                       context,
@@ -696,70 +895,7 @@ class _HomePageState extends State<HomePage>
                 ),
                 SizedBox(height: _betweenWidgetPadding),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment
-                      .center, // Align children to the center horizontally
                   children: <Widget>[
-                    Expanded(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.black54,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Column(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(2.0),
-                              child: Text(_eventName2,
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 13)),
-                            ),
-                            Divider(height: 1),
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(0, 5, 5, 8),
-                              child: Row(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.all(7.0),
-                                    child: Icon(
-                                      Icons.calendar_month,
-                                      color: Colors.orange,
-                                      size:
-                                          35.0, // You can adjust the size as needed
-                                    ),
-                                  ),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                          (DateFormat('MMM dd, yyyy').format(
-                                                  DateTime.parse(_eventDate2)))
-                                              .toString(),
-                                          style: TextStyle(
-                                              fontSize: _statsFontSize)),
-                                      Text(
-                                        _eventLocation2,
-                                        style:
-                                            TextStyle(fontSize: _statsFontSize),
-                                      ),
-                                      Text(
-                                        '${(_difference2 + 1).toString()} Days Left',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.pink,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: _betweenWidgetPadding),
                     Expanded(
                       child: ClipRRect(
                         child: Container(
@@ -770,7 +906,7 @@ class _HomePageState extends State<HomePage>
                           child: Column(
                             children: [
                               Padding(
-                                padding: const EdgeInsets.all(2.0),
+                                padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 7.0),
                                 child: Text(_eventName1,
                                     style: TextStyle(
                                         fontWeight: FontWeight.bold,
@@ -820,6 +956,67 @@ class _HomePageState extends State<HomePage>
                               ),
                             ],
                           ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: _betweenWidgetPadding),
+                    Expanded(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.black54,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(2.0),
+                              child: Text(_eventName2,
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 13)),
+                            ),
+                            Divider(height: 1),
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(0, 5, 5, 8),
+                              child: Row(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(7.0),
+                                    child: Icon(
+                                      Icons.calendar_month,
+                                      color: Colors.orange,
+                                      size:
+                                      35.0, // You can adjust the size as needed
+                                    ),
+                                  ),
+                                  Column(
+                                    crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                          (DateFormat('MMM dd, yyyy').format(
+                                              DateTime.parse(_eventDate2)))
+                                              .toString(),
+                                          style: TextStyle(
+                                              fontSize: _statsFontSize)),
+                                      Text(
+                                        _eventLocation2,
+                                        style:
+                                        TextStyle(fontSize: _statsFontSize),
+                                      ),
+                                      Text(
+                                        '${(_difference2 + 1).toString()} Days Left',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.pink,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),

@@ -21,8 +21,12 @@ class _ProfileState extends State<Profile> {
   var myUser;
   int _currentValue = 3;
 
-  double spacingWidth = 10;
-  double spacingHeight = 10;
+  late String? _firstName = "";
+  late String? _lastName = "";
+  late int? _stripe = 0;
+  late String? _email = "";
+  int _age = 5;
+
   String _beltColor = "white";
   String _curriculum = "satria_muda";
   String _location = "VA";
@@ -37,25 +41,21 @@ class _ProfileState extends State<Profile> {
   late int? bm_situps = 0;
   late int? bm_pullups = 0;
   late String? bm_deadhang;
-  late String? bm_mileTime;
+  late String? bm_mile;
   late String? bm_dash;
-  late String? bm_wallsit;
+  late String? bm_wallsits;
   late int? bm_boxjumps = 0;
   late int? bm_squats = 0;
 
   List<String> _listOfLocations = [];
   List<int> _listOfNumbers = [for (var i = 0; i <= 50; i++) i];
-  double _spacingFromEdge = 40;
-
-  late String? _firstName = "";
-  late String? _lastName = "";
-  late int? _stripe = 0;
-  late String? _email = "";
-
+  List _listOfAges = [for (var i = 5; i <= 50; i++) i];
   List _listOfStripes = [0, 1, 2, 3, 4];
 
   double _sizeBoxWidth = 10;
   double _sizeBoxHeight = 16;
+  double spacingWidth = 10;
+  double spacingHeight = 10;
 
   late String? _dbkey = "";
 
@@ -66,6 +66,7 @@ class _ProfileState extends State<Profile> {
   TextEditingController? _2ndplaceController = TextEditingController();
   TextEditingController? _classMeritsController = TextEditingController();
   TextEditingController? _deedsController = TextEditingController();
+
   TextEditingController? _bm_pushupsController = TextEditingController();
   TextEditingController? _bm_situpsController = TextEditingController();
   TextEditingController? _bm_pullupsController = TextEditingController();
@@ -76,8 +77,6 @@ class _ProfileState extends State<Profile> {
   TextEditingController? _bm_boxJumpsController = TextEditingController();
   TextEditingController? _bm_squatsController = TextEditingController();
 
-  int _age = 6;
-  List _listOfAges = [for (var i = 6; i <= 50; i++) i];
   double _numberSize = 30;
   double _iconSize = 30;
   double _subtitleSize = 10;
@@ -101,6 +100,7 @@ class _ProfileState extends State<Profile> {
           (_deeds);
     });
   }
+
   Widget _pendingWidget = Container();
   void checkForPendingUpdates(String dbKey) {
     _database.child('pending').child(dbKey).once().then((rtdbData) {
@@ -154,8 +154,10 @@ class _ProfileState extends State<Profile> {
         setState(() {
           _firstName = myData['firstname'];
           _lastName = myData['lastname'];
+          _age = myData['age'] ?? 0;
           _email = myData['email'];
           _beltColor = myData['belt'];
+          _curriculum = myData['curriculum'];
           _1stplace = myData['1stplace'] ?? 0;
           _2ndplace = myData['2ndplace'] ?? 0;
           _classMerits = myData['classMerits'] ?? 0;
@@ -164,7 +166,9 @@ class _ProfileState extends State<Profile> {
           _tournaments = myData['tournaments'] ?? 0;
           _stripe = myData['stripe'] ?? 0;
           _location = myData['location'];
-          _firstNameController = TextEditingController(text: myData['firstname']);
+          _isApprov = myData['isApproved'];
+          _firstNameController =
+              TextEditingController(text: myData['firstname']);
           _lastNameController = TextEditingController(text: myData['lastname']);
           _tournamentController =
               TextEditingController(text: _tournaments.toString());
@@ -176,33 +180,50 @@ class _ProfileState extends State<Profile> {
               TextEditingController(text: _classMerits.toString());
           _deedsController = TextEditingController(text: _deeds.toString());
 
-          _bm_pushupsController =
-              TextEditingController(text: myData['bm_pushups'] == null ? '0' : myData['bm_pushups'].toString());
-          _bm_pullupsController =
-              TextEditingController(text: myData['bm_pullups'] == null ? '0' : myData['bm_pullups'].toString());
-          _bm_situpsController =
-              TextEditingController(text: myData['bm_situps'] == null ? '0' : myData['bm_situps'].toString());
-          _bm_deadhangController =
-              TextEditingController(text: myData['bm_deadhang'] == null ? '0:00' : myData['bm_deadhang'].toString());
-          _bm_mileTimeController =
-              TextEditingController(text: myData['bm_mile'] == null ? '0:00' : myData['bm_mile'].toString());
-          _bm_dashController =
-              TextEditingController(text: myData['bm_dash'] == null ? '0:00' : myData['bm_dash'].toString());
-          _bm_wallSitController =
-              TextEditingController(text: myData['bm_wallsits'] == null ? '0:00' : myData['bm_wallsits'].toString());
-          _bm_boxJumpsController =
-              TextEditingController(text: myData['bm_boxjumps'] == null ? '0' : myData['bm_boxjumps'].toString());
-          _bm_squatsController =
-              TextEditingController(text: myData['bm_squats'] == null ? '0' : myData['bm_squats'].toString());
+          _bm_pushupsController = TextEditingController(
+              text: myData['bm_pushups'] == null
+                  ? '0'
+                  : myData['bm_pushups'].toString());
+          _bm_pullupsController = TextEditingController(
+              text: myData['bm_pullups'] == null
+                  ? '0'
+                  : myData['bm_pullups'].toString());
+          _bm_situpsController = TextEditingController(
+              text: myData['bm_situps'] == null
+                  ? '0'
+                  : myData['bm_situps'].toString());
+          _bm_deadhangController = TextEditingController(
+              text: myData['bm_deadhang'] == null
+                  ? '0:00'
+                  : myData['bm_deadhang'].toString());
+          _bm_mileTimeController = TextEditingController(
+              text: myData['bm_mile'] == null
+                  ? '0:00'
+                  : myData['bm_mile'].toString());
+          _bm_dashController = TextEditingController(
+              text: myData['bm_dash'] == null
+                  ? '0:00'
+                  : myData['bm_dash'].toString());
+          _bm_wallSitController = TextEditingController(
+              text: myData['bm_wallsits'] == null
+                  ? '0:00'
+                  : myData['bm_wallsits'].toString());
+          _bm_boxJumpsController = TextEditingController(
+              text: myData['bm_boxjumps'] == null
+                  ? '0'
+                  : myData['bm_boxjumps'].toString());
+          _bm_squatsController = TextEditingController(
+              text: myData['bm_squats'] == null
+                  ? '0'
+                  : myData['bm_squats'].toString());
 
-          _age = myData['age'] ?? 0;
           bm_pushups = myData['bm_pushups'] ?? 0;
           bm_situps = myData['bm_situps'] ?? 0;
           bm_pullups = myData['bm_pullups'] ?? 0;
           bm_deadhang = myData['bm_deadhang'].toString() ?? '0';
-          bm_mileTime = myData['bm_mile'].toString() ?? '0';
+          bm_mile = myData['bm_mile'].toString() ?? '0';
           bm_dash = myData['bm_dash'].toString() ?? '0';
-          bm_wallsit = myData['bm_wallsits'].toString() ?? '0';
+          bm_wallsits = myData['bm_wallsits'].toString() ?? '0';
           bm_boxjumps = myData['bm_boxjumps'] ?? 0;
           bm_squats = myData['bm_squats'] ?? 0;
         });
@@ -222,7 +243,6 @@ class _ProfileState extends State<Profile> {
       setState(() {
         data.forEach((key, value) {
           _listOfLocations.add(value['state']);
-          print(value['state']);
         });
       });
     });
@@ -244,11 +264,11 @@ class _ProfileState extends State<Profile> {
               'uid': _currentUser?.uid,
               'belt': 'white',
               'comments': 'Welcome to Silat martial arts.',
-              'curriculum': _age > 11 ? "jawara_muda" : "satria_muda",
+              'curriculum': _curriculum,
               'email': _currentUser?.email,
               'firstname': _firstName,
               'lastname': _lastName,
-              'isApproved': false,
+              'isApproved': _isApprov,
               'stripe': _stripe,
               'age': _age,
               'location': 'VA',
@@ -257,12 +277,12 @@ class _ProfileState extends State<Profile> {
               'bm_boxjumps': bm_boxjumps,
               'bm_dash': bm_dash,
               'bm_deadhang': bm_deadhang,
-              'bm_mile': bm_mileTime,
+              'bm_mile': bm_mile,
               'bm_pullups': bm_pullups,
               'bm_pushups': bm_pushups,
               'bm_situps': bm_situps,
               'bm_squats': bm_squats,
-              'bm_wallsits': bm_wallsit,
+              'bm_wallsits': bm_wallsits,
               'classMerits': _classMerits,
               'deeds': _deeds,
               'score': _finalScore,
@@ -272,34 +292,33 @@ class _ProfileState extends State<Profile> {
                 {ScaffoldMessenger.of(context).showSnackBar(snackBarGreen)})
             .catchError((error) =>
                 {ScaffoldMessenger.of(context).showSnackBar(snackBarRed)});
-
       } else {
         _database
             .child('/pending')
             .child(_dbkey.toString())
             .update({
               'uid': _currentUser?.uid,
-              'belt': 'white',
+              'belt': _beltColor,
               'comments': 'Welcome to Silat martial arts.',
-              'curriculum': _age > 11 ? "jawara_muda" : "satria_muda",
+              'curriculum': _curriculum,
               'email': _currentUser?.email,
               'firstname': _firstName,
               'lastname': _lastName,
-              'isApproved': false,
+              'isApproved': _isApprov,
               'stripe': _stripe,
               'age': _age,
-              'location': 'VA',
+              'location': _location,
               '1stplace': _1stplace,
               '2ndplace': _2ndplace,
               'bm_boxjumps': bm_boxjumps,
               'bm_dash': bm_dash,
               'bm_deadhang': bm_deadhang,
-              'bm_mile': bm_mileTime,
+              'bm_mile': bm_mile,
               'bm_pullups': bm_pullups,
               'bm_pushups': bm_pushups,
               'bm_situps': bm_situps,
               'bm_squats': bm_squats,
-              'bm_wallsits': bm_wallsit,
+              'bm_wallsits': bm_wallsits,
               'classMerits': _classMerits,
               'deeds': _deeds,
               'score': _finalScore,
@@ -310,22 +329,6 @@ class _ProfileState extends State<Profile> {
             .catchError((error) =>
                 {ScaffoldMessenger.of(context).showSnackBar(snackBarRed)});
       }
-    }
-  }
-
-  Future<void> callCloudFunction(String dbKey) async {
-    try {
-      final url = Uri.parse('https://receivekeyandtrigger-5zrfm7bq3q-uc.a.run.app');
-      final response = await http.post(url, body: json.encode({'dbKey': dbKey}),
-          headers: {'Content-Type': 'application/json'});
-
-      if (response.statusCode == 200) {
-        print('Function responded: ${response.body}');
-      } else {
-        print('Failed to call function: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('Error calling function: $e');
     }
   }
 
@@ -372,9 +375,7 @@ class _ProfileState extends State<Profile> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   //InternetConnection(),
-                  Center(
-                    child: _pendingWidget
-                  ),
+                  Center(child: _pendingWidget),
                   Padding(
                     padding: const EdgeInsets.symmetric(
                         vertical: 0, horizontal: 12.0),
@@ -902,7 +903,7 @@ class _ProfileState extends State<Profile> {
                         "Grip strength and endurance by timing how long a person can hang from a pull-up bar without letting go.",
                         style: TextStyle(fontSize: _subtitleSize)),
                     trailing: TextField(
-                      textAlign: TextAlign.right,
+                      textAlign: TextAlign.center,
                       controller: _bm_deadhangController,
                       keyboardType: TextInputType.number,
                       decoration: InputDecoration(
@@ -919,8 +920,8 @@ class _ProfileState extends State<Profile> {
                         ),
                       ),
                       inputFormatters: <TextInputFormatter>[
-                        FilteringTextInputFormatter.allow(RegExp(
-                            r'^[0-9:]*$')), // Limiting the input to 5 characters
+                        FilteringTextInputFormatter.allow(RegExp(r'^[0-9:.]*$'))
+                        // Limiting the input to 5 characters
                       ],
                       onChanged: (String newValue) {
                         if (newValue == "") {
@@ -940,7 +941,7 @@ class _ProfileState extends State<Profile> {
                         "Cardiovascular endurance and speed by timing how quickly a person can run a mile.",
                         style: TextStyle(fontSize: _subtitleSize)),
                     trailing: TextField(
-                      textAlign: TextAlign.right,
+                      textAlign: TextAlign.center,
                       controller: _bm_mileTimeController,
                       keyboardType: TextInputType.number,
                       decoration: InputDecoration(
@@ -948,7 +949,7 @@ class _ProfileState extends State<Profile> {
                             OutlineInputBorder(), // Adds a border around the input
                         contentPadding: EdgeInsets.symmetric(
                             vertical: 10.0,
-                            horizontal: 10.0), // Padding inside the border
+                            horizontal: 2.0), // Padding inside the border
                         isDense: true, // Reduces the field's height
                         counterText:
                             '', // Hides the counter text that appears below the TextField
@@ -957,14 +958,14 @@ class _ProfileState extends State<Profile> {
                         ),
                       ),
                       inputFormatters: <TextInputFormatter>[
-                        FilteringTextInputFormatter.allow(RegExp(
-                            r'^[0-9:]*$')), // Limiting the input to 5 characters
+                        FilteringTextInputFormatter.allow(RegExp(r'^[0-9:.]*$'))
+                        // Limiting the input to 5 characters
                       ],
                       onChanged: (String newValue) {
                         if (newValue == "") {
                           newValue = '0';
                         }
-                        setState(() => bm_mileTime = newValue);
+                        setState(() => bm_mile = newValue);
                       },
                     ),
                   ),
@@ -978,7 +979,7 @@ class _ProfileState extends State<Profile> {
                         "Explosive power and sprint speed by timing how fast a person can run 50 meters.",
                         style: TextStyle(fontSize: _subtitleSize)),
                     trailing: TextField(
-                      textAlign: TextAlign.right,
+                      textAlign: TextAlign.center,
                       controller: _bm_dashController,
                       keyboardType: TextInputType.number,
                       decoration: InputDecoration(
@@ -986,7 +987,7 @@ class _ProfileState extends State<Profile> {
                             OutlineInputBorder(), // Adds a border around the input
                         contentPadding: EdgeInsets.symmetric(
                             vertical: 10.0,
-                            horizontal: 10.0), // Padding inside the border
+                            horizontal: 2.0), // Padding inside the border
                         isDense: true, // Reduces the field's height
                         counterText:
                             '', // Hides the counter text that appears below the TextField
@@ -995,8 +996,8 @@ class _ProfileState extends State<Profile> {
                         ),
                       ),
                       inputFormatters: <TextInputFormatter>[
-                        FilteringTextInputFormatter.allow(RegExp(
-                            r'^[0-9:]*$')), // Limiting the input to 5 characters
+                        FilteringTextInputFormatter.allow(RegExp(r'^[0-9:.]*$'))
+                        // Limiting the input to 5 characters
                       ],
                       onChanged: (String newValue) {
                         if (newValue == "") {
@@ -1017,7 +1018,7 @@ class _ProfileState extends State<Profile> {
                         "Lower body strength and endurance by timing how long a person can maintain a wall sit position.",
                         style: TextStyle(fontSize: _subtitleSize)),
                     trailing: TextField(
-                      textAlign: TextAlign.right,
+                      textAlign: TextAlign.center,
                       controller: _bm_wallSitController,
                       keyboardType: TextInputType.number,
                       decoration: InputDecoration(
@@ -1025,7 +1026,7 @@ class _ProfileState extends State<Profile> {
                             OutlineInputBorder(), // Adds a border around the input
                         contentPadding: EdgeInsets.symmetric(
                             vertical: 10.0,
-                            horizontal: 10.0), // Padding inside the border
+                            horizontal: 2.0), // Padding inside the border
                         isDense: true, // Reduces the field's height
                         counterText:
                             '', // Hides the counter text that appears below the TextField
@@ -1034,14 +1035,14 @@ class _ProfileState extends State<Profile> {
                         ),
                       ),
                       inputFormatters: <TextInputFormatter>[
-                        FilteringTextInputFormatter.allow(RegExp(
-                            r'^[0-9:]*$')), // Limiting the input to 5 characters
+                        FilteringTextInputFormatter.allow(RegExp(r'^[0-9:.]*$'))
+                        // Limiting the input to 5 characters
                       ],
                       onChanged: (String newValue) {
                         if (newValue == "") {
                           newValue = '0';
                         }
-                        setState(() => bm_wallsit = newValue);
+                        setState(() => bm_wallsits = newValue);
                       },
                     ),
                   ),
