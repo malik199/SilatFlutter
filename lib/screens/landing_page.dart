@@ -369,7 +369,7 @@ SizedBox(height: 50),
                   : null,
             ),
             appBar: AppBar(
-              title: Header(headerText: _currentUser.displayName.toString()),
+              title: Header(headerText: "Silat Institute"),
             ),
             body: _pages[currentPageIndex],
             bottomNavigationBar: NavigationBar(

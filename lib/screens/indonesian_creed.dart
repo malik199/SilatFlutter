@@ -89,8 +89,10 @@ class _CreedIndonesianState extends State<CreedIndonesian> {
                   ElevatedButton.icon(
                     onPressed: togglePlay,
                     icon: Icon(isPlaying ? Icons.pause : Icons.play_arrow),
-                    label: Text("Play creed in Indonesian"),
-                    style: ElevatedButton.styleFrom(),
+                    label: Text("Play Creed in Indonesian", style: TextStyle(fontFamily: 'PTSansNarrow',),),
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.white, backgroundColor: Colors.blue, // Text color
+                    ),
                   ),
                   Slider(
                     value: currentPosition,

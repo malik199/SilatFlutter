@@ -78,11 +78,16 @@ class _HomePageState extends State<HomePage>
     _getEventsData();
     _getQuote();
     _tabController = TabController(length: 4, vsync: this);
+    _topStudentsDBStream = Stream<DatabaseEvent>.empty().listen((event) {});
+
   }
 
   @override
   void dispose() {
     _tabController.dispose();
+    _topStudentsDBStream.cancel();
+    _userDBStream.cancel();
+    _eventsDBStream.cancel();
     super.dispose();
   }
 
@@ -129,7 +134,6 @@ class _HomePageState extends State<HomePage>
             bm_wallsits = value['bm_wallsits'].toString();
             bm_boxjumps = value['bm_boxjumps'] ?? 0;
             bm_squats = value['bm_squats'] ?? 0;
-
           });
         });
 
@@ -141,54 +145,62 @@ class _HomePageState extends State<HomePage>
   }
 
   void _getStudentData(belt, curriculum) {
+    _topStudentsDBStream.cancel();
     _topStudentsDBStream =
         _database.child('users').orderByChild('score').onValue.listen((event) {
-      if (event.snapshot.value != null) {
-        final data = Map<String, dynamic>.from(event.snapshot.value as Map);
-        List<dynamic> allStudents = data.values.toList();
+          try {
+            if (event.snapshot.value != null) {
+              final data = Map<String, dynamic>.from(event.snapshot.value as Map);
+              List<dynamic> allStudents = data.values.toList();
 
-        // Clear previous data
-        _satriaMudaData.clear();
-        _jawaraMudaData.clear();
-        _allStudentsData.clear();
-        _myBeltData.clear();
-        // Filter and categorize data
-        for (var student in allStudents) {
-          if (student["isApproved"] == true &&
-              student['score'] != null &&
-              student['score'] != 0) {
-            _allStudentsData.add(student);
+              // Clear previous data
+              _satriaMudaData.clear();
+              _jawaraMudaData.clear();
+              _allStudentsData.clear();
+              _myBeltData.clear();
 
-            if (student['curriculum'] == 'satria_muda') {
-              _satriaMudaData.add(student);
-            } else if (student['curriculum'] == 'jawara_muda') {
-              _jawaraMudaData.add(student);
+              // Filter and categorize data
+              for (var student in allStudents) {
+                if (student["isApproved"] == true &&
+                    student['score'] != null &&
+                    student['score'] != 0) {
+                  _allStudentsData.add(student);
+
+                  if (student['curriculum'] == 'satria_muda') {
+                    _satriaMudaData.add(student);
+                  } else if (student['curriculum'] == 'jawara_muda') {
+                    _jawaraMudaData.add(student);
+                  }
+
+                  if (student['belt'] == belt &&
+                      student['curriculum'] == curriculum) {
+                    _myBeltData.add(student);
+                  }
+                }
+              }
+
+              // Sort lists by score in descending order
+              var sorter = (a, b) => (b['score'] as num).compareTo(a['score'] as num);
+              _satriaMudaData.sort(sorter);
+              _jawaraMudaData.sort(sorter);
+              _allStudentsData.sort(sorter);
+              _myBeltData.sort(sorter);
+
+              // Update state with the sorted data
+              setState(() {
+                _reversedSatriaMudaData = List.from(_satriaMudaData);
+                _reversedJawaraMudaData = List.from(_jawaraMudaData);
+                _reversedAllStudentsData = List.from(_allStudentsData);
+                _reversedMyBeltData = List.from(_myBeltData);
+              });
             }
-
-            if (student['belt'] == belt &&
-                student['curriculum'] == curriculum) {
-              _myBeltData.add(student);
-            }
+          } catch (e) {
+            // Handle the error appropriately
+            print('Error fetching student data: $e');
           }
-        }
-
-        // Sort lists by score in descending order
-        var sorter = (a, b) => (b['score'] as num).compareTo(a['score'] as num);
-        _satriaMudaData.sort(sorter);
-        _jawaraMudaData.sort(sorter);
-        _allStudentsData.sort(sorter);
-        _myBeltData.sort(sorter);
-
-        // No need to reverse twice, just set the state once
-        setState(() {
-          _reversedSatriaMudaData = List.from(_satriaMudaData);
-          _reversedJawaraMudaData = List.from(_jawaraMudaData);
-          _reversedAllStudentsData = List.from(_allStudentsData);
-          _reversedMyBeltData = List.from(_myBeltData);
         });
-      }
-    });
   }
+
 
   Future<void> _showMyDialog() async {
     return showDialog<void>(
@@ -277,7 +289,7 @@ class _HomePageState extends State<HomePage>
         .listen((event) {
       if (event.snapshot.exists && event.snapshot.value != null) {
         final data =
-        new Map<String?, dynamic>.from(event.snapshot.value as Map);
+            new Map<String?, dynamic>.from(event.snapshot.value as Map);
         Map<dynamic, dynamic> quoteData = data.values.first;
         setState(() {
           _quoteOfTheWeek = quoteData['quote'];
@@ -368,7 +380,8 @@ class _HomePageState extends State<HomePage>
               Divider(),
               ListTile(
                 dense: true,
-                contentPadding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0), // Reduced padding
+                contentPadding: EdgeInsets.symmetric(
+                    vertical: 0.0, horizontal: 0.0), // Reduced padding
                 leading: Icon(Icons.follow_the_signs, size: _iconSize),
                 title: Text(
                   "Tournaments",
@@ -388,7 +401,8 @@ class _HomePageState extends State<HomePage>
               ),
               ListTile(
                 dense: true,
-                contentPadding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0), // Reduced padding
+                contentPadding: EdgeInsets.symmetric(
+                    vertical: 0.0, horizontal: 0.0), // Reduced padding
                 leading: Icon(Icons.filter_1, size: _iconSize),
                 title: Text(
                   "1st Place",
@@ -406,7 +420,8 @@ class _HomePageState extends State<HomePage>
               ),
               ListTile(
                 dense: true,
-                contentPadding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0), // Reduced padding
+                contentPadding: EdgeInsets.symmetric(
+                    vertical: 0.0, horizontal: 0.0), // Reduced padding
                 leading: Icon(Icons.filter_2, size: _iconSize),
                 title: Text(
                   "2nd Place",
@@ -424,14 +439,14 @@ class _HomePageState extends State<HomePage>
               ),
               ListTile(
                 dense: true,
-                contentPadding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0), // Reduced padding
+                contentPadding: EdgeInsets.symmetric(
+                    vertical: 0.0, horizontal: 0.0), // Reduced padding
                 leading: Icon(Icons.store, size: _iconSize),
                 title: Text(
                   "Class Merits",
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: _statsPopUpHeaderFontSize
-                  ),
+                      fontSize: _statsPopUpHeaderFontSize),
                 ),
                 subtitle: Text(
                     "Winning a class event, being an outstanding student.",
@@ -446,7 +461,8 @@ class _HomePageState extends State<HomePage>
               ),
               ListTile(
                 dense: true,
-                contentPadding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0), // Reduced padding
+                contentPadding: EdgeInsets.symmetric(
+                    vertical: 0.0, horizontal: 0.0), // Reduced padding
                 leading: Icon(Icons.verified, size: _iconSize),
                 title: Text(
                   "Good Deeds",
@@ -471,15 +487,13 @@ class _HomePageState extends State<HomePage>
                   children: [
                     Row(
                       children: [
-                        Text(
-                          "Pushups",
-                          style: TextStyle(
-                            fontSize: _littleFontSize)
-                        ),
+                        Text("Pushups",
+                            style: TextStyle(fontSize: _littleFontSize)),
                         SizedBox(
                           width: _smallSpacing,
                         ),
-                        Text(bm_pushups.toString(),
+                        Text(
+                          bm_pushups.toString(),
                           style: TextStyle(
                             fontSize: _littleFontSize, color: Colors.amber,
                             // Set your desired font size here, smaller than the default
@@ -489,15 +503,15 @@ class _HomePageState extends State<HomePage>
                     ),
                     Row(
                       children: [
-                        Text(
-                          "Situps",
-                          style: TextStyle(
-                            fontSize: _littleFontSize,
-                          )),
+                        Text("Situps",
+                            style: TextStyle(
+                              fontSize: _littleFontSize,
+                            )),
                         SizedBox(
                           width: _smallSpacing,
                         ),
-                        Text(bm_situps.toString(),
+                        Text(
+                          bm_situps.toString(),
                           style: TextStyle(
                             fontSize: _littleFontSize, color: Colors.amber,
                             // Set your desired font size here, smaller than the default
@@ -508,12 +522,14 @@ class _HomePageState extends State<HomePage>
                     Row(
                       children: [
                         Text("Pullups",
-                          style: TextStyle(
-                            fontSize: _littleFontSize,)),
+                            style: TextStyle(
+                              fontSize: _littleFontSize,
+                            )),
                         SizedBox(
                           width: _smallSpacing,
                         ),
-                        Text(bm_pullups.toString(),
+                        Text(
+                          bm_pullups.toString(),
                           style: TextStyle(
                             fontSize: _littleFontSize, color: Colors.amber,
                             // Set your desired font size here, smaller than the default
@@ -529,12 +545,12 @@ class _HomePageState extends State<HomePage>
                     Row(
                       children: [
                         Text("Deadhang",
-                          style: TextStyle(
-                              fontSize: _littleFontSize)),
+                            style: TextStyle(fontSize: _littleFontSize)),
                         SizedBox(
                           width: _smallSpacing,
                         ),
-                        Text(bm_deadhang as String,
+                        Text(
+                          bm_deadhang as String,
                           style: TextStyle(
                             fontSize: _littleFontSize, color: Colors.amber,
                             // Set your desired font size here, smaller than the default
@@ -544,13 +560,15 @@ class _HomePageState extends State<HomePage>
                     ),
                     Row(
                       children: [
-                        Text("Mile Time",
-                          style: TextStyle(
-                            fontSize: _littleFontSize),),
+                        Text(
+                          "Mile Time",
+                          style: TextStyle(fontSize: _littleFontSize),
+                        ),
                         SizedBox(
                           width: _smallSpacing,
                         ),
-                        Text(bm_mile as String,
+                        Text(
+                          bm_mile as String,
                           style: TextStyle(
                             fontSize: _littleFontSize, color: Colors.amber,
                             // Set your desired font size here, smaller than the default
@@ -560,13 +578,15 @@ class _HomePageState extends State<HomePage>
                     ),
                     Row(
                       children: [
-                        Text("50m Dash",
-                          style: TextStyle(
-                            fontSize: _littleFontSize),),
+                        Text(
+                          "50m Dash",
+                          style: TextStyle(fontSize: _littleFontSize),
+                        ),
                         SizedBox(
                           width: _smallSpacing,
                         ),
-                        Text(bm_dash as String,
+                        Text(
+                          bm_dash as String,
                           style: TextStyle(
                             fontSize: _littleFontSize, color: Colors.amber,
                             // Set your desired font size here, smaller than the default
@@ -581,29 +601,15 @@ class _HomePageState extends State<HomePage>
                   children: [
                     Row(
                       children: [
-                        Text("Wallsits",
-                          style: TextStyle(
-                            fontSize: _littleFontSize),),
+                        Text(
+                          "Wallsits",
+                          style: TextStyle(fontSize: _littleFontSize),
+                        ),
                         SizedBox(
                           width: _smallSpacing,
                         ),
-                        Text(bm_wallsits as String,
-                          style: TextStyle(
-                          fontSize: _littleFontSize, color: Colors.amber,
-                            // Set your desired font size here, smaller than the default
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Text("Box-jumps",
-                          style: TextStyle(
-                            fontSize: _littleFontSize),),
-                        SizedBox(
-                          width: _smallSpacing,
-                        ),
-                        Text(bm_boxjumps.toString(),
+                        Text(
+                          bm_wallsits as String,
                           style: TextStyle(
                             fontSize: _littleFontSize, color: Colors.amber,
                             // Set your desired font size here, smaller than the default
@@ -613,13 +619,33 @@ class _HomePageState extends State<HomePage>
                     ),
                     Row(
                       children: [
-                        Text("Squats",
-                          style: TextStyle(
-                            fontSize: _littleFontSize),),
+                        Text(
+                          "Box-jumps",
+                          style: TextStyle(fontSize: _littleFontSize),
+                        ),
                         SizedBox(
                           width: _smallSpacing,
                         ),
-                        Text(bm_squats.toString(),
+                        Text(
+                          bm_boxjumps.toString(),
+                          style: TextStyle(
+                            fontSize: _littleFontSize, color: Colors.amber,
+                            // Set your desired font size here, smaller than the default
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          "Squats",
+                          style: TextStyle(fontSize: _littleFontSize),
+                        ),
+                        SizedBox(
+                          width: _smallSpacing,
+                        ),
+                        Text(
+                          bm_squats.toString(),
                           style: TextStyle(
                             fontSize: _littleFontSize, color: Colors.amber,
                             // Set your desired font size here, smaller than the default
@@ -653,13 +679,13 @@ class _HomePageState extends State<HomePage>
     );
   }
 
-  @override
-  void deactivate() {
-    _userDBStream.cancel();
-    _topStudentsDBStream.cancel();
-    _eventsDBStream.cancel();
-    super.deactivate();
-  }
+  // @override
+  // void deactivate() {
+  //   _userDBStream.cancel();
+  //   _topStudentsDBStream.cancel();
+  //   _eventsDBStream.cancel();
+  //   super.deactivate();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -687,43 +713,42 @@ class _HomePageState extends State<HomePage>
               children: [
                 Row(
                   children: [
-
                     Expanded(
                       child: Container(
                         decoration: BoxDecoration(
                           color: Colors.black54,
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: Stack(
-                          children: [
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment
-                                  .spaceAround, // Adjusted to space between
-                              children: [
-
-                                TextButton(
-                                  onPressed: () => Navigator.push(
-                                      context,
-                                      new MaterialPageRoute(
-                                          builder: (context) => Avatar())),
-                                  child: FluttermojiCircleAvatar(
-                                    radius: 65,
-                                    backgroundColor: Colors.white60,
-                                  ),
-                                ),
-                                SizedBox(width: _betweenWidgetPadding),
-                                Column(
+                        child: Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment
+                                .spaceBetween, // Adjusted to space between
+                            children: [
+                              Flexible(
+                                child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    SizedBox(height: _betweenWidgetPadding),
+                                    Text("$_firstName $_lastName",
+                                        overflow: TextOverflow
+                                            .ellipsis, // Adds an ellipsis after the cutoff point
+                                        maxLines: 1,
+                                        style: TextStyle(
+                                            fontFamily: 'PTSansNarrow',
+                                            height: .9,
+                                            color: Colors.white,
+                                            fontSize: 26,
+                                            fontWeight: FontWeight.bold)),
+                                    SizedBox(height:_smallSpacing),
                                     Container(
                                       decoration: BoxDecoration(
                                         color: Colors.deepPurple,
                                         borderRadius: BorderRadius.circular(10),
                                       ),
                                       child: Padding(
-                                        padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 8.0),
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 0, horizontal: 8.0),
                                         child: Row(children: [
                                           Icon(
                                             Icons.bar_chart,
@@ -735,7 +760,7 @@ class _HomePageState extends State<HomePage>
                                               style: TextStyle(
                                                   fontFamily: 'PTSansNarrow',
                                                   color: Colors.white,
-                                                  fontSize: 22,
+                                                  fontSize: 18,
                                                   fontWeight: FontWeight.bold))
                                         ]),
                                       ),
@@ -746,7 +771,7 @@ class _HomePageState extends State<HomePage>
                                         Icons.follow_the_signs,
                                         color: Colors.white60,
                                         size:
-                                        15.0, // You can adjust the size as needed
+                                            15.0, // You can adjust the size as needed
                                       ),
                                       SizedBox(width: 5),
                                       Text("Tournaments:",
@@ -766,7 +791,7 @@ class _HomePageState extends State<HomePage>
                                         Icons.filter_1,
                                         color: Colors.white60,
                                         size:
-                                        15.0, // You can adjust the size as needed
+                                            15.0, // You can adjust the size as needed
                                       ),
                                       SizedBox(width: 5),
                                       Text("1st Place:",
@@ -803,10 +828,32 @@ class _HomePageState extends State<HomePage>
                                     ]),
                                   ],
                                 ),
-                                SizedBox(width: 10),
-                              ],
-                            )
-                          ],
+                              ),
+                              Flexible(
+                                child: Container(
+                                  padding: EdgeInsets.all(
+                                      3), // Padding inside the inner border
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape
+                                        .circle, // Outer shape is a circle
+                                    border: Border.all(
+                                        color: Colors.grey,
+                                        width: 2), // Inner border
+                                  ),
+                                  child: InkWell(
+                                    onTap: () => Navigator.push(
+                                        context,
+                                        new MaterialPageRoute(
+                                            builder: (context) => Avatar())),
+                                    child: FluttermojiCircleAvatar(
+                                      radius: 65,
+                                      backgroundColor: Colors.white54,
+                                    ),
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
                         ),
                       ),
                     )
@@ -853,10 +900,12 @@ class _HomePageState extends State<HomePage>
                           child: Column(
                             children: [
                               Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 7.0),
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 2, horizontal: 7.0),
                                 child: Text(_eventName1,
                                     textAlign: TextAlign.center,
-                                    overflow: TextOverflow.ellipsis,  // Adds an ellipsis after the cutoff point
+                                    overflow: TextOverflow
+                                        .ellipsis, // Adds an ellipsis after the cutoff point
                                     maxLines: 1,
                                     style: TextStyle(
                                         fontWeight: FontWeight.bold,
@@ -921,10 +970,12 @@ class _HomePageState extends State<HomePage>
                         child: Column(
                           children: [
                             Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 7.0),
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 2, horizontal: 7.0),
                               child: Text(_eventName2,
                                   textAlign: TextAlign.center,
-                                  overflow: TextOverflow.ellipsis,  // Adds an ellipsis after the cutoff point
+                                  overflow: TextOverflow
+                                      .ellipsis, // Adds an ellipsis after the cutoff point
                                   maxLines: 1,
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
@@ -943,23 +994,23 @@ class _HomePageState extends State<HomePage>
                                       Icons.calendar_month,
                                       color: Colors.orange,
                                       size:
-                                      35.0, // You can adjust the size as needed
+                                          35.0, // You can adjust the size as needed
                                     ),
                                   ),
                                   Column(
                                     crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                           (DateFormat('MMM dd, yyyy').format(
-                                              DateTime.parse(_eventDate2)))
+                                                  DateTime.parse(_eventDate2)))
                                               .toString(),
                                           style: TextStyle(
                                               fontSize: _statsFontSize)),
                                       Text(
                                         _eventLocation2,
                                         style:
-                                        TextStyle(fontSize: _statsFontSize),
+                                            TextStyle(fontSize: _statsFontSize),
                                       ),
                                       Text(
                                         '${(_difference2 + 1).toString()} Days Left',
@@ -985,7 +1036,8 @@ class _HomePageState extends State<HomePage>
           Container(
             decoration: BoxDecoration(
               color: Colors.black26,
-              borderRadius: BorderRadius.vertical(top: Radius.zero, bottom: Radius.circular(10)),
+              borderRadius: BorderRadius.vertical(
+                  top: Radius.zero, bottom: Radius.circular(10)),
             ),
             child: Padding(
               padding:
@@ -1006,8 +1058,10 @@ class _HomePageState extends State<HomePage>
               child: Column(
                 children: <Widget>[
                   TabBar(
-                    labelPadding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
-                    indicatorPadding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+                    labelPadding:
+                        EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+                    indicatorPadding:
+                        EdgeInsets.symmetric(horizontal: 0, vertical: 0),
                     labelColor: Colors.blue,
                     unselectedLabelColor: Colors.grey,
                     tabs: [

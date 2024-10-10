@@ -527,8 +527,7 @@ class _WeightClassesState extends State<WeightClasses> {
                     _classify();
                   }
                 },
-                child: Text('FIND MY WEIGHT CLASS', style: TextStyle(
-                  fontWeight: FontWeight.bold,
+                child: Text('FIND MY WEIGHT CLASS', style: TextStyle(fontFamily: 'PTSansNarrow', fontWeight: FontWeight.bold
                 )),
                 style: ButtonStyle(
                   backgroundColor: WidgetStateProperty.all<Color>(Colors.purple),

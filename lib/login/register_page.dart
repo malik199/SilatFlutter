@@ -219,10 +219,10 @@ class _RegisterPageState extends State<RegisterPage> {
                             icon: const Icon(Icons.arrow_downward),
                             iconSize: 24,
                             elevation: 16,
-                            style: const TextStyle(color: Colors.deepPurple),
+                            style: const TextStyle(color: Colors.amber),
                             underline: Container(
                               height: 2,
-                              color: Colors.deepPurpleAccent,
+                              color: Colors.amberAccent,
                             ),
                             onChanged: (int? newValue) {
                               setState(() {
@@ -247,10 +247,10 @@ class _RegisterPageState extends State<RegisterPage> {
                             icon: const Icon(Icons.arrow_downward),
                             iconSize: 24,
                             elevation: 16,
-                            style: const TextStyle(color: Colors.deepPurple),
+                            style: const TextStyle(color: Colors.amber),
                             underline: Container(
                               height: 2,
-                              color: Colors.deepPurpleAccent,
+                              color: Colors.amberAccent,
                             ),
                             onChanged: (String? newValue) {
                               setState(() {

@@ -70,8 +70,7 @@ class Advancement extends StatelessWidget {
                   textAlign: TextAlign.center,
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: _mediumFont,
-                      color: Colors.black38)),
+                      fontSize: _mediumFont),),
               BeltsComplex(
                   curriculum: "jawara_muda", color: "white", stripes: 5),
               SizedBox(height: _spacing),
@@ -125,8 +124,7 @@ class Advancement extends StatelessWidget {
                   textAlign: TextAlign.center,
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 15,
-                      color: Colors.black38)),
+                      fontSize: 15)),
               BeltsComplex(
                   curriculum: "jawara_muda",
                   color: "black",

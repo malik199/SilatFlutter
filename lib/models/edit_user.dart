@@ -415,6 +415,7 @@ class _EditUserWidgetState extends State<EditUserWidget> {
     double _spacingFromEdge = 40;
     double _smallSpacing = 5;
     double _mediumSpacing = 15;
+    double _smallerText = 10;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 8.0),
@@ -520,7 +521,6 @@ class _EditUserWidgetState extends State<EditUserWidget> {
                       ),
                     ],
                   ),
-
                 ],
               ),
               Row(
@@ -581,7 +581,8 @@ class _EditUserWidgetState extends State<EditUserWidget> {
                       children: [
                         Icon(Icons.follow_the_signs),
                         SizedBox(width: _smallSpacing),
-                        Text("Tournaments:"),
+                        Text("Tournaments:",
+                            style: TextStyle(fontSize: _smallerText)),
                         SizedBox(width: _smallSpacing),
                         DropdownButton<int>(
                           value: _tournaments,
@@ -615,7 +616,8 @@ class _EditUserWidgetState extends State<EditUserWidget> {
                       children: [
                         Icon(Icons.filter_1),
                         SizedBox(width: _smallSpacing),
-                        Text("1st Places:"),
+                        Text("1st Places:",
+                            style: TextStyle(fontSize: _smallerText)),
                         SizedBox(width: _smallSpacing),
                         DropdownButton<int>(
                           value: _1stplace,
@@ -651,7 +653,8 @@ class _EditUserWidgetState extends State<EditUserWidget> {
                       children: [
                         Icon(Icons.filter_2),
                         SizedBox(width: _smallSpacing),
-                        Text("2nd Places:"),
+                        Text("2nd Places:",
+                            style: TextStyle(fontSize: _smallerText)),
                         SizedBox(width: _smallSpacing),
                         DropdownButton<int>(
                           value: _2ndplace,
@@ -685,7 +688,8 @@ class _EditUserWidgetState extends State<EditUserWidget> {
                       children: [
                         Icon(Icons.store),
                         SizedBox(width: _smallSpacing),
-                        Text("Class Merits:"),
+                        Text("Class Merits:",
+                            style: TextStyle(fontSize: _smallerText)),
                         SizedBox(width: _smallSpacing),
                         DropdownButton<int>(
                           value: _classMerits,
@@ -719,7 +723,8 @@ class _EditUserWidgetState extends State<EditUserWidget> {
                   children: [
                     Icon(Icons.verified),
                     SizedBox(width: _smallSpacing),
-                    Text("Good Deeds: "),
+                    Text("Good Deeds:",
+                        style: TextStyle(fontSize: _smallerText)),
                     DropdownButton<int>(
                       value: _deeds,
                       icon: const Icon(Icons.arrow_downward),
@@ -767,10 +772,9 @@ class _EditUserWidgetState extends State<EditUserWidget> {
                   children: [
                     Row(
                       children: [
-                        Text(
-                          "Pushups",
-                          textAlign: TextAlign.left,
-                        ),
+                        Text("Pushups",
+                            textAlign: TextAlign.left,
+                            style: TextStyle(fontSize: _smallerText)),
                         SizedBox(
                           width: _smallSpacing,
                         ),
@@ -812,10 +816,9 @@ class _EditUserWidgetState extends State<EditUserWidget> {
                     ),
                     Row(
                       children: [
-                        Text(
-                          "Situps",
-                          textAlign: TextAlign.left,
-                        ),
+                        Text("Situps",
+                            textAlign: TextAlign.left,
+                            style: TextStyle(fontSize: _smallerText)),
                         SizedBox(
                           width: _smallSpacing,
                         ),
@@ -857,7 +860,7 @@ class _EditUserWidgetState extends State<EditUserWidget> {
                     ),
                     Row(
                       children: [
-                        Text("Pullups"),
+                        Text("Pullups", style: TextStyle(fontSize: _smallerText)),
                         SizedBox(
                           width: _smallSpacing,
                         ),
@@ -904,7 +907,7 @@ class _EditUserWidgetState extends State<EditUserWidget> {
                   children: [
                     Row(
                       children: [
-                        Text("Deadhang"),
+                        Text("Deadhang", style: TextStyle(fontSize: _smallerText)),
                         SizedBox(
                           width: _smallSpacing,
                         ),
@@ -946,7 +949,7 @@ class _EditUserWidgetState extends State<EditUserWidget> {
                     ),
                     Row(
                       children: [
-                        Text("Mile Time"),
+                        Text("Mile Time", style: TextStyle(fontSize: _smallerText)),
                         SizedBox(
                           width: _smallSpacing,
                         ),
@@ -988,7 +991,7 @@ class _EditUserWidgetState extends State<EditUserWidget> {
                     ),
                     Row(
                       children: [
-                        Text("50m Dash"),
+                        Text("50m Dash", style: TextStyle(fontSize: _smallerText)),
                         SizedBox(
                           width: _smallSpacing,
                         ),
@@ -1035,7 +1038,7 @@ class _EditUserWidgetState extends State<EditUserWidget> {
                   children: [
                     Row(
                       children: [
-                        Text("Wallsits"),
+                        Text("Wallsits", style: TextStyle(fontSize: _smallerText)),
                         SizedBox(
                           width: _smallSpacing,
                         ),
@@ -1077,7 +1080,7 @@ class _EditUserWidgetState extends State<EditUserWidget> {
                     ),
                     Row(
                       children: [
-                        Text("Box-jumps"),
+                        Text("Box-jumps", style: TextStyle(fontSize: _smallerText)),
                         SizedBox(
                           width: _smallSpacing,
                         ),
@@ -1119,7 +1122,7 @@ class _EditUserWidgetState extends State<EditUserWidget> {
                     ),
                     Row(
                       children: [
-                        Text("Squats"),
+                        Text("Squats", style: TextStyle(fontSize: _smallerText)),
                         SizedBox(
                           width: _smallSpacing,
                         ),

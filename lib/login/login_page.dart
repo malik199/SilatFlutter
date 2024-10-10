@@ -280,7 +280,7 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                             ],
                           ),
-                          OutlinedButton.icon(
+                        /*  OutlinedButton.icon(
                             style: OutlinedButton.styleFrom(
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(20),
@@ -305,7 +305,7 @@ class _LoginPageState extends State<LoginPage> {
                                 );
                               }
                             },
-                          ),
+                          ),*/
                         ],
                       ),
                     )
