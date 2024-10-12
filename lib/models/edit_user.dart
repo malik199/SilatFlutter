@@ -262,7 +262,7 @@ class _EditUserWidgetState extends State<EditUserWidget> {
                     textStyle:
                         TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                 icon: Icon(Icons.save),
-                label: Text("Approve Pending Changes",
+                label: Text("Approve Changes",
                     style: TextStyle(
                       color: Colors.white,
                       fontFamily: 'PTSansNarrow',
@@ -415,16 +415,27 @@ class _EditUserWidgetState extends State<EditUserWidget> {
     double _spacingFromEdge = 40;
     double _smallSpacing = 5;
     double _mediumSpacing = 15;
-    double _smallerText = 10;
+    double _smallerText = 12;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 8.0),
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical:  0),
         child: Form(
           key: formKey,
           child: Column(
             children: [
+              Row(
+                children: [
+                  Icon(Icons.email, color: Colors.teal),
+                  SizedBox(width: _smallSpacing),
+                  Text('$_email',
+                      style: TextStyle(
+                          color: Colors.teal,
+                          fontWeight: FontWeight.bold)),
+                ],
+              ),
+              SizedBox(height: _mediumSpacing,),
               TextFormField(
                 decoration: InputDecoration(
                   labelText: 'First Name',
@@ -723,7 +734,7 @@ class _EditUserWidgetState extends State<EditUserWidget> {
                   children: [
                     Icon(Icons.verified),
                     SizedBox(width: _smallSpacing),
-                    Text("Good Deeds:",
+                    Text("Good Deeds: ",
                         style: TextStyle(fontSize: _smallerText)),
                     DropdownButton<int>(
                       value: _deeds,
