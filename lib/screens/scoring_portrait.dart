@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
-import 'package:flutter_beep/flutter_beep.dart';
+//import 'package:flutter_beep/flutter_beep.dart';
 
 class ScoringPortrait extends StatefulWidget {
   @override
@@ -70,7 +70,7 @@ class _ScoringPageState extends State<ScoringPortrait> {
               _pausePlay = "play";
               _current = _matchTime;
               _containerColor = Colors.green;
-              FlutterBeep.beep(false);
+              //FlutterBeep.beep(false);
 
               // Show alert dialog
               showDialog(
