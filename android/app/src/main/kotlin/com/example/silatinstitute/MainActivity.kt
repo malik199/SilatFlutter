@@ -1,4 +1,4 @@
-package com.example.silatinstitute
+package com.silat.app
 
 import io.flutter.embedding.android.FlutterActivity
 

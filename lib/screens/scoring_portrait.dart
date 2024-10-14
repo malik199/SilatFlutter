@@ -8,129 +8,113 @@ class ScoringPortrait extends StatefulWidget {
 }
 
 class _ScoringPageState extends State<ScoringPortrait> {
-  var _timer;
-  int _matchTime = 120;
-  int _current = 120;
-
-  String _pausePlay = "play";
-  final Iterable<Duration> pauses = [
-    const Duration(milliseconds: 500),
-    const Duration(milliseconds: 1000),
-    const Duration(milliseconds: 500),
-  ];
-
   @override
   initState() {
     super.initState();
   }
 
-  IconData getTimerIcon(String pause) {
-    if (pause == "pause") {
-      return Icons.pause;
+  /* TIMER FUNCTIONS */
+
+  Timer? _timer;
+  int _start = 90; // Default duration in seconds for 1:30 minutes
+  bool _isRunning = false;
+
+  void toggleTimer() {
+    if (_isRunning) {
+      pauseTimer();
     } else {
-      return Icons.play_arrow;
+      startTimer();
     }
   }
 
-  void startTimer(bool reset) {
-    if (_timer != null) {
-      if (_pausePlay == "pause") {
-        // Pause timer
+  void startTimer() {
+    _isRunning = true;
+    const oneSec = Duration(seconds: 1);
+    _timer?.cancel(); // Cancel any existing timers
+    _timer = Timer.periodic(oneSec, (Timer timer) {
+      if (_start == 0) {
         setState(() {
-          _pausePlay = "play";
-          _containerColor = Colors.deepOrangeAccent;
+          timer.cancel();
+          _isRunning = false;
+          showTimerDoneDialog();
         });
-        _timer.cancel();
-        _timer = null;
       } else {
-        // Resume timer
         setState(() {
-          _pausePlay = "pause";
-          _containerColor = Colors.orange;
-        });
-        // No need to create a new Timer, just change state to resume
-      }
-    } else {
-      // Timer is null, check if it's a reset or a fresh start
-      if (reset) {
-        // Reset timer
-        setState(() {
-          _pausePlay = "pause";
-          _containerColor = Colors.green;
-          _current = _matchTime;
+          _start--;
         });
       }
-      // Start timer from scratch
-      _timer = Timer.periodic(
-        const Duration(seconds: 1),
-        (Timer timer) => setState(
-          () {
-            if (_current < 1) {
-              timer.cancel();
-              _pausePlay = "play";
-              _current = _matchTime;
-              _containerColor = Colors.green;
-              //FlutterBeep.beep(false);
+    });
+  }
 
-              // Show alert dialog
-              showDialog(
-                context: context, // Ensure context is available
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    backgroundColor: Colors.red,
-                    title: Text("TIMER DONE",
-                        style: TextStyle(
-                            color: Colors.white, fontWeight: FontWeight.bold)),
-                    content: Text("The timer has completed its countdown.",
-                        style: TextStyle(
-                            color: Colors.white, fontWeight: FontWeight.bold)),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop(); // Close the dialog
-                        },
-                        child: Text("OK",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 30)),
-                        style:
-                            TextButton.styleFrom(foregroundColor: Colors.white),
-                      ),
-                    ],
-                  );
-                },
-              );
-            } else {
-              _current--;
-              _pausePlay = "pause";
-              _containerColor = Colors.orange;
-            }
-          },
-        ),
-      );
+  void pauseTimer() {
+    if (_timer != null) {
+      _timer!.cancel();
+      setState(() {
+        _isRunning = false;
+      });
     }
   }
 
-  String intToTimeLeft(int value) {
-    int h, m, s;
-    h = value ~/ 3600;
-    m = ((value - h * 3600)) ~/ 60;
-    s = value - (h * 3600) - (m * 60);
-
-    /*String hourLeft =
-        h.toString().length < 2 ? "0" + h.toString() : h.toString();*/
-    String minuteLeft = m.toString();
-
-    // m.toString().length < 2 ? "0" + m.toString() :
-    String secondsLeft =
-        s.toString().length < 2 ? "0" + s.toString() : s.toString();
-    String result = "$minuteLeft:$secondsLeft";
-
-    return result;
+  void resetTimer() {
+    _timer?.cancel();
+    setState(() {
+      _start = 90;
+      _isRunning = false;
+    });
   }
 
-  Color _containerColor = Colors.green;
+  void setTime(int seconds) {
+    setState(() {
+      _start = seconds;
+      _isRunning = false;
+    });
+  }
+
+  void showTimerDoneDialog() {
+    showDialog(
+      context: context, // Ensure context is available
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.red,
+          title: Text("TIMER DONE",
+              style:
+                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+          content: Text("The timer has completed its countdown.",
+              style:
+                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text("OK",
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 30)),
+              style: TextButton.styleFrom(foregroundColor: Colors.white),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  String getFormattedTime() {
+    int minutes = _start ~/ 60;
+    int seconds = _start % 60;
+    return "$minutes:${seconds.toString().padLeft(2, '0')}";
+  }
+
+  Color getButtonColor() {
+    if (_isRunning) {
+      return Colors.green; // Green when the timer is running
+    } else if (_start != 90) {
+      return Colors.deepOrangeAccent; // Orange when paused
+    } else {
+      return Colors.pink!; // Dark yellow when stopped
+    }
+  }
 
   // ****************** RED LOGIC ******************
 
@@ -216,8 +200,8 @@ class _ScoringPageState extends State<ScoringPortrait> {
   }
 
   void resetGame() {
+    resetTimer();
     setState(() {
-      startTimer(true);
       _redFinalScore = 0;
       arrayRedScore = [];
       _redArrayText = "";
@@ -225,14 +209,6 @@ class _ScoringPageState extends State<ScoringPortrait> {
       arrayBlueScore = [];
       _blueArrayText = "";
     });
-  }
-
-  @override
-  void deactivate() {
-    if (_timer != null) {
-      _timer.cancel();
-    }
-    super.deactivate();
   }
 
   Column popupStats() {
@@ -317,7 +293,7 @@ class _ScoringPageState extends State<ScoringPortrait> {
                     Expanded(
                       flex: 5,
                       child: Column(
-                        //ROW 2
+                          //ROW 2
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
@@ -343,11 +319,11 @@ class _ScoringPageState extends State<ScoringPortrait> {
                             SizedBox(height: _spacing),
                             Expanded(
                               child: Row(
-                                //ROW 2
+                                  //ROW 2
                                   mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
+                                      MainAxisAlignment.spaceBetween,
                                   crossAxisAlignment:
-                                  CrossAxisAlignment.stretch,
+                                      CrossAxisAlignment.stretch,
                                   children: [
                                     Expanded(
                                       flex: 2,
@@ -382,7 +358,7 @@ class _ScoringPageState extends State<ScoringPortrait> {
                     // **************** LITTLE BUTTONS ************
                     Expanded(
                       child: Row(
-                        //ROW 2
+                          //ROW 2
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
@@ -408,7 +384,7 @@ class _ScoringPageState extends State<ScoringPortrait> {
                     ),
                     Expanded(
                       child: Row(
-                        //ROW 2
+                          //ROW 2
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
@@ -471,7 +447,7 @@ class _ScoringPageState extends State<ScoringPortrait> {
                     Expanded(
                       flex: 5,
                       child: Column(
-                        //ROW 2
+                          //ROW 2
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
@@ -497,11 +473,11 @@ class _ScoringPageState extends State<ScoringPortrait> {
                             SizedBox(height: _spacing),
                             Expanded(
                               child: Row(
-                                //ROW 2
+                                  //ROW 2
                                   mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
+                                      MainAxisAlignment.spaceBetween,
                                   crossAxisAlignment:
-                                  CrossAxisAlignment.stretch,
+                                      CrossAxisAlignment.stretch,
                                   children: [
                                     Expanded(
                                       flex: 2,
@@ -534,7 +510,7 @@ class _ScoringPageState extends State<ScoringPortrait> {
                     // **************** LITTLE BUTTONS ************
                     Expanded(
                       child: Row(
-                        //ROW 2
+                          //ROW 2
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
@@ -560,7 +536,7 @@ class _ScoringPageState extends State<ScoringPortrait> {
                     ),
                     Expanded(
                       child: Row(
-                        //ROW 2
+                          //ROW 2
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
@@ -593,7 +569,8 @@ class _ScoringPageState extends State<ScoringPortrait> {
         Expanded(
           flex: 1,
           child: Container(
-            width: double.infinity, // Adjust the height as needed to fit two rows of buttons// Add padding to the container
+            width: double
+                .infinity, // Adjust the height as needed to fit two rows of buttons// Add padding to the container
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
@@ -634,7 +611,7 @@ class _ScoringPageState extends State<ScoringPortrait> {
                             ),
                             TextButton(
                               onPressed: () =>
-                              {Navigator.pop(context, 'OK'), resetGame()},
+                                  {Navigator.pop(context, 'OK'), resetGame()},
                               child: const Text('OK'),
                             ),
                           ],
@@ -672,7 +649,7 @@ class _ScoringPageState extends State<ScoringPortrait> {
                     ), // Blue Score
                   ],
                 ),
-                SizedBox(height: 5),// Space between the two rows
+                SizedBox(height: 5), // Space between the two rows
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
@@ -687,59 +664,46 @@ class _ScoringPageState extends State<ScoringPortrait> {
                           color: Colors.red,
                           size: 40.0,
                           semanticLabel:
-                          'Text to announce in accessibility modes',
+                              'Text to announce in accessibility modes',
                         ),
                       ),
                     ), // Delete Red
                     Expanded(
-                      flex: 4,
-                      child: InkWell(
-                        onTap: () => startTimer(false),
-                        child: Container(
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: _containerColor,
-                            borderRadius: const BorderRadius.all(
-                              Radius.circular(borderRadius),
+                        flex: 4,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            SizedBox(height: 20),
+                            ElevatedButton.icon(
+                              icon: Icon(
+                                  _isRunning ? Icons.pause : Icons.play_arrow,
+                                  size: 35),
+                              label: Text(
+                                getFormattedTime(),
+                                style: TextStyle(
+                                    fontSize: 35, fontWeight: FontWeight.bold, color: Colors.white),
+                              ),
+                              onPressed: () => toggleTimer(),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    getButtonColor(), // Correctly use backgroundColor instead of primary
+                                minimumSize: Size(200, 60), // Button size
+                                padding: EdgeInsets
+                                    .zero, // No padding inside the button
+                              ),
                             ),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            // Adjust as needed
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 8),
-                                child: Icon(
-                                  getTimerIcon(_pausePlay),
-                                  color: Colors.white,
-                                  size: 30.0,
-                                  semanticLabel: 'Start Timer',
-                                ),
-                              ),
-                              Text(
-                                intToTimeLeft(_current),
-                                style: const TextStyle(
-                                    fontSize: 30,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 8),
-                                child: InkWell(
-                                  onTap: () => startTimer(true),
-                                  child: const Icon(
-                                    Icons.refresh_outlined,
-                                    color: Colors.white,
-                                    size: 30.0,
-                                    semanticLabel: 'Refresh Time',
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
+                            SizedBox(height: 20),
+                            ElevatedButton(
+                              onPressed: () => resetTimer(),
+                              child: Icon(Icons.refresh),
+                            ),
+                            SizedBox(height: 20),
+                            ElevatedButton(
+                              onPressed: () => showTimeSelection(context),
+                              child: Text('Set Duration'),
+                            ),
+                          ],
+                        )),
                     Expanded(
                       flex: 1,
                       child: TextButton(
@@ -751,7 +715,7 @@ class _ScoringPageState extends State<ScoringPortrait> {
                           color: Colors.blue,
                           size: 40.0,
                           semanticLabel:
-                          'Text to announce in accessibility modes',
+                              'Text to announce in accessibility modes',
                         ),
                       ),
                     ), // Delete Blue
@@ -780,29 +744,29 @@ class _ScoringPageState extends State<ScoringPortrait> {
     const TextStyle whiteTextColor = TextStyle(color: Colors.white);
     final ButtonStyle redStyle = ButtonStyle(
         backgroundColor: WidgetStateProperty.all(Colors.red),
-        shape: WidgetStateProperty.all(
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(buttonBorderRadius))),
+        shape: WidgetStateProperty.all(RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(buttonBorderRadius))),
         textStyle: WidgetStateProperty.all(TextStyle(
             fontSize: _largeFont,
             fontWeight: FontWeight.bold,
             color: Colors.white)));
     final ButtonStyle blueStyle = ButtonStyle(
-        shape: WidgetStateProperty.all(
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(buttonBorderRadius))),
+        shape: WidgetStateProperty.all(RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(buttonBorderRadius))),
         backgroundColor: WidgetStateProperty.all(Colors.blue),
         textStyle: WidgetStateProperty.all(
             TextStyle(fontSize: _largeFont, fontWeight: FontWeight.bold)));
     final ButtonStyle redSmallerStyle = ButtonStyle(
         padding: WidgetStateProperty.all(EdgeInsets.zero),
-        shape: WidgetStateProperty.all(
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(buttonBorderRadius))),
+        shape: WidgetStateProperty.all(RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(buttonBorderRadius))),
         backgroundColor: WidgetStateProperty.all(Colors.red),
         textStyle: WidgetStateProperty.all(
             TextStyle(fontSize: _smallFont, fontWeight: FontWeight.bold)));
     final ButtonStyle blueSmallerStyle = ButtonStyle(
         padding: WidgetStateProperty.all(EdgeInsets.zero),
-        shape: WidgetStateProperty.all(
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(buttonBorderRadius))),
+        shape: WidgetStateProperty.all(RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(buttonBorderRadius))),
         backgroundColor: WidgetStateProperty.all(Colors.blue),
         textStyle: WidgetStateProperty.all(
             TextStyle(fontSize: _smallFont, fontWeight: FontWeight.bold)));
@@ -875,15 +839,14 @@ class _ScoringPageState extends State<ScoringPortrait> {
                         style: redStyle,
                         onPressed: () => redButtonClicked(3),
                         child: FittedBox(
-                          child: const Text('3',
-                              style: whiteTextColor),
+                          child: const Text('3', style: whiteTextColor),
                         ),
                       ),
                     ),
                     SizedBox(height: _spacing),
                     Expanded(
                       child: Row(
-                        //ROW 2
+                          //ROW 2
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
@@ -924,7 +887,7 @@ class _ScoringPageState extends State<ScoringPortrait> {
                   ],
                 ),
               ),
-              SizedBox(width:10),
+              SizedBox(width: 10),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -981,15 +944,14 @@ class _ScoringPageState extends State<ScoringPortrait> {
                         style: blueStyle,
                         onPressed: () => blueButtonClicked(3),
                         child: const FittedBox(
-                            child: Text('3',
-                                style: whiteTextColor)),
+                            child: Text('3', style: whiteTextColor)),
                       ),
                     ),
                     SizedBox(height: _spacing),
                     Expanded(
                       flex: 1,
                       child: Row(
-                        //ROW 2
+                          //ROW 2
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
@@ -1063,35 +1025,55 @@ class _ScoringPageState extends State<ScoringPortrait> {
                         ),
                       ),
                     ), // Red Score
-                    ElevatedButton(
-                      onPressed: () => showDialog<String>(
-                        context: context,
-                        builder: (BuildContext context) => AlertDialog(
-                          title: const Text('Reset Match?'),
-                          content: const Text(
-                              'Are you sure you want to reset match and erase all the scores?'),
-                          actions: <Widget>[
-                            TextButton(
-                              onPressed: () => Navigator.pop(context, 'Cancel'),
-                              child: const Text('Cancel'),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () => showDialog<String>(
+                            context: context,
+                            builder: (BuildContext context) => AlertDialog(
+                              title: const Text('Reset Match?'),
+                              content: const Text(
+                                  'Are you sure you want to reset match and erase all the scores?'),
+                              actions: <Widget>[
+                                TextButton(
+                                  onPressed: () =>
+                                      Navigator.pop(context, 'Cancel'),
+                                  child: const Text('Cancel'),
+                                ),
+                                TextButton(
+                                  onPressed: () => {
+                                    Navigator.pop(context, 'OK'),
+                                    resetGame()
+                                  },
+                                  child: const Text('OK'),
+                                ),
+                              ],
                             ),
-                            TextButton(
-                              onPressed: () =>
-                              {Navigator.pop(context, 'OK'), resetGame()},
-                              child: const Text('OK'),
-                            ),
-                          ],
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.purple,
+                            shape: const CircleBorder(),
+                          ),
+                          child: const Icon(
+                            Icons.autorenew,
+                            size: 40,
+                            color: Colors.white,
+                          ),
                         ),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.purple,
-                        shape: const CircleBorder(),
-                      ),
-                      child: const Icon(
-                        Icons.autorenew,
-                        size: 40,
-                        color: Colors.white,
-                      ),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.purple, // Correctly use backgroundColor instead of primary// Button size
+                            padding: EdgeInsets.zero, // No padding inside the button
+                          ),
+                          onPressed: () => showTimeSelection(context),
+                          child: Text('TIME',
+                              style: const TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white)),
+                        ),
+                      ],
                     ), // Restart
                     Expanded(
                       flex: 3,
@@ -1116,7 +1098,7 @@ class _ScoringPageState extends State<ScoringPortrait> {
                   ],
                 ),
               ),
-              SizedBox(height: _spacing),// Space between the two rows
+              SizedBox(height: _spacing), // Space between the two rows
               Expanded(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1131,60 +1113,44 @@ class _ScoringPageState extends State<ScoringPortrait> {
                           Icons.backspace,
                           color: Colors.red,
                           size: 40.0,
-                          semanticLabel:
-                          'Delete Red',
+                          semanticLabel: 'Delete Red',
                         ),
                       ),
                     ), // Delete Red
                     Expanded(
-                      flex: 4,
-                      child: InkWell(
-                        onTap: () => startTimer(false),
-                        child: Container(
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: _containerColor,
-                            borderRadius: const BorderRadius.all(
-                              Radius.circular(30),
+                        flex: 4,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: <Widget>[
+                            Expanded(
+                              child: ElevatedButton.icon(
+                                icon: Icon(
+                                    _isRunning ? Icons.pause : Icons.play_arrow,
+                                    size: 35),
+                                label: Text(
+                                  getFormattedTime(),
+                                  style: TextStyle(
+                                      fontSize: 35,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                onPressed: () => toggleTimer(),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor:
+                                      getButtonColor(), // Correctly use backgroundColor instead of primary// Button size
+                                  padding: EdgeInsets
+                                      .zero, // No padding inside the button
+                                ),
+                              ),
                             ),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            // Adjust as needed
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 8),
-                                child: Icon(
-                                  getTimerIcon(_pausePlay),
-                                  color: Colors.white,
-                                  size: 30.0,
-                                  semanticLabel: 'Start Timer',
-                                ),
-                              ),
-                              Text(
-                                intToTimeLeft(_current),
-                                style: const TextStyle(
-                                    fontSize: 30,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 8),
-                                child: InkWell(
-                                  onTap: () => startTimer(true),
-                                  child: const Icon(
-                                    Icons.refresh_outlined,
-                                    color: Colors.white,
-                                    size: 30.0,
-                                    semanticLabel: 'Refresh Time',
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
+                            ElevatedButton(
+                                onPressed: () => resetTimer(),
+                                child: Icon(Icons.refresh, size: 30),
+                                style: ElevatedButton.styleFrom(
+                                    padding: EdgeInsets.zero,
+                                    shape: CircleBorder())),
+                          ],
+                        )),
                     Expanded(
                       flex: 1,
                       child: TextButton(
@@ -1195,8 +1161,7 @@ class _ScoringPageState extends State<ScoringPortrait> {
                           Icons.backspace,
                           color: Colors.blue,
                           size: 40.0,
-                          semanticLabel:
-                          'Delete Blue',
+                          semanticLabel: 'Delete Blue',
                         ),
                       ),
                     ), // Delete Blue
@@ -1207,6 +1172,50 @@ class _ScoringPageState extends State<ScoringPortrait> {
           ),
         ),
       ],
+    );
+  }
+
+  void showTimeSelection(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return SafeArea(
+          child: Wrap(
+            children: <Widget>[
+              ListTile(
+                leading: Icon(Icons.timer),
+                title: Text('30 seconds'),
+                onTap: () => {Navigator.pop(context), setTime(30)},
+              ),
+              ListTile(
+                leading: Icon(Icons.timer),
+                title: Text('1:00 minute'),
+                onTap: () => {Navigator.pop(context), setTime(60)},
+              ),
+              ListTile(
+                leading: Icon(Icons.timer),
+                title: Text('1:30 minutes'),
+                onTap: () => {Navigator.pop(context), setTime(90)},
+              ),
+              ListTile(
+                leading: Icon(Icons.timer),
+                title: Text('2:00 minutes'),
+                onTap: () => {Navigator.pop(context), setTime(120)},
+              ),
+              ListTile(
+                leading: Icon(Icons.timer),
+                title: Text('3:00 minutes'),
+                onTap: () => {Navigator.pop(context), setTime(180)},
+              ),
+              ListTile(
+                leading: Icon(Icons.timer),
+                title: Text('4:00 minutes'),
+                onTap: () => {Navigator.pop(context), setTime(240)},
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
