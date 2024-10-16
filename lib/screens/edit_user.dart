@@ -213,7 +213,7 @@ class _EditUserWidgetState extends State<EditUserWidget> {
         // return object of type Dialog
         return AlertDialog(
           title: new Text(
-              "You are about to pending updates for '${widget.dbItem['firstname'].toUpperCase()} ${widget.dbItem['lastname'].toUpperCase()}'"),
+              "You are about to delete pending updates for '${widget.dbItem['firstname'].toUpperCase()} ${widget.dbItem['lastname'].toUpperCase()}'"),
           content: new Text(
               "Are you sure you want remove these pending changes for ${widget.dbItem['email']}"),
           actions: <Widget>[
@@ -499,7 +499,9 @@ class _EditUserWidgetState extends State<EditUserWidget> {
                         ].map<DropdownMenuItem<String>>((String value) {
                           return DropdownMenuItem<String>(
                             value: value,
-                            child: Text(value),
+                            child: Text(value, style: TextStyle(
+                              fontFamily: 'PTSansNarrow',
+                            ),),
                           );
                         }).toList(),
                       ),
@@ -508,7 +510,9 @@ class _EditUserWidgetState extends State<EditUserWidget> {
                   Row(
                     children: [
                       Icon(Icons.place),
-                      Text("Location: "),
+                      Text("Location: ", style: TextStyle(
+                        fontFamily: 'PTSansNarrow',
+                      ),),
                       DropdownButton<String>(
                         value: _location,
                         icon: const Icon(Icons.arrow_downward),
@@ -526,7 +530,9 @@ class _EditUserWidgetState extends State<EditUserWidget> {
                             .map<DropdownMenuItem<String>>((String value) {
                           return DropdownMenuItem<String>(
                             value: value,
-                            child: Text(value),
+                            child: Text(value, style: TextStyle(
+                            fontFamily: 'PTSansNarrow',
+                            ),),
                           );
                         }).toList(),
                       ),
@@ -541,7 +547,9 @@ class _EditUserWidgetState extends State<EditUserWidget> {
                     children: [
                       Icon(Icons.assignment_ind),
                       SizedBox(width: _smallSpacing),
-                      Text("Age:"),
+                      Text("Age:", style: TextStyle(
+                        fontFamily: 'PTSansNarrow',
+                      ),),
                       SizedBox(width: _smallSpacing),
                       DropdownButton<int>(
                         value: _age,
@@ -569,17 +577,57 @@ class _EditUserWidgetState extends State<EditUserWidget> {
                   ),
                   Row(
                     children: [
-                      Icon(Icons.thumb_up_alt, color: Colors.green),
+                      Icon(Icons.horizontal_split),
                       SizedBox(width: _smallSpacing),
-                      Text("Approved:"),
+                      Text("Belt:" , style: TextStyle(
+                        fontFamily: 'PTSansNarrow',
+                      ),),
                       SizedBox(width: _smallSpacing),
-                      Switch(
-                          value: _isApprov,
-                          onChanged: (bool value) {
-                            setState(() => _isApprov = value);
-                          }),
+                      DropdownButton<String>(
+                          value: _beltColor,
+                          icon: Icon(Icons.arrow_downward),
+                          iconSize: 24,
+                          elevation: 16,
+                          style: TextStyle(color: Colors.amber),
+                          underline: Container(
+                            height: 2,
+                            color: Colors.amberAccent,
+                          ),
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              _beltColor = newValue!;
+                            });
+                          },
+                          items: <String>[
+                            'white',
+                            'yellow',
+                            'green',
+                            'blue',
+                            'purple',
+                            'brown',
+                            'black',
+                            'red'
+                          ].map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList()),
                     ],
                   ),
+
+                ],
+              ),
+              Row(
+                children: [
+                  Text("Approved:" , style: TextStyle(
+                    fontFamily: 'PTSansNarrow',
+                  ),),
+                  Switch(
+                      value: _isApprov,
+                      onChanged: (bool value) {
+                        setState(() => _isApprov = value);
+                      }),
                 ],
               ),
               Divider(thickness: 2),

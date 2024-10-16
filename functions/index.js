@@ -44,3 +44,23 @@ exports.transferUserData = functions.https.onRequest((req, res) => {
         res.status(500).send(`Error accessing data: ${error.message}`);
     });
 });
+
+exports.deleteFirebaseUser = functions.https.onCall((data, context) => {
+  // Check if the request is made by an authenticated user
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'The function must be called while authenticated.');
+  }
+
+  const uid = data.uid;
+
+  return admin.auth().deleteUser(uid)
+    .then(() => {
+      console.log('Successfully deleted user', uid);
+      return { status: 'success', message: 'User deleted' };
+    })
+    .catch((error) => {
+      console.log('Error deleting user:', error);
+      throw new functions.https.HttpsError('unknown', error.message, error);
+    });
+});
+

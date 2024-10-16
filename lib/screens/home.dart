@@ -121,10 +121,10 @@ class _HomePageState extends State<HomePage>
             _age = value['age'];
             _stripe = value['stripe'];
             _location = value['location'];
-            _tournaments = value['tournaments'];
-            _1stPlace = value['1stplace'];
-            _2ndPlace = value['2ndplace'];
-            _score = value['score'];
+            _tournaments = value['tournaments'] ?? 0;
+            _1stPlace = value['1stplace'] ?? 0;
+            _2ndPlace = value['2ndplace'] ?? 0;
+            _score = value['score'] ?? 0;
             bm_pushups = value['bm_pushups'] ?? 0;
             bm_situps = value['bm_situps'] ?? 0;
             bm_pullups = value['bm_pullups'] ?? 0;

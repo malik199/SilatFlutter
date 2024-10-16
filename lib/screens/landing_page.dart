@@ -6,6 +6,7 @@ import 'package:silat_flutter/admin/pending_changes.dart';
 import 'package:silat_flutter/screens/add_events.dart';
 import 'package:silat_flutter/screens/add_quote.dart';
 import 'package:silat_flutter/screens/advancement.dart';
+import 'package:silat_flutter/screens/delete_user.dart';
 import 'package:silat_flutter/screens/events.dart';
 import 'package:silat_flutter/screens/header.dart';
 import 'package:silat_flutter/screens/indonesian_creed.dart';
@@ -355,6 +356,22 @@ SizedBox(height: 50),
                               ),
                             ],
                           ),
+                        ListTile(
+                          leading:
+                          Icon(Icons.delete_forever, color: Colors.red),
+                          title: const Text(
+                            'Delete My Account',
+                            style: TextStyle(color: Colors.red),
+                          ),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      DeleteUserPage()),
+                            );
+                          },
+                        ),
                         ListTile(
                           leading: Icon(Icons.logout),
                           title: const Text('Log Out'),

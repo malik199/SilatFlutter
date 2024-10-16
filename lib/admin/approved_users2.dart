@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:silat_flutter/models/edit_user.dart';
+import 'package:silat_flutter/screens/edit_user.dart';
 import 'package:silat_flutter/models/pull_color_model.dart';
 
 

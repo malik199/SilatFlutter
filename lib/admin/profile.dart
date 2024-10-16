@@ -1,12 +1,7 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/services.dart';
-import 'package:http/http.dart' as http;
-
-import '../models/edit_user.dart';
 
 class Profile extends StatefulWidget {
   @override

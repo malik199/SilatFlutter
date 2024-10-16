@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
-import '../models/edit_user.dart';
+import '../screens/edit_user.dart';
 
 class UnapprovedUsers extends StatefulWidget {
   const UnapprovedUsers({Key? key}) : super(key: key);

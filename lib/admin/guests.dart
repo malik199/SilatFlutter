@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import '../models/pull_color_model.dart';
-import '../models/edit_user.dart';
+import '../screens/edit_user.dart';
 
 class Guests extends StatefulWidget {
   const Guests({Key? key}) : super(key: key);
