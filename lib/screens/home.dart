@@ -493,7 +493,7 @@ class _HomePageState extends State<HomePage>
                           width: _smallSpacing,
                         ),
                         Text(
-                          bm_pushups.toString(),
+                          obj['bm_pushups'] != null && obj['bm_pushups'] != 0 ? obj['bm_pushups'].toString() : "",
                           style: TextStyle(
                             fontSize: _littleFontSize, color: Colors.amber,
                             // Set your desired font size here, smaller than the default
@@ -511,7 +511,7 @@ class _HomePageState extends State<HomePage>
                           width: _smallSpacing,
                         ),
                         Text(
-                          bm_situps.toString(),
+                          obj['bm_situps'] != null ? obj['bm_situps'].toString() : "",
                           style: TextStyle(
                             fontSize: _littleFontSize, color: Colors.amber,
                             // Set your desired font size here, smaller than the default
@@ -529,7 +529,7 @@ class _HomePageState extends State<HomePage>
                           width: _smallSpacing,
                         ),
                         Text(
-                          bm_pullups.toString(),
+                          obj['bm_pullups'] != null ? obj['bm_pullups'].toString() : "",
                           style: TextStyle(
                             fontSize: _littleFontSize, color: Colors.amber,
                             // Set your desired font size here, smaller than the default
@@ -550,7 +550,7 @@ class _HomePageState extends State<HomePage>
                           width: _smallSpacing,
                         ),
                         Text(
-                          bm_deadhang as String,
+                          obj['bm_deadhang'] != null ? obj['bm_deadhang'].toString() : "",
                           style: TextStyle(
                             fontSize: _littleFontSize, color: Colors.amber,
                             // Set your desired font size here, smaller than the default
@@ -568,7 +568,7 @@ class _HomePageState extends State<HomePage>
                           width: _smallSpacing,
                         ),
                         Text(
-                          bm_mile as String,
+                          obj['bm_mile'] != null ? obj['bm_mile'].toString() : "",
                           style: TextStyle(
                             fontSize: _littleFontSize, color: Colors.amber,
                             // Set your desired font size here, smaller than the default
@@ -586,7 +586,7 @@ class _HomePageState extends State<HomePage>
                           width: _smallSpacing,
                         ),
                         Text(
-                          bm_dash as String,
+                          obj['bm_dash'] != null ? obj['bm_dash'].toString() : "",
                           style: TextStyle(
                             fontSize: _littleFontSize, color: Colors.amber,
                             // Set your desired font size here, smaller than the default
@@ -609,7 +609,7 @@ class _HomePageState extends State<HomePage>
                           width: _smallSpacing,
                         ),
                         Text(
-                          bm_wallsits as String,
+                          obj['bm_wallsits'] != null ? obj['bm_wallsits'].toString() : "",
                           style: TextStyle(
                             fontSize: _littleFontSize, color: Colors.amber,
                             // Set your desired font size here, smaller than the default
@@ -627,7 +627,7 @@ class _HomePageState extends State<HomePage>
                           width: _smallSpacing,
                         ),
                         Text(
-                          bm_boxjumps.toString(),
+                          obj['bm_boxjumps'] != null ? obj['bm_boxjumps'].toString() : "",
                           style: TextStyle(
                             fontSize: _littleFontSize, color: Colors.amber,
                             // Set your desired font size here, smaller than the default
@@ -645,7 +645,7 @@ class _HomePageState extends State<HomePage>
                           width: _smallSpacing,
                         ),
                         Text(
-                          bm_squats.toString(),
+                          obj['bm_squats'] != null ? obj['bm_squats'].toString() : "",
                           style: TextStyle(
                             fontSize: _littleFontSize, color: Colors.amber,
                             // Set your desired font size here, smaller than the default
